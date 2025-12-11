@@ -2,6 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 namespace _Project.Core.Scripts
 {
@@ -13,6 +14,8 @@ namespace _Project.Core.Scripts
 
         public event Action JumpEvent;
         public event Action DodgeEvent;
+        public event Action TargetEvent;
+        public event Action TargetCancelEvent;
 
         // public bool JumpPressed { get; private set; }
 
@@ -74,6 +77,25 @@ namespace _Project.Core.Scripts
         {
             if (!context.performed) return;
             DodgeEvent?.Invoke();
+        }
+
+        public void OnTarget(InputAction.CallbackContext context)
+        {
+            if (!context.performed) return;
+            if (context.interaction is TapInteraction)
+            {
+                TargetEvent?.Invoke();
+            }
+        }
+
+        public void OnTargetCancel(InputAction.CallbackContext context)
+        {
+            if (!context.performed) return;
+
+            if (context.interaction is HoldInteraction)
+            {
+                TargetCancelEvent?.Invoke();
+            }
         }
     }
 }

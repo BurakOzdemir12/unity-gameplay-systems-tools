@@ -17,6 +17,8 @@ namespace _Project.Core.Scripts
         public event Action TargetEvent;
         public event Action TargetCancelEvent;
 
+        public bool IsAttacking { get; private set; }
+
         // public bool JumpPressed { get; private set; }
 
         private void Awake()
@@ -95,6 +97,19 @@ namespace _Project.Core.Scripts
             if (context.interaction is HoldInteraction)
             {
                 TargetCancelEvent?.Invoke();
+            }
+        }
+
+        public void OnAttack(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                IsAttacking = true;
+            }
+
+            if (context.canceled)
+            {
+                IsAttacking = false;
             }
         }
     }

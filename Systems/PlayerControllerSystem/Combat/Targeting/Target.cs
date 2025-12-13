@@ -1,14 +1,12 @@
+using System;
 using UnityEngine;
 
 public class Target : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
+    public event Action<Target> OnTargetDestroyed;
 
-    void Update()
+    private void OnDestroy()
     {
-        
+        OnTargetDestroyed?.Invoke(this);
     }
 }

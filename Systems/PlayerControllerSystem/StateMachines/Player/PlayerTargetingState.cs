@@ -20,7 +20,7 @@ namespace _Project.Systems.PlayerControllerSystem.StateMachines.Player
         {
             if (stateMachine.InputHandler.IsAttacking)
             {
-                stateMachine.SwitchState(new PlayerAttackingState(stateMachine));
+                stateMachine.SwitchState(new PlayerAttackingState(stateMachine,0));
                 return;
             }
             if (stateMachine.Targeter.SelectedTarget == null)

@@ -23,7 +23,7 @@ namespace _Project.Systems.PlayerControllerSystem.StateMachines.Player
             //If you want to attack while free look state even without Targeting use this code
             if (stateMachine.InputHandler.IsAttacking)
             {
-                stateMachine.SwitchState(new PlayerAttackingState(stateMachine));
+                stateMachine.SwitchState(new PlayerAttackingState(stateMachine,0));
                 return;
             }
 

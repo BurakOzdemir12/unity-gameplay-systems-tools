@@ -1,6 +1,8 @@
 using System;
 using _Project.Core.Scripts;
+using _Project.Systems.PlayerControllerSystem.Combat;
 using _Project.Systems.PlayerControllerSystem.Gravity_Force;
+using _Project.Systems.PlayerControllerSystem.WeaponHandler;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -13,6 +15,8 @@ namespace _Project.Systems.PlayerControllerSystem.StateMachines.Player
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public Targeter Targeter { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
+        [field: SerializeField] public WeaponLogic WeaponLogic { get; private set; }
+        [field: SerializeField] public AttackDataSo[] Attacks { get; private set; }
 
         [field: SerializeField] public float locomotionAnimatorDampTime = 0.1f;
         [field: SerializeField] public float targetingAnimatorDampTime = 0.2f;
@@ -26,6 +30,7 @@ namespace _Project.Systems.PlayerControllerSystem.StateMachines.Player
         public readonly int TargetingBlendTreeHash = Animator.StringToHash("TargetingBlendTree");
         public readonly int TargetingForwardSpeedHash = Animator.StringToHash("TargetingForwardSpeed");
         public readonly int TargetingRightSpeedHash = Animator.StringToHash("TargetingRightSpeed");
+
         private void Start()
         {
             if (UnityEngine.Camera.main == null) Debug.LogError("No main camera found!");

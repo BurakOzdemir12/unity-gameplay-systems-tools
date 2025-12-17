@@ -1,0 +1,87 @@
+﻿using UnityEngine;
+
+namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
+{
+    public class PlayerFreeLookState : PlayerBaseState
+    {
+        public PlayerFreeLookState(PlayerStateMachine stateMachine) : base(stateMachine)
+        {
+        }
+
+        public override void Enter()
+        {
+            stateMachine.InputHandler.TargetEvent += OnTarget;
+            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,stateMachine.crossFadeDurationBetweenBlendTrees);
+        }
+
+
+        public override void Tick(float deltaTime)
+        {
+            //If you want to attack while free look state even without Targeting use this code
+            if (stateMachine.InputHandler.IsAttacking)
+            {
+                stateMachine.SwitchState(new PlayerAttackingState(stateMachine,0));
+                return;
+            }
+
+            Vector3 movement = CalculateMovementDirection();
+
+            Move(movement * stateMachine.FreeMovementSpeed, deltaTime);
+            // stateMachine.Controller.Move(movement * stateMachine.FreeMovementSpeed * deltaTime); without force receiver -gravity
+
+            if (stateMachine.InputHandler.Move.sqrMagnitude < 0.001f)
+            {
+                stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParam, 0,
+                    stateMachine.locomotionAnimatorDampTime, deltaTime);
+                return;
+            }
+
+            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParam, 1, stateMachine.locomotionAnimatorDampTime,
+                deltaTime);
+
+            RotatePlayerTowardsMovement(movement, deltaTime);
+        }
+
+
+        public override void Exit()
+        {
+            stateMachine.InputHandler.TargetEvent -= OnTarget;
+        }
+
+        private void RotatePlayerTowardsMovement(Vector3 movement, float deltaTime)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(movement);
+
+            Transform characterTransform = stateMachine.Controller.transform;
+            characterTransform.rotation = Quaternion.Slerp(characterTransform.rotation, targetRot,
+                stateMachine.rotationDampTime * deltaTime);
+
+            // We can use RotateToward and Lerp either.
+            // characterTransform.rotation = Quaternion.RotateTowards(
+            //     characterTransform.rotation, targetRot, stateMachine.rotationDampTime * deltaTime
+            // );
+        }
+
+        private void OnTarget()
+        {
+            if (!stateMachine.Targeter.SelectTarget()) return;
+
+            stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
+        }
+
+        private Vector3 CalculateMovementDirection()
+        {
+            Vector3 forward = stateMachine.MainCameraTransform.forward;
+            Vector3 right = stateMachine.MainCameraTransform.right;
+
+            forward.y = 0f;
+            right.y = 0f;
+
+            forward.Normalize();
+            right.Normalize();
+
+            return forward * stateMachine.InputHandler.Move.y +
+                   right * stateMachine.InputHandler.Move.x;
+        }
+    }
+}

@@ -14,18 +14,21 @@ namespace _Project.Systems.Core.Health
             currentHealth = maxHealth;
         }
 
-        //TODO Implement damage
-        void Start()
-        {
-        }
-
-        void Update()
-        {
-        }
 
         public void ApplyDamage(float damage)
         {
-            throw new NotImplementedException();
+            currentHealth = Mathf.Max(currentHealth - damage, 0);
+
+            if (currentHealth <= 0)
+            {
+                HandlePlayerDeath();
+                return;
+            }
+        }
+
+        private void HandlePlayerDeath()
+        {
+            Destroy(this.gameObject);
         }
     }
 }

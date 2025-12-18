@@ -19,3 +19,4 @@ MonoBehaviour:
   <AttackForce>k__BackingField: 5
   <ForceTime>k__BackingField: 0.4
   <DamageMultiplier>k__BackingField: 1
+  <KnockBackForce>k__BackingField: 5

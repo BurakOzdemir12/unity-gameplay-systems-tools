@@ -8,6 +8,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         private readonly AttackDataSo attack;
         private float previousFrameTime;
         private bool alreadyAppliedForce = false;
+        private const string ATTACK_TAG = "Attack";
 
         public PlayerAttackingState(PlayerStateMachine stateMachine, int attackIndex) : base(stateMachine)
         {
@@ -16,7 +17,13 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public override void Enter()
         {
-            stateMachine.WeaponLogic.SetAttackAttributes(attack.DamageMultiplier);
+            // stateMachine.WeaponLogic.SetAttackAttributes(attack.DamageMultiplier, attack.KnockBackForce,
+            //     stateMachine.attackDamage);
+            float finalDamage = stateMachine.attackDamage * attack.DamageMultiplier;
+            float finalKnockbackForce = attack.KnockBackForce;
+
+            stateMachine.WeaponLogic.BeginAttack(finalDamage, finalKnockbackForce);
+
             stateMachine.Animator.CrossFadeInFixedTime(attack.AnimationName, attack.TransitionDuration);
         }
 
@@ -26,10 +33,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             Move(deltaTime);
             // FaceTarget(stateMachine.Targeter.SelectedTarget, deltaTime);
             FaceAttackToLook(deltaTime);
-            float normalizedTime = GetNormalizedTime();
+
+            float normalizedTime = GetNormalizedTime(stateMachine.Animator, ATTACK_TAG);
+
             if (normalizedTime >= previousFrameTime && normalizedTime < 1f)
             {
-                if (normalizedTime >= attack.ForceTime)
+                if (normalizedTime >= attack.ForceTime) //TODO Create Event action for this in scriptable object
                 {
                     TryApplyForce();
                 }
@@ -56,24 +65,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public override void Exit()
         {
-        }
-
-        private float GetNormalizedTime()
-        {
-            AnimatorStateInfo currentInfo = stateMachine.Animator.GetCurrentAnimatorStateInfo(0);
-            AnimatorStateInfo nextInfo = stateMachine.Animator.GetNextAnimatorStateInfo(0);
-            if (stateMachine.Animator.IsInTransition(0) && nextInfo.IsTag("SwordAttack"))
-            {
-                return nextInfo.normalizedTime;
-            }
-            else if (!stateMachine.Animator.IsInTransition(0) && currentInfo.IsTag("SwordAttack"))
-            {
-                return currentInfo.normalizedTime;
-            }
-            else
-            {
-                return 0f;
-            }
+            stateMachine.WeaponLogic.EndAttack();
         }
 
         private void TryComboAttack(float normalizedTime)

@@ -18,6 +18,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         [field: SerializeField] public WeaponLogic WeaponLogic { get; private set; }
         [field: SerializeField] public AttackDataSo[] Attacks { get; private set; }
 
+        // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
+        // public Transform swordHolderR;
+
         [Header("Animation")]
         [Tooltip("The duration of the crossfade between the two blend trees")]
         [field: SerializeField]
@@ -47,6 +50,10 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public Transform MainCameraTransform { get; private set; }
 
+        [Header("Attack settings")] [Tooltip(" Attack damage")] [field: SerializeField]
+        public float attackDamage = 20f;
+
+
         public readonly int FreeLookSpeedParam = Animator.StringToHash("FreeLookSpeed");
         public readonly int FreeLookBlendTreeHash = Animator.StringToHash("FreeLookBlendTree");
         public readonly int TargetingBlendTreeHash = Animator.StringToHash("TargetingBlendTree");
@@ -58,6 +65,15 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             if (UnityEngine.Camera.main == null) Debug.LogError("No main camera found!");
             if (UnityEngine.Camera.main != null) MainCameraTransform = UnityEngine.Camera.main.transform;
             SwitchState(new PlayerFreeLookState(this));
+
+          
+        }
+
+        public void EquipWeapon(WeaponLogic newWeapon)
+        {
+            WeaponLogic = newWeapon;
+            if (WeaponLogic != null)
+                WeaponLogic.Initialize(Controller);
         }
     }
 }

@@ -1,8 +1,9 @@
+using _Project.Systems.Core.GravityForce.Interfaces;
 using UnityEngine;
 
 namespace _Project.Systems.Core.GravityForce
 {
-    public class ForceReceiver : MonoBehaviour
+    public class ForceReceiver : MonoBehaviour, IKnockable
     {
         [SerializeField] private CharacterController controller;
         [SerializeField] private float dragTime = 0.2f;
@@ -38,6 +39,14 @@ namespace _Project.Systems.Core.GravityForce
         public void AddForce(Vector3 force)
         {
             impact += force;
+        }
+
+        public void ApplyKnockback(float knockbackForce, Vector3 forceDirection)
+        {
+            Vector3 dir = forceDirection;
+            dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f) return;
+            AddForce(dir.normalized * knockbackForce);
         }
     }
 }

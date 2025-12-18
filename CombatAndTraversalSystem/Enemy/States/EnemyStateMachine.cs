@@ -1,6 +1,7 @@
 using System;
 using _Project.Systems.Core.GravityForce;
 using _Project.Systems.Core.StateMachine;
+using _Project.Systems.Core.WeaponLogic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -13,6 +14,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public NavMeshAgent Agent { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
+        [field: SerializeField] public WeaponLogic WeaponLogic { get; private set; }
 
         [Header("Movement Settings")]
         [Tooltip("Move Speed")]
@@ -44,6 +46,20 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
         [field: SerializeField]
         public LayerMask AttackDetectionLayers { get; private set; }
 
+        [Tooltip("Attack Damage Value")] [field: SerializeField]
+        public float attackDamage;
+
+        [Tooltip("Attack Cooldown Time")]
+        [field: SerializeField]
+        public float AttackCoolDown { get; private set; }
+
+        [Tooltip("Attack Force Value")]
+        [field: SerializeField]
+        public float AttackKnockBackForce { get; private set; }
+
+        [Tooltip("Attack Force Time")]
+        [field: SerializeField]
+        public float ForceTime { get; private set; }
 
         [Header("Animation Settings")]
         [Tooltip("The duration time of the locomotion blend tree ")]
@@ -80,6 +96,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
             buffersForChase = new Collider[bufferMax];
             buffersForAttack = new Collider[bufferMax];
             SwitchState(new EnemyIdleState(this));
+        }
+        public void EquipWeapon(WeaponLogic newWeapon)
+        {
+            WeaponLogic = newWeapon;
+            if (WeaponLogic != null)
+                WeaponLogic.Initialize(Controller);
         }
 
         private void OnDrawGizmosSelected()

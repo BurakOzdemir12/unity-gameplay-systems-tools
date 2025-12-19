@@ -38,7 +38,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             t.rotation = Quaternion.Slerp(
                 t.rotation,
                 targetRotation,
-                stateMachine.rotationDampTimeWhileAttack * deltaTime
+                stateMachine.RotationDampTimeWhileAttack * deltaTime
             );
         }
 
@@ -50,7 +50,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             targetLookPos.y = 0; //if the player above or below the target we dont care..
             Quaternion targetRotation = stateMachine.transform.rotation = Quaternion.LookRotation(targetLookPos);
             Quaternion.Slerp(stateMachine.transform.rotation, targetRotation,
-                (stateMachine.rotationDampTime * deltaTime));
+                (stateMachine.RotationDampTime * deltaTime));
         }
 
         private Vector3 CalculateAttackDirection()
@@ -72,6 +72,18 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
             targetDir.y = 0f;
             return targetDir;
+        }
+
+        protected void DecideTargetOrLocomotion()
+        {
+            if (stateMachine.Targeter.SelectedTarget != null)
+            {
+                stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
+            }
+            else
+            {
+                stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
+            }
         }
     }
 }

@@ -84,6 +84,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public Transform MainCameraTransform { get; private set; }
 
+        private void OnEnable()
+        {
+            Health.OnTakeDamage += HandleTakeDamage;
+            Health.OnDeath += HandleDeath;
+        }
+
 
         private void Start()
         {
@@ -92,7 +98,14 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             SwitchState(new PlayerFreeLookState(this));
         }
 
-          
+        private void HandleTakeDamage()
+        {
+            SwitchState(new PlayerImpactState(this));
+        }
+
+        private void HandleDeath()
+        {
+            SwitchState(new PlayerDeadState(this));
         }
 
         public void EquipWeapon(WeaponLogic newWeapon)
@@ -100,6 +113,13 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             WeaponLogic = newWeapon;
             if (WeaponLogic != null)
                 WeaponLogic.Initialize(Controller);
+        }
+
+
+        private void OnDisable()
+        {
+            Health.OnTakeDamage -= HandleTakeDamage;
+            Health.OnDeath -= HandleDeath;
         }
     }
 }

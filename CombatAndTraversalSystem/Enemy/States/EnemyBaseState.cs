@@ -55,6 +55,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
             return closestTarget != null;
         }
 
+      
         private GameObject FindClosestTarget(int detectedCount, Collider[] colType)
         {
             Transform enemyTransform = stateMachine.transform;

@@ -34,6 +34,15 @@ namespace _Project.Systems.Core.GravityForce
             }
 
             impact = Vector3.SmoothDamp(impact, Vector3.zero, ref dampingVelocity, dragTime);
+            // if (agent != null)
+            // {
+            //     if (impact.sqrMagnitude < 0.2f * 0.2f)
+            //     {
+            //         impact = Vector3.zero;
+            //         agent.enabled = true;
+            //     }
+            // }
+
         }
 
         public void AddForce(Vector3 force)

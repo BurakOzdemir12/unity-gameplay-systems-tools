@@ -14,7 +14,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
             stateMachine.Agent.isStopped = false;
 
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LocomotionBlendTreeHash,
-                stateMachine.CrossFadeDuration);
+                stateMachine.LocomotionBlendTreeDuration);
         }
 
         public override void Tick(float deltaTime)
@@ -33,7 +33,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
 
             MoveToPlayer(deltaTime);
             stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 1f,
-                stateMachine.locomotionAnimationDampTime,
+                stateMachine.LocomotionAnimationDampTime,
                 deltaTime);
         }
 
@@ -46,9 +46,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
         private void MoveToPlayer(float deltaTime)
         {
             if (stateMachine.Player == null) return;
-
-            Vector3 detectedPlayerPos = stateMachine.Player.transform.position;
-            stateMachine.Agent.SetDestination(detectedPlayerPos);
+            // bool isArrived = stateMachine.Agent.remainingDistance <= stateMachine.Agent.stoppingDistance;
+            if (stateMachine.Agent.isOnNavMesh) //!isArrived &&
+            {
+                Vector3 detectedPlayerPos = stateMachine.Player.transform.position;
+                stateMachine.Agent.SetDestination(detectedPlayerPos);
+            }
 
             Transform enemyT = stateMachine.transform;
             Vector3 to = stateMachine.Agent.steeringTarget - enemyT.position;

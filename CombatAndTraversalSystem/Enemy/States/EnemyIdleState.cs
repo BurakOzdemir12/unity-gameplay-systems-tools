@@ -32,7 +32,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
             }
 
             stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 0f,
-                stateMachine.locomotionAnimationDampTime,
+                stateMachine.LocomotionAnimationDampTime,
                 deltaTime);
         }
 

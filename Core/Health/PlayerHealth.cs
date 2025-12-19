@@ -9,6 +9,9 @@ namespace _Project.Systems.Core.Health
         [SerializeField] private float maxHealth;
         private float currentHealth;
 
+        public event Action OnTakeDamage;
+        public event Action OnDeath;
+
         private void Awake()
         {
             currentHealth = maxHealth;
@@ -18,7 +21,7 @@ namespace _Project.Systems.Core.Health
         public void ApplyDamage(float damage)
         {
             currentHealth = Mathf.Max(currentHealth - damage, 0);
-
+            OnTakeDamage?.Invoke();
             if (currentHealth <= 0)
             {
                 HandlePlayerDeath();
@@ -28,7 +31,8 @@ namespace _Project.Systems.Core.Health
 
         private void HandlePlayerDeath()
         {
-            Destroy(this.gameObject);
+            OnDeath?.Invoke();
+            // Destroy(this.gameObject);
         }
     }
 }

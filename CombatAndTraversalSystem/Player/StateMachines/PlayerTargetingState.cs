@@ -13,7 +13,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
             stateMachine.InputHandler.TargetCancelEvent += OnTargetCancel;
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.TargetingBlendTreeHash,
-                stateMachine.crossFadeDurationBetweenBlendTrees);
+                stateMachine.CrossFadeDurationBetweenBlendTrees);
         }
 
         public override void Tick(float deltaTime)
@@ -65,25 +65,25 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             if (movement.y == 0)
             {
                 stateMachine.Animator.SetFloat(stateMachine.TargetingForwardSpeedHash, 0,
-                    stateMachine.targetingAnimatorDampTime, deltaTime);
+                    stateMachine.TargetingAnimatorDampTime, deltaTime);
             }
             else
             {
                 float value = movement.y > 0f ? 1f : -1f;
                 stateMachine.Animator.SetFloat(stateMachine.TargetingForwardSpeedHash, value,
-                    stateMachine.targetingAnimatorDampTime, deltaTime);
+                    stateMachine.TargetingAnimatorDampTime, deltaTime);
             }
 
             if (movement.x == 0)
             {
                 stateMachine.Animator.SetFloat(stateMachine.TargetingRightSpeedHash, 0,
-                    stateMachine.targetingAnimatorDampTime, deltaTime);
+                    stateMachine.TargetingAnimatorDampTime, deltaTime);
             }
             else
             {
                 float value = movement.x > 0 ? 1f : -1f;
                 stateMachine.Animator.SetFloat(stateMachine.TargetingRightSpeedHash, value,
-                    stateMachine.targetingAnimatorDampTime, deltaTime);
+                    stateMachine.TargetingAnimatorDampTime, deltaTime);
             }
 
             if (movement.sqrMagnitude < 0.001f)

@@ -1,3 +1,4 @@
+using System;
 using _Project.Systems.Core.Health.Interfaces;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ namespace _Project.Systems.Core.Health
     {
         [SerializeField] private float maxHealth;
         private float currentHealth;
+        public event Action OnTakeDamage;
+        public event Action OnDeath;
 
         void Start()
         {
@@ -20,6 +23,8 @@ namespace _Project.Systems.Core.Health
         public void ApplyDamage(float damage)
         {
             currentHealth = Mathf.Max(currentHealth - damage, 0);
+            OnTakeDamage?.Invoke();
+
             if (currentHealth <= 0)
             {
                 HandleEnemyDeath();
@@ -31,7 +36,8 @@ namespace _Project.Systems.Core.Health
 
         private void HandleEnemyDeath()
         {
-            Destroy(this.gameObject);
+            OnDeath?.Invoke();
+            // Destroy(this.gameObject);
         }
     }
 }

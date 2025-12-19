@@ -113,6 +113,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
 
         //TODO Create AttackSo for Enemy or change your own AttackSo script for make suitable for enemy either 
 
+        private void OnEnable()
+        {
+            Health.OnTakeDamage += HandleTakeDamage;
+            Health.OnDeath += HandleDeath;
+        }
 
         private void Start()
         {
@@ -125,6 +130,17 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
             buffersForAttack = new Collider[bufferMax];
             SwitchState(new EnemyIdleState(this));
         }
+
+        private void HandleTakeDamage()
+        {
+            SwitchState(new EnemyImpactState(this));
+        }
+
+        private void HandleDeath()
+        {
+            SwitchState(new EnemyDeadState(this));
+        }
+
         public void EquipWeapon(WeaponLogic newWeapon)
         {
             WeaponLogic = newWeapon;
@@ -140,6 +156,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
 
             Gizmos.color = Color.darkRed;
             Gizmos.DrawWireSphere(transform.position, AttackRange);
+        }
+
+        private void OnDisable()
+        {
+            Health.OnTakeDamage -= HandleTakeDamage;
+            Health.OnDeath -= HandleDeath;
         }
     }
 }

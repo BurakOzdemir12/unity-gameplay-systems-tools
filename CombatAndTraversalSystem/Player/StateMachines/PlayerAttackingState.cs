@@ -19,7 +19,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
             // stateMachine.WeaponLogic.SetAttackAttributes(attack.DamageMultiplier, attack.KnockBackForce,
             //     stateMachine.attackDamage);
-            float finalDamage = stateMachine.attackDamage * attack.DamageMultiplier;
+            float finalDamage = stateMachine.AttackDamage * attack.DamageMultiplier;
             float finalKnockbackForce = attack.KnockBackForce;
 
             stateMachine.WeaponLogic.BeginAttack(finalDamage, finalKnockbackForce);
@@ -50,14 +50,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             }
             else
             {
-                if (stateMachine.Targeter.SelectedTarget)
-                {
-                    stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
-                }
-                else
-                {
-                    stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
-                }
+                DecideTargetOrLocomotion();
             }
 
             previousFrameTime = normalizedTime;

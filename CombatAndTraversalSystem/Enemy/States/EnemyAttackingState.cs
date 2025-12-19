@@ -16,7 +16,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
             // stateMachine.Animator.CrossFadeInFixedTime(stateMachine.AttackBlendTreeHash,
             //     stateMachine.CrossFadeDurationCombat); 
 
-            float finalDamage = stateMachine.attackDamage;
+            float finalDamage = stateMachine.AttackDamage;
             float finalKnockbackForce = stateMachine.AttackKnockBackForce;
 
             stateMachine.WeaponLogic.BeginAttack(finalDamage, finalKnockbackForce);

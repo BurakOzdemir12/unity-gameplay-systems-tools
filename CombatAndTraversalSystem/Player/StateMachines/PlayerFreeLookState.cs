@@ -11,7 +11,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Enter()
         {
             stateMachine.InputHandler.TargetEvent += OnTarget;
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,stateMachine.crossFadeDurationBetweenBlendTrees);
+            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,stateMachine.CrossFadeDurationBetweenBlendTrees);
         }
 
 
@@ -32,11 +32,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             if (stateMachine.InputHandler.Move.sqrMagnitude < 0.001f)
             {
                 stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParam, 0,
-                    stateMachine.locomotionAnimatorDampTime, deltaTime);
+                    stateMachine.LocomotionAnimatorDampTime, deltaTime);
                 return;
             }
 
-            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParam, 1, stateMachine.locomotionAnimatorDampTime,
+            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParam, 1, stateMachine.LocomotionAnimatorDampTime,
                 deltaTime);
 
             RotatePlayerTowardsMovement(movement, deltaTime);
@@ -54,7 +54,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
             Transform characterTransform = stateMachine.Controller.transform;
             characterTransform.rotation = Quaternion.Slerp(characterTransform.rotation, targetRot,
-                stateMachine.rotationDampTime * deltaTime);
+                stateMachine.RotationDampTime * deltaTime);
 
             // We can use RotateToward and Lerp either.
             // characterTransform.rotation = Quaternion.RotateTowards(

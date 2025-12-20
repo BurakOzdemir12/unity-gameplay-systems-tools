@@ -30,6 +30,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 return;
             }
 
+            TickBlockingOverlay(deltaTime, true);
 
             Vector3 movement = CalculateMovement();
             Move(movement * stateMachine.TargetingMovementSpeed, deltaTime);

@@ -32,9 +32,15 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             // Move(deltaTime, attack.AttackForceTargetPos, attack.AttackForce);
             Move(deltaTime);
             // FaceTarget(stateMachine.Targeter.SelectedTarget, deltaTime);
-            FaceAttackToLook(deltaTime);
 
-            float normalizedTime = GetNormalizedTime(stateMachine.Animator, ATTACK_TAG);
+            
+                FaceAttackToLook(deltaTime);
+            
+
+
+            TickBlockingOverlay(deltaTime, false);
+
+            float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, ATTACK_TAG);
 
             if (normalizedTime >= previousFrameTime && normalizedTime < 1f)
             {

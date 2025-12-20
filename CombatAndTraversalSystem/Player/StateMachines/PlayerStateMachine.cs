@@ -76,6 +76,14 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         [Header("Animation Settings")] [Tooltip("The duration time of the locomotion blend tree ")] [SerializeField]
         private float crossFadeDuration = 0.1f;
 
+        [Tooltip("The Blocking layer Change speed ")] [SerializeField]
+        private float blockingLayerChangeSpeed = 0.1f;
+
+        public float BlockingLayerChangeSpeed => blockingLayerChangeSpeed;
+        public const string BLOCK_TAG = "Block";
+        
+         public float blockLayerWeight;
+
         public float CrossFadeDuration => crossFadeDuration;
 
         public readonly int FreeLookSpeedParam = Animator.StringToHash("FreeLookSpeed");
@@ -84,8 +92,15 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public readonly int TargetingForwardSpeedHash = Animator.StringToHash("TargetingForwardSpeed");
         public readonly int TargetingRightSpeedHash = Animator.StringToHash("TargetingRightSpeed");
         public readonly int LightImpactHash = Animator.StringToHash("ImpactSlight");
+        public readonly int IsBlockingBoolHash = Animator.StringToHash("isBlocking");
+        public int BlockingLayerIndex { get; private set; }
 
         public Transform MainCameraTransform { get; private set; }
+
+        private void Awake()
+        {
+            BlockingLayerIndex = Animator.GetLayerIndex("Block Layer");
+        }
 
         private void OnEnable()
         {

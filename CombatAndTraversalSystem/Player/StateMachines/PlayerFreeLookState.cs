@@ -11,7 +11,8 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Enter()
         {
             stateMachine.InputHandler.TargetEvent += OnTarget;
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,stateMachine.CrossFadeDurationBetweenBlendTrees);
+            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,
+                stateMachine.CrossFadeDurationBetweenBlendTrees);
         }
 
 
@@ -20,9 +21,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             //If you want to attack while free look state even without Targeting use this code
             if (stateMachine.InputHandler.IsAttacking)
             {
-                stateMachine.SwitchState(new PlayerAttackingState(stateMachine,0));
+                stateMachine.SwitchState(new PlayerAttackingState(stateMachine, 0));
                 return;
             }
+
+            // TrySwitchToBlockState(); If you want to block state by itself use blockstate
+            TickBlockingOverlay(deltaTime, allowBlocking: true);
 
             Vector3 movement = CalculateMovementDirection();
 

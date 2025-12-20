@@ -2,6 +2,7 @@ using System;
 using _Project.Systems.CombatAndTraversalSystem.Targeting;
 using _Project.Systems.Core.GravityForce;
 using _Project.Systems.Core.Health;
+using _Project.Systems.Core.Ragdoll;
 using _Project.Systems.Core.WeaponLogic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
         [field: SerializeField] public WeaponLogic WeaponLogic { get; private set; }
         [field: SerializeField] public EnemyHealth Health { get; private set; }
         [field: SerializeField] public Target Target { get; private set; }
+        [field: SerializeField] public Ragdoll Ragdoll { get; private set; }
 
         [Header("Movement")] [Tooltip("Move Speed")] [SerializeField]
         private float moveSpeed;

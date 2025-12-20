@@ -1,12 +1,14 @@
 ﻿using _Project.Systems.CombatAndTraversalSystem.Targeting;
 using _Project.Systems.Core.StateMachine;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 {
     public abstract class PlayerBaseState : State
     {
         protected readonly PlayerStateMachine stateMachine;
+
 
         protected PlayerBaseState(PlayerStateMachine stateMachine)
         {
@@ -30,6 +32,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         protected void FaceAttackToLook(float deltaTime)
         {
+            if (stateMachine.Targeter.SelectedTarget != null)
+                return;
+
             var targetDir = CalculateAttackDirection();
 
             Quaternion targetRotation = Quaternion.LookRotation(targetDir);
@@ -85,5 +90,40 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
             }
         }
+
+        // Block while other states runs
+        protected void TickBlockingOverlay(float deltaTime, bool allowBlocking = true)
+        {
+            if (stateMachine.CurrentState is PlayerDeadState or PlayerAttackingState)
+            {
+                return;
+            }
+
+            // Or just use current ststae check know instead allow bool
+            bool wantsBlock = allowBlocking && stateMachine.InputHandler.IsBlocking;
+
+            stateMachine.Animator.SetBool(stateMachine.IsBlockingBoolHash, wantsBlock);
+
+            float target = wantsBlock ? 1f : 0f;
+
+            stateMachine.blockLayerWeight = Mathf.MoveTowards(
+                stateMachine.blockLayerWeight,
+                target,
+                deltaTime * stateMachine.BlockingLayerChangeSpeed
+            );
+
+            stateMachine.Animator.SetLayerWeight(
+                stateMachine.BlockingLayerIndex,
+                stateMachine.blockLayerWeight
+            );
+        }
+        //  If you want to block state by itself use Changing state code
+        // protected bool TrySwitchToBlockState() 
+        // {
+        //     if (!stateMachine.InputHandler.IsBlocking) return false;
+        //
+        //     stateMachine.SwitchState(new PlayerBlockingState(stateMachine));
+        //     return true;
+        // }
     }
 }

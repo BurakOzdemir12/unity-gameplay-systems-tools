@@ -21,12 +21,13 @@ namespace _Project.Systems.Core.Health
         public void ApplyDamage(float damage)
         {
             currentHealth = Mathf.Max(currentHealth - damage, 0);
-            OnTakeDamage?.Invoke();
             if (currentHealth <= 0)
             {
                 HandlePlayerDeath();
                 return;
             }
+
+            OnTakeDamage?.Invoke();
         }
 
         private void HandlePlayerDeath()

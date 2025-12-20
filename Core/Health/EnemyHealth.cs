@@ -23,13 +23,13 @@ namespace _Project.Systems.Core.Health
         public void ApplyDamage(float damage)
         {
             currentHealth = Mathf.Max(currentHealth - damage, 0);
-            OnTakeDamage?.Invoke();
 
             if (currentHealth <= 0)
             {
                 HandleEnemyDeath();
                 return;
             }
+            OnTakeDamage?.Invoke();
 
             Debug.Log("Enemy Get Hit =>" + damage + "Now Health=>" + currentHealth);
         }

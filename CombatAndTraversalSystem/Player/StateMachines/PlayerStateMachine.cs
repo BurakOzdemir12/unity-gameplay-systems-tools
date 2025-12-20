@@ -4,9 +4,11 @@ using _Project.Systems.CombatAndTraversalSystem.Player.Combat;
 using _Project.Systems.CombatAndTraversalSystem.Targeting;
 using _Project.Systems.Core.GravityForce;
 using _Project.Systems.Core.Health;
+using _Project.Systems.Core.Ragdoll;
 using _Project.Systems.Core.StateMachine;
 using _Project.Systems.Core.WeaponLogic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 {
@@ -19,6 +21,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
         [field: SerializeField] public WeaponLogic WeaponLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
+        [field: SerializeField] public Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public AttackDataSo[] Attacks { get; private set; }
 
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]

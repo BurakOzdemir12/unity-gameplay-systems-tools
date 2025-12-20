@@ -5,6 +5,7 @@ namespace _Project.Systems.Core.StateMachine
     public abstract class StateMachine : MonoBehaviour
     {
         private State currentState;
+        public State CurrentState => currentState;
 
         void Update()
         {

@@ -48,7 +48,8 @@ namespace _Project.Systems.CombatAndTraversalSystem.Targeting
             {
                 Vector2 viewPos = mainCamera.WorldToViewportPoint(target.transform.position);
 
-                if (viewPos is not { x: > 0 and < 1, y: > 0 and < 1 })
+                if (!target.GetComponentInChildren<Renderer>().isVisible
+                   ) // &&  viewPos is not { x: > 0 and < 1, y: > 0 and < 1 }
                 {
                     continue;
                 }

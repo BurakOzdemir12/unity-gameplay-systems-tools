@@ -103,17 +103,45 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public float DodgeCooldownTime => dodgeCooldownTime;
 
 
-        [Tooltip("Dodge Animation Start Time")] [Range(0f, 1f)] [SerializeField]
+        [Tooltip("Roll Animation Start Time")] [Range(0f, 1f)] [SerializeField]
         private float dodgeAnimStartTime;
 
         public float DodgeAnimStartTime => dodgeAnimStartTime;
 
-        [Tooltip("Dodge Animation End Time")] [Range(0f, 1f)] [SerializeField]
+        [Tooltip("Roll Animation End Time")] [Range(0f, 1f)] [SerializeField]
         private float dodgeAnimEndTime;
 
         public float DodgeAnimEndTime => dodgeAnimEndTime;
 
-        [Space(10)] public string BLOCK_TAG = "Block";
+        [Header("Roll Settings")] [Tooltip("Roll Speed")] [SerializeField]
+        private float rollSpeed = 2f;
+
+        public float RollSpeed => rollSpeed;
+
+        [Tooltip("Roll Cooldown")] [SerializeField]
+        private float rollCooldownTime = 2f;
+
+        public float RollCooldownTime => rollCooldownTime;
+
+        [Tooltip("Previous time of roll animation")]
+        private float previousRollTime;
+
+        public float PreviousRollTime
+        {
+            get => previousRollTime;
+            set => previousRollTime = value;
+        }
+
+        [Tooltip("Roll Animation Start Time")] [Range(0f, 1f)] [SerializeField]
+        private float rollAnimStartTime;
+
+        public float RollAnimStartTime => rollAnimStartTime;
+
+        [Tooltip("Roll Animation End Time")] [Range(0f, 1f)] [SerializeField]
+        private float rollAnimEndTime;
+
+        public float RollAnimEndTime => rollAnimEndTime;
+
 
         [field: SerializeField] public float blockLayerWeight = 1;
 
@@ -129,6 +157,8 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public readonly int IsBlockingBoolHash = Animator.StringToHash("isBlocking");
         public readonly int DodgeBackwardHash = Animator.StringToHash("Dodge Backward");
         public readonly int DodgeForwardHash = Animator.StringToHash("Dodge Forward");
+        public readonly int RollForwardHash = Animator.StringToHash("Roll Forward");
+        public readonly int RollBackwardHash = Animator.StringToHash("Roll Backward");
         public int BlockingLayerIndex { get; private set; }
 
         public Transform MainCameraTransform { get; private set; }
@@ -151,6 +181,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             if (UnityEngine.Camera.main != null) MainCameraTransform = UnityEngine.Camera.main.transform;
             SwitchState(new PlayerFreeLookState(this));
         }
+
         public void DecideTargetOrLocomotion()
         {
             if (Targeter.SelectedTarget != null)
@@ -162,6 +193,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 SwitchState(new PlayerFreeLookState(this));
             }
         }
+
         private void HandleTakeDamage()
         {
             SwitchState(new PlayerImpactState(this));
@@ -175,6 +207,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public void SetDodgeCooldownTime(float time)
         {
             previousDodgeTime = time;
+        }
+
+        public void SetRollCooldownTime(float time)
+        {
+            previousRollTime = time;
         }
 
         public void EquipWeapon(WeaponLogic newWeapon)

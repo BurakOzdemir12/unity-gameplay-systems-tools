@@ -12,6 +12,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
             stateMachine.InputHandler.TargetEvent += OnTarget;
             stateMachine.InputHandler.DodgeEvent += OnDodge;
+            stateMachine.InputHandler.RollEvent += OnRoll;
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,
                 stateMachine.CrossFadeDurationBetweenBlendTrees);
         }
@@ -81,8 +82,20 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             {
                 return;
             }
+
             stateMachine.SetDodgeCooldownTime(Time.time);
             stateMachine.SwitchState(new PlayerDodgeState(stateMachine));
+        }
+
+        private void OnRoll()
+        {
+            if (Time.time - stateMachine.PreviousRollTime < stateMachine.RollCooldownTime)
+            {
+                return;
+            }
+
+            stateMachine.SetRollCooldownTime(Time.time);
+            stateMachine.SwitchState(new PlayerRollState(stateMachine));
         }
     }
 }

@@ -76,15 +76,49 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         [Header("Animation Settings")] [Tooltip("The duration time of the locomotion blend tree ")] [SerializeField]
         private float crossFadeDuration = 0.1f;
 
+        public float CrossFadeDuration => crossFadeDuration;
+
         [Tooltip("The Blocking layer Change speed ")] [SerializeField]
         private float blockingLayerChangeSpeed = 0.1f;
 
         public float BlockingLayerChangeSpeed => blockingLayerChangeSpeed;
-        public const string BLOCK_TAG = "Block";
-        
-         public float blockLayerWeight;
 
-        public float CrossFadeDuration => crossFadeDuration;
+        [Header("Dodge Settings")] [Tooltip("Dodge speed")] [SerializeField]
+        private float dodgeSpeed = 10f;
+
+        public float DodgeSpeed => dodgeSpeed;
+
+        [Tooltip("Dodge Press Previous Time ")]
+        private float previousDodgeTime;
+
+        public float PreviousDodgeTime
+        {
+            get => previousDodgeTime;
+            set => previousDodgeTime = value;
+        }
+
+        [Tooltip("Dodge Cooldown Time")] [SerializeField]
+        private float dodgeCooldownTime = 2f;
+
+        public float DodgeCooldownTime => dodgeCooldownTime;
+
+
+        [Tooltip("Dodge Animation Start Time")] [Range(0f, 1f)] [SerializeField]
+        private float dodgeAnimStartTime;
+
+        public float DodgeAnimStartTime => dodgeAnimStartTime;
+
+        [Tooltip("Dodge Animation End Time")] [Range(0f, 1f)] [SerializeField]
+        private float dodgeAnimEndTime;
+
+        public float DodgeAnimEndTime => dodgeAnimEndTime;
+
+        [Space(10)] public string BLOCK_TAG = "Block";
+
+        [field: SerializeField] public float blockLayerWeight = 1;
+
+
+        // TODO Create scriptableobject or seperated static class for stock animator hashes
 
         public readonly int FreeLookSpeedParam = Animator.StringToHash("FreeLookSpeed");
         public readonly int FreeLookBlendTreeHash = Animator.StringToHash("FreeLookBlendTree");
@@ -93,6 +127,8 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public readonly int TargetingRightSpeedHash = Animator.StringToHash("TargetingRightSpeed");
         public readonly int LightImpactHash = Animator.StringToHash("ImpactSlight");
         public readonly int IsBlockingBoolHash = Animator.StringToHash("isBlocking");
+        public readonly int DodgeBackwardHash = Animator.StringToHash("Dodge Backward");
+        public readonly int DodgeForwardHash = Animator.StringToHash("Dodge Forward");
         public int BlockingLayerIndex { get; private set; }
 
         public Transform MainCameraTransform { get; private set; }
@@ -115,7 +151,17 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             if (UnityEngine.Camera.main != null) MainCameraTransform = UnityEngine.Camera.main.transform;
             SwitchState(new PlayerFreeLookState(this));
         }
-
+        public void DecideTargetOrLocomotion()
+        {
+            if (Targeter.SelectedTarget != null)
+            {
+                SwitchState(new PlayerTargetingState(this));
+            }
+            else
+            {
+                SwitchState(new PlayerFreeLookState(this));
+            }
+        }
         private void HandleTakeDamage()
         {
             SwitchState(new PlayerImpactState(this));
@@ -124,6 +170,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         private void HandleDeath()
         {
             SwitchState(new PlayerDeadState(this));
+        }
+
+        public void SetDodgeCooldownTime(float time)
+        {
+            previousDodgeTime = time;
         }
 
         public void EquipWeapon(WeaponLogic newWeapon)

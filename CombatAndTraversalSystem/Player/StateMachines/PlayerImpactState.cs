@@ -26,7 +26,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
             if (remainingImpactTime <= 0f)
             {
-                DecideTargetOrLocomotion();
+                stateMachine.DecideTargetOrLocomotion();
             }
         }
 

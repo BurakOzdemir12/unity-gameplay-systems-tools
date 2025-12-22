@@ -11,6 +11,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Enter()
         {
             stateMachine.InputHandler.TargetEvent += OnTarget;
+            stateMachine.InputHandler.DodgeEvent += OnDodge;
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,
                 stateMachine.CrossFadeDurationBetweenBlendTrees);
         }
@@ -26,7 +27,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             }
 
             // TrySwitchToBlockState(); If you want to block state by itself use blockstate
-            TickBlockingOverlay(deltaTime, allowBlocking: true);
+            HandleBlocking(deltaTime, allowBlocking: true);
 
             Vector3 movement = CalculateMovementDirection();
 
@@ -50,6 +51,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Exit()
         {
             stateMachine.InputHandler.TargetEvent -= OnTarget;
+            stateMachine.InputHandler.DodgeEvent -= OnDodge;
         }
 
         private void RotatePlayerTowardsMovement(Vector3 movement, float deltaTime)
@@ -73,19 +75,14 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
         }
 
-        private Vector3 CalculateMovementDirection()
+        private void OnDodge()
         {
-            Vector3 forward = stateMachine.MainCameraTransform.forward;
-            Vector3 right = stateMachine.MainCameraTransform.right;
-
-            forward.y = 0f;
-            right.y = 0f;
-
-            forward.Normalize();
-            right.Normalize();
-
-            return forward * stateMachine.InputHandler.Move.y +
-                   right * stateMachine.InputHandler.Move.x;
+            if (Time.time - stateMachine.PreviousDodgeTime < stateMachine.DodgeCooldownTime)
+            {
+                return;
+            }
+            stateMachine.SetDodgeCooldownTime(Time.time);
+            stateMachine.SwitchState(new PlayerDodgeState(stateMachine));
         }
     }
 }

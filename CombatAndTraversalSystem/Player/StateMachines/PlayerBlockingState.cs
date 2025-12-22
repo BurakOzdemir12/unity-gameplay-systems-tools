@@ -33,7 +33,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
                 if (normalizedTime >= 1f)
                 {
-                    DecideTargetOrLocomotion();
+                    stateMachine.DecideTargetOrLocomotion();
                 }
 
                 return;

@@ -21,15 +21,28 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             stateMachine.Controller.Move((motion + movement) * deltaTime);
         }
 
-        protected void Move(float deltaTime) //, Vector3 attackForceTargetPos, float AttackForce
+        protected void Move(float deltaTime) 
         {
-            // stateMachine.Controller.Move(attackForceTargetPos * (AttackForce * deltaTime));
-            // var motion = stateMachine.ForceReceiver.Movement;
-            //
-            // stateMachine.Controller.Move(motion * deltaTime);
             Move(Vector3.zero, deltaTime);
         }
+        
+        protected Vector3 CalculateMovementDirection()
+        {
+            Vector2 inputValue = stateMachine.InputHandler.Move;
+            
+            Vector3 forward = stateMachine.MainCameraTransform.forward;
+            Vector3 right = stateMachine.MainCameraTransform.right;
 
+            forward.y = 0f;
+            right.y = 0f;
+
+            forward.Normalize();
+            right.Normalize();
+
+            return forward * inputValue.y +
+                   right * inputValue.x;
+        }
+        
         protected void FaceAttackToLook(float deltaTime)
         {
             if (stateMachine.Targeter.SelectedTarget != null)
@@ -48,7 +61,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         }
 
 
-        protected void FaceTarget(Target currentTarget, float deltaTime)
+        protected void FaceLockOnTarget(Target currentTarget, float deltaTime)
         {
             if (currentTarget == null) return;
             Vector3 targetLookPos = currentTarget.transform.position - stateMachine.transform.position;
@@ -79,20 +92,10 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             return targetDir;
         }
 
-        protected void DecideTargetOrLocomotion()
-        {
-            if (stateMachine.Targeter.SelectedTarget != null)
-            {
-                stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
-            }
-            else
-            {
-                stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
-            }
-        }
+      
 
         // Block while other states runs
-        protected void TickBlockingOverlay(float deltaTime, bool allowBlocking = true)
+        protected void HandleBlocking(float deltaTime, bool allowBlocking = true)
         {
             if (stateMachine.CurrentState is PlayerDeadState or PlayerAttackingState)
             {
@@ -117,6 +120,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 stateMachine.blockLayerWeight
             );
         }
+
+        
+        
         //  If you want to block state by itself use Changing state code
         // protected bool TrySwitchToBlockState() 
         // {

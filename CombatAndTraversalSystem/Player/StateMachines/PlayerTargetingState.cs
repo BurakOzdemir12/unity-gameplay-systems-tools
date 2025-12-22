@@ -12,9 +12,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Enter()
         {
             stateMachine.InputHandler.TargetCancelEvent += OnTargetCancel;
+            stateMachine.InputHandler.DodgeEvent += OnDodge;
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.TargetingBlendTreeHash,
                 stateMachine.CrossFadeDurationBetweenBlendTrees);
         }
+
 
         public override void Tick(float deltaTime)
         {
@@ -30,18 +32,19 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 return;
             }
 
-            TickBlockingOverlay(deltaTime, true);
+            HandleBlocking(deltaTime, true);
 
             Vector3 movement = CalculateMovement();
             Move(movement * stateMachine.TargetingMovementSpeed, deltaTime);
             UpdateAnimator(deltaTime);
-            FaceTarget(stateMachine.Targeter.SelectedTarget, deltaTime);
+            FaceLockOnTarget(stateMachine.Targeter.SelectedTarget, deltaTime);
             Debug.Log(stateMachine.Targeter.SelectedTarget.name);
         }
 
         public override void Exit()
         {
             stateMachine.InputHandler.TargetCancelEvent -= OnTargetCancel;
+            stateMachine.InputHandler.DodgeEvent -= OnDodge;
         }
 
         private void OnTargetCancel()
@@ -49,6 +52,17 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             stateMachine.Targeter.DeselectTarget();
 
             stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
+        }
+
+        private void OnDodge()
+        {
+            if (Time.time - stateMachine.PreviousDodgeTime < stateMachine.DodgeCooldownTime)
+            {
+                return;
+            }
+
+            stateMachine.SetDodgeCooldownTime(Time.time);
+            stateMachine.SwitchState(new PlayerDodgeState(stateMachine));
         }
 
         private Vector3 CalculateMovement()

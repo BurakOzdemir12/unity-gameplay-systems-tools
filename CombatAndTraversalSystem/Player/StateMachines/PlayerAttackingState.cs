@@ -33,8 +33,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             Move(deltaTime);
             // FaceTarget(stateMachine.Targeter.SelectedTarget, deltaTime);
 
+            float attackDampTime = stateMachine.RotationDampTimeWhileAttack;
 
-            FaceAttackToLook(deltaTime);
+            RotateFaceToLook(deltaTime,attackDampTime);
 
 
             HandleBlocking(deltaTime, false);

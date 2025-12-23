@@ -21,15 +21,15 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             stateMachine.Controller.Move((motion + movement) * deltaTime);
         }
 
-        protected void Move(float deltaTime) 
+        protected void Move(float deltaTime)
         {
             Move(Vector3.zero, deltaTime);
         }
-        
+
         protected Vector3 CalculateMovementDirection()
         {
             Vector2 inputValue = stateMachine.InputHandler.Move;
-            
+
             Vector3 forward = stateMachine.MainCameraTransform.forward;
             Vector3 right = stateMachine.MainCameraTransform.right;
 
@@ -42,13 +42,19 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             return forward * inputValue.y +
                    right * inputValue.x;
         }
-        
-        protected void FaceAttackToLook(float deltaTime)
-        {
-            if (stateMachine.Targeter.SelectedTarget != null)
-                return;
 
-            var targetDir = CalculateAttackDirection();
+        protected bool IsReallyMoving()
+        {
+            return CalculateMovementDirection().sqrMagnitude > 0.0001f;
+        }
+
+        protected void RotateFaceToLook(float deltaTime, float dampTime)
+        {
+            if (dampTime <= 0f) return;
+            if (stateMachine.Targeter.SelectedTarget != null) return;
+
+            var targetDir = CalculateLookDirection();
+            if (targetDir.sqrMagnitude < 0.0001f) return;
 
             Quaternion targetRotation = Quaternion.LookRotation(targetDir);
 
@@ -56,10 +62,10 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             t.rotation = Quaternion.Slerp(
                 t.rotation,
                 targetRotation,
-                stateMachine.RotationDampTimeWhileAttack * deltaTime
+                dampTime * deltaTime
             );
         }
-
+      
 
         protected void FaceLockOnTarget(Target currentTarget, float deltaTime)
         {
@@ -71,7 +77,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 (stateMachine.RotationDampTime * deltaTime));
         }
 
-        private Vector3 CalculateAttackDirection()
+        private Vector3 CalculateLookDirection()
         {
             Vector3 forward = stateMachine.MainCameraTransform.forward;
             Vector3 right = stateMachine.MainCameraTransform.right;
@@ -92,7 +98,6 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             return targetDir;
         }
 
-      
 
         // Block while other states runs
         protected void HandleBlocking(float deltaTime, bool allowBlocking = true)
@@ -121,8 +126,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             );
         }
 
-        
-        
+
         //  If you want to block state by itself use Changing state code
         // protected bool TrySwitchToBlockState() 
         // {

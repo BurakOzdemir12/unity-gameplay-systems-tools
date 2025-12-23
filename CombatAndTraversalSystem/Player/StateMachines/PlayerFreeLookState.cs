@@ -53,6 +53,8 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
             stateMachine.InputHandler.TargetEvent -= OnTarget;
             stateMachine.InputHandler.DodgeEvent -= OnDodge;
+            stateMachine.InputHandler.RollEvent -= OnRoll;
+            
         }
 
         private void RotatePlayerTowardsMovement(Vector3 movement, float deltaTime)

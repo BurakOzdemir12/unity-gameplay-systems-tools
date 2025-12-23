@@ -52,6 +52,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float RotationDampTimeWhileAttack => rotationDampTimeWhileAttack;
 
+        [Tooltip(" The time it takes to rotate towards movement direction")] [SerializeField]
+        private float rotationDampTimeWhileRoll = 2f;
+
+        public float RotationDampTimeWhileRoll => rotationDampTimeWhileRoll;
+
         [Tooltip(" The speed at which the player moves when in free look mode")] [SerializeField]
         private float freeMovementSpeed;
 
@@ -145,6 +150,8 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         [field: SerializeField] public float blockLayerWeight = 1;
 
+        [Tooltip("İf Your animations works with the root motion, set this to true")] [SerializeField]
+        public bool workWithRootMotion = false;
 
         // TODO Create scriptableobject or seperated static class for stock animator hashes
 
@@ -157,8 +164,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public readonly int IsBlockingBoolHash = Animator.StringToHash("isBlocking");
         public readonly int DodgeBackwardHash = Animator.StringToHash("Dodge Backward");
         public readonly int DodgeForwardHash = Animator.StringToHash("Dodge Forward");
+        public readonly int DodgeRightHash = Animator.StringToHash("Dodge Right");
+        public readonly int DodgeLeftHash = Animator.StringToHash("Dodge Left");
         public readonly int RollForwardHash = Animator.StringToHash("Roll Forward");
         public readonly int RollBackwardHash = Animator.StringToHash("Roll Backward");
+        public readonly int RollRightHash = Animator.StringToHash("Roll Right");
+        public readonly int RollLeftHash = Animator.StringToHash("Roll Left");
         public int BlockingLayerIndex { get; private set; }
 
         public Transform MainCameraTransform { get; private set; }

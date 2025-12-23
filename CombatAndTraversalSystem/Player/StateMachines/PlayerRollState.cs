@@ -9,41 +9,45 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         }
 
         private const string ROLL_TAG = "Roll";
+
         private Vector3 direction;
         private float normalizedTime;
 
+        private bool isTargeting; 
+        private bool useRootMotion;
+
         public override void Enter()
         {
-            //TODO Roll will be different, In Alert mode and in Safety mode Jump!!
+            isTargeting = stateMachine.PreviousState is PlayerTargetingState;
+            useRootMotion = stateMachine.workWithRootMotion;
 
-            //TODO Get attack direction of enemy and, roll accordingly 
+            Vector2 input = stateMachine.InputHandler.Move;
             direction = CalculateMovementDirection();
 
-            if (direction.sqrMagnitude < 0.0001f)
-            {
-                stateMachine.Animator.CrossFadeInFixedTime(stateMachine.RollBackwardHash,
-                    stateMachine.CrossFadeDuration);
-                return;
-            }
+            stateMachine.Animator.applyRootMotion = useRootMotion;
 
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.RollForwardHash, stateMachine.CrossFadeDuration);
+            int rollHash = GetRollHash(input, isTargeting, useRootMotion);
+            stateMachine.Animator.CrossFadeInFixedTime(rollHash, stateMachine.CrossFadeDuration);
         }
 
         public override void Tick(float deltaTime)
         {
             normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, ROLL_TAG);
 
-            if (normalizedTime >= 1)
+            if (normalizedTime >= 1f)
             {
                 stateMachine.DecideTargetOrLocomotion();
                 return;
             }
 
-            Vector3 rollDirection = direction.normalized;
-            Vector3 movement = rollDirection * stateMachine.RollSpeed;
+            if (useRootMotion) return;
 
-            bool isAnimationActive = AnimationCalculator();
-            if (!isAnimationActive) return;
+            if (!IsRollMoveWindowActive()) return;
+
+            Vector3 rollDir = direction.normalized;
+            Vector3 movement = rollDir * stateMachine.RollSpeed;
+
+            float rollDampTime = stateMachine.RotationDampTimeWhileRoll;
 
             if (movement.sqrMagnitude < 0.0001f)
             {
@@ -55,18 +59,36 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             }
             else
             {
+                // RotateFaceToLook(deltaTime, rollDampTime);
                 Move(movement, deltaTime);
             }
         }
 
         public override void Exit()
         {
+            stateMachine.Animator.applyRootMotion = false;
         }
 
-        private bool AnimationCalculator()
+        private bool IsRollMoveWindowActive()
         {
             return normalizedTime >= stateMachine.RollAnimStartTime &&
                    normalizedTime <= stateMachine.RollAnimEndTime;
+        }
+
+        private int GetRollHash(Vector2 input, bool targeting, bool rootMotion)
+        {
+            if (input.sqrMagnitude < 0.0001f)
+                return stateMachine.RollBackwardHash;
+
+            if (targeting)
+            {
+                if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+                    return input.x > 0f ? stateMachine.RollRightHash : stateMachine.RollLeftHash;
+
+                return input.y > 0f ? stateMachine.RollForwardHash : stateMachine.RollBackwardHash;
+            }
+
+            return stateMachine.RollForwardHash;
         }
     }
 }

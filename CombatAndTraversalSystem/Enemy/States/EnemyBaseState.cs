@@ -7,7 +7,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
     {
         protected readonly EnemyStateMachine stateMachine;
 
-        protected EnemyBaseState(EnemyStateMachine stateMachine)
+        protected EnemyBaseState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
             this.stateMachine = stateMachine;
         }
@@ -55,7 +55,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Enemy.States
             return closestTarget != null;
         }
 
-      
+
         private GameObject FindClosestTarget(int detectedCount, Collider[] colType)
         {
             Transform enemyTransform = stateMachine.transform;

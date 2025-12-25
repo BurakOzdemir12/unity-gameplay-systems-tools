@@ -1,4 +1,5 @@
 using _Project.Systems.CombatAndTraversalSystem.Player.Combat;
+using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
 using UnityEngine;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
@@ -9,6 +10,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         private float previousFrameTime;
         private bool alreadyAppliedForce = false;
         private const string ATTACK_TAG = "Attack";
+        private PlayerGroundedState GroundParent => GetSuperState() as PlayerGroundedState;
 
         public PlayerAttackingState(PlayerStateMachine stateMachine, int attackIndex) : base(stateMachine)
         {
@@ -35,7 +37,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
             float attackDampTime = stateMachine.RotationDampTimeWhileAttack;
 
-            RotateFaceToLook(deltaTime,attackDampTime);
+            RotateFaceToLook(deltaTime, attackDampTime);
 
 
             HandleBlocking(deltaTime, false);
@@ -56,7 +58,16 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             }
             else
             {
-                stateMachine.DecideTargetOrLocomotion();
+                if (stateMachine.Targeter.SelectedTarget != null)
+                {
+                    GroundParent.SwitchSubState(new PlayerTargetingState(stateMachine));
+                }
+                else
+                {
+                    GroundParent.SwitchSubState(new PlayerFreeLookState(stateMachine));
+                }
+
+                // stateMachine.DecideTargetOrLocomotion();
             }
 
             previousFrameTime = normalizedTime;

@@ -1,3 +1,4 @@
+using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
 using UnityEngine;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
@@ -8,12 +9,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
         }
 
+        private PlayerGroundedState GroundedParent => GetSuperState() as PlayerGroundedState;
 
         public override void Enter()
         {
             stateMachine.InputHandler.TargetCancelEvent += OnTargetCancel;
-            stateMachine.InputHandler.DodgeEvent += OnDodge;
-            stateMachine.InputHandler.RollEvent += OnRoll;
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.TargetingBlendTreeHash,
                 stateMachine.CrossFadeDurationBetweenBlendTrees);
         }
@@ -23,13 +23,15 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
             if (stateMachine.InputHandler.IsAttacking)
             {
-                stateMachine.SwitchState(new PlayerAttackingState(stateMachine, 0));
+                GroundedParent?.SwitchSubState(new PlayerAttackingState(stateMachine, 0));
+                // stateMachine.SwitchState(new PlayerAttackingState(stateMachine, 0));
                 return;
             }
 
             if (stateMachine.Targeter.SelectedTarget == null)
             {
-                stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
+                GroundedParent?.SwitchSubState(new PlayerFreeLookState(stateMachine));
+                // stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
                 return;
             }
 
@@ -39,44 +41,20 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             Move(movement * stateMachine.TargetingMovementSpeed, deltaTime);
             UpdateAnimator(deltaTime);
             FaceLockOnTarget(stateMachine.Targeter.SelectedTarget, deltaTime);
-            Debug.Log(stateMachine.Targeter.SelectedTarget.name);
         }
 
         public override void Exit()
         {
             stateMachine.InputHandler.TargetCancelEvent -= OnTargetCancel;
-            stateMachine.InputHandler.DodgeEvent -= OnDodge;
-            stateMachine.InputHandler.RollEvent -= OnRoll;
         }
 
         private void OnTargetCancel()
         {
             stateMachine.Targeter.DeselectTarget();
-
-            stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
+            GroundedParent?.SwitchSubState(new PlayerFreeLookState(stateMachine));
+            // stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
         }
 
-        private void OnDodge()
-        {
-            if (Time.time - stateMachine.PreviousDodgeTime < stateMachine.DodgeCooldownTime)
-            {
-                return;
-            }
-
-            stateMachine.SetDodgeCooldownTime(Time.time);
-            stateMachine.SwitchState(new PlayerDodgeState(stateMachine));
-        }
-
-        private void OnRoll()
-        {
-            if (Time.time - stateMachine.PreviousRollTime < stateMachine.RollCooldownTime)
-            {
-                return;
-            }
-
-            stateMachine.SetRollCooldownTime(Time.time);
-            stateMachine.SwitchState(new PlayerRollState(stateMachine));
-        }
 
         private Vector3 CalculateMovement()
         {

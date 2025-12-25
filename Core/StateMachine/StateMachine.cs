@@ -9,10 +9,12 @@ namespace _Project.Systems.Core.StateMachine
 
         private State previousState;
         public State PreviousState => previousState;
+        public State PreviousLeafState { get; internal set; }
 
         void Update()
         {
-            currentState?.Tick(Time.deltaTime);
+            // currentState?.Tick(Time.deltaTime);
+            currentState?.UpdateStates(Time.deltaTime);
         }
 
         public void SwitchState(State newState)

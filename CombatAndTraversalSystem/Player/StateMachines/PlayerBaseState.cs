@@ -10,11 +10,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         protected readonly PlayerStateMachine stateMachine;
 
 
-        protected PlayerBaseState(PlayerStateMachine stateMachine)
+        protected PlayerBaseState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
             this.stateMachine = stateMachine;
         }
 
+        
         protected void Move(Vector3 movement, float deltaTime)
         {
             var motion = stateMachine.ForceReceiver.Movement;
@@ -65,7 +66,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 dampTime * deltaTime
             );
         }
-      
+
 
         protected void FaceLockOnTarget(Target currentTarget, float deltaTime)
         {
@@ -102,7 +103,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         // Block while other states runs
         protected void HandleBlocking(float deltaTime, bool allowBlocking = true)
         {
-            if (stateMachine.CurrentState is PlayerDeadState or PlayerAttackingState)
+            if (stateMachine.CurrentSubState is PlayerDeadState or PlayerAttackingState)
             {
                 return;
             }

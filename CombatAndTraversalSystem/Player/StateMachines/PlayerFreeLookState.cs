@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
+using UnityEngine;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 {
@@ -8,22 +9,23 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
         }
 
+        private PlayerGroundedState GroundedParent => GetSuperState() as PlayerGroundedState;
+
         public override void Enter()
         {
+
             stateMachine.InputHandler.TargetEvent += OnTarget;
-            stateMachine.InputHandler.DodgeEvent += OnDodge;
-            stateMachine.InputHandler.RollEvent += OnRoll;
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,
                 stateMachine.CrossFadeDurationBetweenBlendTrees);
         }
-
 
         public override void Tick(float deltaTime)
         {
             //If you want to attack while free look state even without Targeting use this code
             if (stateMachine.InputHandler.IsAttacking)
             {
-                stateMachine.SwitchState(new PlayerAttackingState(stateMachine, 0));
+                GroundedParent?.SwitchSubState(new PlayerAttackingState(stateMachine, 0));
+                // stateMachine.SwitchState(new PlayerAttackingState(stateMachine, 0));
                 return;
             }
 
@@ -37,12 +39,13 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
             if (stateMachine.InputHandler.Move.sqrMagnitude < 0.001f)
             {
-                stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParam, 0,
+                stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, 0,
                     stateMachine.LocomotionAnimatorDampTime, deltaTime);
                 return;
             }
 
-            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParam, 1, stateMachine.LocomotionAnimatorDampTime,
+            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, 1,
+                stateMachine.LocomotionAnimatorDampTime,
                 deltaTime);
 
             RotatePlayerTowardsMovement(movement, deltaTime);
@@ -52,9 +55,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Exit()
         {
             stateMachine.InputHandler.TargetEvent -= OnTarget;
-            stateMachine.InputHandler.DodgeEvent -= OnDodge;
-            stateMachine.InputHandler.RollEvent -= OnRoll;
-            
+            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, 0);
         }
 
         private void RotatePlayerTowardsMovement(Vector3 movement, float deltaTime)
@@ -74,30 +75,10 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         private void OnTarget()
         {
             if (!stateMachine.Targeter.SelectTarget()) return;
+            GroundedParent?.SwitchSubState(new PlayerTargetingState(stateMachine));
 
-            stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
+            // stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
         }
 
-        private void OnDodge()
-        {
-            if (Time.time - stateMachine.PreviousDodgeTime < stateMachine.DodgeCooldownTime)
-            {
-                return;
-            }
-
-            stateMachine.SetDodgeCooldownTime(Time.time);
-            stateMachine.SwitchState(new PlayerDodgeState(stateMachine));
-        }
-
-        private void OnRoll()
-        {
-            if (Time.time - stateMachine.PreviousRollTime < stateMachine.RollCooldownTime)
-            {
-                return;
-            }
-
-            stateMachine.SetRollCooldownTime(Time.time);
-            stateMachine.SwitchState(new PlayerRollState(stateMachine));
-        }
     }
 }

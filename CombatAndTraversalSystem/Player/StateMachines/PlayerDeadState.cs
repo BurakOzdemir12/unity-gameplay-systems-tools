@@ -1,7 +1,10 @@
-﻿namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
+﻿using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
+
+namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 {
     public class PlayerDeadState : PlayerBaseState
     {
+
         public PlayerDeadState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }

@@ -47,16 +47,6 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float RotationDampTime => rotationDampTime;
 
-        [Tooltip(" The time it takes to rotate towards movement direction")] [SerializeField]
-        private float rotationDampTimeWhileAttack = 0.1f;
-
-        public float RotationDampTimeWhileAttack => rotationDampTimeWhileAttack;
-
-        [Tooltip(" The time it takes to rotate towards movement direction")] [SerializeField]
-        private float rotationDampTimeWhileRoll = 2f;
-
-        public float RotationDampTimeWhileRoll => rotationDampTimeWhileRoll;
-
         [Tooltip(" The speed at which the player moves when in free look mode")] [SerializeField]
         private float freeMovementSpeed;
 
@@ -73,6 +63,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float AttackDamage => attackDamage;
 
+        [Tooltip(" The time it takes to rotate towards movement direction")] [SerializeField]
+        private float rotationDampTimeWhileAttack = 0.1f;
+
+        public float RotationDampTimeWhileAttack => rotationDampTimeWhileAttack;
+
         [Header("Impact Settings")] [Tooltip(" Impact duration")] [SerializeField]
         private float impactDuration = 0.1f;
 
@@ -83,15 +78,28 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float CrossFadeDuration => crossFadeDuration;
 
-        [Tooltip("The Blocking layer Change speed ")] [SerializeField]
+        [Header("Blocking Settings")] [Tooltip("The Blocking layer Change speed ")] [SerializeField]
         private float blockingLayerChangeSpeed = 0.1f;
 
         public float BlockingLayerChangeSpeed => blockingLayerChangeSpeed;
+
+        [field: SerializeField] public float blockLayerWeight = 1;
+
+        [Tooltip(" The time it takes to rotate towards movement direction when Block")] [SerializeField]
+        private float rotationDampTimeWhileBlock = 2f;
+
+        public float RotationDampTimeWhileBlock => rotationDampTimeWhileBlock;
 
         [Header("Dodge Settings")] [Tooltip("Dodge speed")] [SerializeField]
         private float dodgeSpeed = 10f;
 
         public float DodgeSpeed => dodgeSpeed;
+
+        [Tooltip(" The time it takes to rotate towards movement direction")] [SerializeField]
+        private float rotationDampTimeWhileDodge = 2f;
+
+        public float RotationDampTimeWhileDodge => rotationDampTimeWhileDodge;
+
 
         [Tooltip("Dodge Press Previous Time ")]
         private float previousDodgeTime;
@@ -108,12 +116,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public float DodgeCooldownTime => dodgeCooldownTime;
 
 
-        [Tooltip("Roll Animation Start Time")] [Range(0f, 1f)] [SerializeField]
+        [Tooltip("Dodge Animation Start Time")] [Range(0f, 1f)] [SerializeField]
         private float dodgeAnimStartTime;
 
         public float DodgeAnimStartTime => dodgeAnimStartTime;
 
-        [Tooltip("Roll Animation End Time")] [Range(0f, 1f)] [SerializeField]
+        [Tooltip("Dodge Animation End Time")] [Range(0f, 1f)] [SerializeField]
         private float dodgeAnimEndTime;
 
         public float DodgeAnimEndTime => dodgeAnimEndTime;
@@ -122,6 +130,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         private float rollSpeed = 2f;
 
         public float RollSpeed => rollSpeed;
+
+        [Tooltip(" The time it takes to rotate towards movement direction while Roll")] [SerializeField]
+        private float rotationDampTimeWhileRoll = 2f;
+
+        public float RotationDampTimeWhileRoll => rotationDampTimeWhileRoll;
 
         [Tooltip("Roll Cooldown")] [SerializeField]
         private float rollCooldownTime = 2f;
@@ -147,8 +160,19 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float RollAnimEndTime => rollAnimEndTime;
 
+        [Header("Jump Settings")] [Tooltip("Jump Cooldown")] [SerializeField]
+        private float jumpCooldownTime = 2f;
 
-        [field: SerializeField] public float blockLayerWeight = 1;
+        public float JumpCooldownTime => jumpCooldownTime;
+
+        [Tooltip("Previous time of roll animation")]
+        private float previousJumpTime;
+
+        public float PreviousJumpTime
+        {
+            get =>  previousJumpTime;
+            set =>  previousJumpTime = value;
+        }
 
         [Tooltip("İf Your animations works with the root motion, set this to true")] [SerializeField]
         public bool workWithRootMotion = false;
@@ -156,6 +180,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         // TODO Create scriptableobject or seperated static class for stock animator hashes
 
         public readonly int FreeLookSpeedParam = Animator.StringToHash("FreeLookSpeed");
+        public readonly int FreeLookSpeedParamHash = Animator.StringToHash("FreeLookSpeed");
         public readonly int FreeLookBlendTreeHash = Animator.StringToHash("FreeLookBlendTree");
         public readonly int TargetingBlendTreeHash = Animator.StringToHash("TargetingBlendTree");
         public readonly int TargetingForwardSpeedHash = Animator.StringToHash("TargetingForwardSpeed");

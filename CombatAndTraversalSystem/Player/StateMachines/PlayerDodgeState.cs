@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
+using UnityEngine;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 {
@@ -11,42 +12,29 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         private const string DODGE_TAG = "Dodge";
         private Vector3 direction;
         private float normalizedTime;
-        private bool isFromTargetingState;
+        private bool isTargeting;
+        private bool useRootMotion;
+        private PlayerGroundedState GroundedParent => GetSuperState() as PlayerGroundedState;
 
         public override void Enter()
         {
             //TODO Dodge will be different, In Alert mode and in Safety mode
 
-            //TODO Get attack direction of enemy and,  dodge accordingly
+            //TODO Get attack direction of enemy and, Dodge accordingly prevent get damage While enemy attack
+            //TODO with different enemy types, some will damage
 
-            Vector2 movement = stateMachine.InputHandler.Move;
-            isFromTargetingState = stateMachine.PreviousState is PlayerTargetingState;
-            if (isFromTargetingState)
-            {
-                stateMachine.Animator.applyRootMotion = true;
+            // isTargeting = stateMachine.PreviousState is PlayerTargetingState;
+            isTargeting = stateMachine.PreviousLeafState is PlayerTargetingState;
 
-                int dodgeHash = PickTargetingDodge(movement);
+            useRootMotion = stateMachine.workWithRootMotion;
 
-                stateMachine.Animator.CrossFadeInFixedTime(dodgeHash, stateMachine.CrossFadeDuration);
-                return;
-            }
-
-            // if came from Free Look state then it moves without root motion
-            // Why I did this? I don't know its 4 in the morning
-
-
-            stateMachine.Animator.applyRootMotion = false;
+            Vector2 input = stateMachine.InputHandler.Move;
             direction = CalculateMovementDirection();
 
-            if (direction.sqrMagnitude < 0.0001f)
-            {
-                stateMachine.Animator.CrossFadeInFixedTime(stateMachine.DodgeBackwardHash,
-                    stateMachine.CrossFadeDuration);
-                return;
-            }
+            stateMachine.Animator.applyRootMotion = useRootMotion;
 
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.DodgeForwardHash,
-                stateMachine.CrossFadeDuration);
+            int dodgeHash = GetDodgeHash(input, isTargeting, useRootMotion);
+            stateMachine.Animator.CrossFadeInFixedTime(dodgeHash, stateMachine.CrossFadeDuration);
         }
 
         public override void Tick(float deltaTime)
@@ -55,35 +43,40 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
             if (normalizedTime >= 1f)
             {
-                // stateMachine.Animator.applyRootMotion = false;
-                stateMachine.DecideTargetOrLocomotion();
-                return;
-            }
-
-
-            // Disable Move Functşon call if you going to use root Motion
-            if (!isFromTargetingState)
-            {
-                Vector3 dodgeDirection = direction.normalized;
-                Vector3 movement = dodgeDirection * stateMachine.DodgeSpeed;
-
-                bool isAnimationActive = AnimationCalculator();
-                if (!isAnimationActive) return;
-                float rollDampTime = stateMachine.RotationDampTimeWhileRoll;
-
-                RotateFaceToLook(deltaTime, rollDampTime);
-                if (direction.sqrMagnitude < 0.0001f)
+                if (stateMachine.Targeter.SelectedTarget != null)
                 {
-                    Vector3 backward = -stateMachine.MainCameraTransform.forward;
-                    backward.y = 0f;
-                    backward.Normalize();
-
-                    Move(backward * stateMachine.DodgeSpeed, deltaTime);
+                    GroundedParent?.SwitchSubState(new PlayerTargetingState(stateMachine));
                 }
                 else
                 {
-                    Move(movement, deltaTime);
+                    GroundedParent?.SwitchSubState(new PlayerFreeLookState(stateMachine));
                 }
+
+                // if you dont want to work with super state, you can use this line
+                // stateMachine.DecideTargetOrLocomotion();
+                return;
+            }
+
+            if (useRootMotion) return;
+            if (!IsDodgeMoveWindowActive()) return;
+
+            Vector3 dodgeDirection = direction.normalized;
+            Vector3 movement = dodgeDirection * stateMachine.DodgeSpeed;
+
+            float dodgeDamptime = stateMachine.RotationDampTimeWhileDodge;
+
+            RotateFaceToLook(deltaTime, dodgeDamptime);
+            if (direction.sqrMagnitude < 0.0001f)
+            {
+                Vector3 backward = -stateMachine.MainCameraTransform.forward;
+                backward.y = 0f;
+                backward.Normalize();
+
+                Move(backward * stateMachine.DodgeSpeed, deltaTime);
+            }
+            else
+            {
+                Move(movement, deltaTime);
             }
         }
 
@@ -92,26 +85,28 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             stateMachine.Animator.applyRootMotion = false;
         }
 
-        private bool AnimationCalculator()
+        private bool IsDodgeMoveWindowActive()
         {
             return normalizedTime >= stateMachine.DodgeAnimStartTime &&
                    normalizedTime <= stateMachine.DodgeAnimEndTime;
         }
 
-        private int PickTargetingDodge(Vector2 movement)
+        private int GetDodgeHash(Vector2 input, bool targeting, bool rootMotion)
         {
-            // float forwardSpeed = stateMachine.Animator.GetFloat(stateMachine.TargetingForwardSpeedHash);
-            // float rightSpeed = stateMachine.Animator.GetFloat(stateMachine.TargetingRightSpeedHash);
-
-            if (movement.sqrMagnitude < 0.0001f)
+            if (input.sqrMagnitude < 0.0001f)
             {
                 return stateMachine.DodgeBackwardHash;
             }
 
-            if (Mathf.Abs(movement.x) > Mathf.Abs(movement.y))
-                return movement.x > 0f ? stateMachine.DodgeRightHash : stateMachine.DodgeLeftHash;
+            if (targeting)
+            {
+                if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+                    return input.x > 0f ? stateMachine.DodgeRightHash : stateMachine.DodgeLeftHash;
 
-            return movement.y > 0f ? stateMachine.DodgeForwardHash : stateMachine.DodgeBackwardHash;
+                return input.y > 0f ? stateMachine.DodgeForwardHash : stateMachine.DodgeBackwardHash;
+            }
+
+            return stateMachine.DodgeForwardHash;
         }
     }
 }

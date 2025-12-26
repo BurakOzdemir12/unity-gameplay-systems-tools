@@ -103,6 +103,32 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!1102 &-7238524355970943031
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Falling Loop
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 2567725345388053393, guid: 68d1d54e0290ca14c9ca09f07b43285a, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1102 &-6059803831886183578
 AnimatorState:
   serializedVersion: 6
@@ -125,6 +151,32 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: f9c2fe842618c40489829f547c40a692, type: 3}
   m_Tag: Roll
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &-6058298606600136240
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Falling To Landing
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: -203655887218126122, guid: 9e75f718c7d95c84c8923f53c88a881a, type: 3}
+  m_Tag: Landing
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -521,6 +573,32 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: FreeLookSpeed
+--- !u!1102 &2260118964586151901
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Falling To Landing Heavy
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: -203655887218126122, guid: b5c4a76a7450b7f4e9f202548ec01ad4, type: 3}
+  m_Tag: Landing
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1102 &2664933227935264582
 AnimatorState:
   serializedVersion: 6
@@ -568,7 +646,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -3544255934867108276, guid: 97f966f1bd2f55642a25e2ecb2963a18, type: 3}
+  m_Motion: {fileID: 7400000, guid: d7bbeaaf922c7f64a8450c7011df80e5, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -805,7 +883,7 @@ AnimatorStateMachine:
     m_Position: {x: 430, y: 140, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -5097532321093153977}
-    m_Position: {x: -270, y: 80, z: 0}
+    m_Position: {x: -40, y: 160, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2235478292247948015}
     m_Position: {x: 180, y: -20, z: 0}
@@ -832,7 +910,16 @@ AnimatorStateMachine:
     m_Position: {x: 400, y: -50, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4079420656807181100}
-    m_Position: {x: -40, y: 80, z: 0}
+    m_Position: {x: -270, y: 80, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -7238524355970943031}
+    m_Position: {x: -270, y: 140, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -6058298606600136240}
+    m_Position: {x: -270, y: 200, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 2260118964586151901}
+    m_Position: {x: -270, y: 250, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []

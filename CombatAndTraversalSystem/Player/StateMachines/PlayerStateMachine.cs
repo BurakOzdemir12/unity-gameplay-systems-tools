@@ -161,25 +161,65 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float RollAnimEndTime => rollAnimEndTime;
 
-        [Header("Jump Settings")] [Tooltip("Jump Cooldown")] [SerializeField]
+        [Header("Jump Settings")] [Tooltip("Jump Force")] [SerializeField]
+        private float jumpForce = 10f;
+
+        public float JumpForce => jumpForce;
+
+        [Tooltip("Jump Cooldown")] [SerializeField]
         private float jumpCooldownTime = 2f;
 
         public float JumpCooldownTime => jumpCooldownTime;
 
-        [Tooltip("Previous time of roll animation")]
+        [field: Tooltip("Previous time of jump animation")]
+        public bool PendingJump { get; private set; }
+
         private float previousJumpTime;
 
         public float PreviousJumpTime
         {
-            get =>  previousJumpTime;
-            set =>  previousJumpTime = value;
+            get => previousJumpTime;
+            set => previousJumpTime = value;
         }
+
+        [Header("Falling - Landing Settings")] [Tooltip("Falling State Start Heightens")] [SerializeField]
+        private float fallingHeightThreshold = 1f;
+
+        public float FallingHeightThreshold => fallingHeightThreshold;
+
+        [Tooltip("Landing State Start Heightens")] [SerializeField]
+        private float landingHeightThreshold = 1f;
+
+        public float LandingHeightThreshold => landingHeightThreshold;
+
+        [Tooltip("Hard Landing  Start Heightens")] [SerializeField]
+        private float landingHardHeightThreshold = 3f;
+
+        public float LandingHardHeightThreshold => landingHardHeightThreshold;
+
+        [Tooltip("Landing Animation Start Time")] [Range(0f, 2f)] [SerializeField]
+        private float landingStateExitTime;
+
+        public float LandingStateExitTime => landingStateExitTime;
+
+        
+        // [Tooltip("Landing Animation Start Time")] [Range(0f, 2f)] [SerializeField]
+        // private float landingAnimStartTime;
+        //
+        // public float LandingAnimStartTime => landingAnimStartTime;
+        //
+        // [Tooltip("Landing Animation End Time")] [Range(0f, 2f)] [SerializeField]
+        // private float landingAnimEndTime;
+        //
+        // public float LandingAnimEndTime => landingAnimEndTime;
 
         [Tooltip("İf Your animations works with the root motion, set this to true")] [SerializeField]
         public bool workWithRootMotion = false;
 
         [Tooltip("In Combat or alert mode, its gonna roll but in normal mode jump will work ")] [SerializeField]
-        public bool inAlertMode = false;
+        private bool inAlertMode = false;
+
+        public bool IsInAlertMode => inAlertMode;
 
         // TODO Create scriptable object or seperated static class for stock animator hashes
 
@@ -199,6 +239,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public readonly int RollRightHash = Animator.StringToHash("Roll Right");
         public readonly int RollLeftHash = Animator.StringToHash("Roll Left");
         public readonly int IdleToJumpHash = Animator.StringToHash("Idle Jump");
+        public readonly int FallingLoopHash = Animator.StringToHash("Falling Loop");
+        public readonly int LandingHash = Animator.StringToHash("Falling To Landing");
+        public readonly int LandingHeavyHash = Animator.StringToHash("Falling To Landing Heavy");
         public int BlockingLayerIndex { get; private set; }
 
         public Transform MainCameraTransform { get; private set; }
@@ -206,7 +249,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         private PlayerGroundedState CurrentGrounded => CurrentState as PlayerGroundedState;
         public State CurrentSubState => (CurrentState as State)?.GetSubState();
 
-        private float groundedGrace = 0.1f;
+        [SerializeField] private float groundedGrace = 0.1f;
         public float GroundedGrace => groundedGrace;
 
         private void Awake()
@@ -225,7 +268,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
             if (UnityEngine.Camera.main == null) Debug.LogError("No main camera found!");
             if (UnityEngine.Camera.main != null) MainCameraTransform = UnityEngine.Camera.main.transform;
-            
+
             SwitchState(new PlayerGroundedState(this));
         }
 
@@ -272,6 +315,19 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             previousRollTime = time;
         }
 
+        public void PendingJumpState(float time)
+        {
+            PendingJump = true;
+            previousJumpTime = time;
+        }
+
+        public bool ConsumeJump() // if Jumping turn true
+        {
+            if (!PendingJump) return false;
+            PendingJump = false;
+            return true;
+        }
+
         public void EquipWeapon(WeaponLogic newWeapon)
         {
             WeaponLogic = newWeapon;
@@ -279,6 +335,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 WeaponLogic.Initialize(Controller);
         }
 
+        public void LandingAnimationEvent()
+        {
+        }
 
         private void OnDisable()
         {

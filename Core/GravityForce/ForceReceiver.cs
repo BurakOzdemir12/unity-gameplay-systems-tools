@@ -57,5 +57,10 @@ namespace _Project.Systems.Core.GravityForce
             if (dir.sqrMagnitude < 0.0001f) return;
             AddForce(dir.normalized * knockbackForce);
         }
+
+        public void ApplyJumpForce(float force)
+        {
+            verticalVelocity += force;
+        }
     }
 }

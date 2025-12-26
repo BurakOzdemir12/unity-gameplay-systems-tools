@@ -15,6 +15,8 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperSt
             stateMachine.InputHandler.DodgeEvent += OnDodge;
             stateMachine.InputHandler.RollEvent += OnRoll;
             stateMachine.InputHandler.JumpEvent += OnJump;
+            stateMachine.InputHandler.RollOrJumpEvent += OnRollOrJumpEvent;
+
 
             if (stateMachine.Targeter.SelectedTarget != null)
             {
@@ -45,7 +47,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperSt
             stateMachine.InputHandler.DodgeEvent -= OnDodge;
             stateMachine.InputHandler.RollEvent -= OnRoll;
             stateMachine.InputHandler.JumpEvent -= OnJump;
-            
+            stateMachine.InputHandler.RollOrJumpEvent -= OnRollOrJumpEvent;
+
+
             ClearSubState();
         }
 
@@ -66,7 +70,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperSt
 
         private void OnRoll()
         {
-            if (!stateMachine.inAlertMode) return;
+            if (!stateMachine.IsInAlertMode) return;
 
             if (Time.time - stateMachine.PreviousRollTime < stateMachine.RollCooldownTime)
             {
@@ -80,14 +84,43 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperSt
 
         private void OnJump()
         {
-            if (stateMachine.inAlertMode) return;
+            if (stateMachine.IsInAlertMode) return;
             if (Time.time - stateMachine.PreviousJumpTime < stateMachine.JumpCooldownTime)
             {
                 return;
             }
 
-            SetSubState(new PlayerJumpingState(stateMachine));
+            stateMachine.PendingJumpState(Time.time);
+
+            SwitchRootState(new PlayerAirborneState(stateMachine));
             // stateMachine.SwitchState(new PlayerRollState(stateMachine));
+        }
+
+        private void OnRollOrJumpEvent()
+        {
+            if (!stateMachine.IsInAlertMode)
+            {
+                if (Time.time - stateMachine.PreviousJumpTime < stateMachine.JumpCooldownTime)
+                {
+                    return;
+                }
+
+                stateMachine.PendingJumpState(Time.time);
+
+                SwitchRootState(new PlayerAirborneState(stateMachine));
+                // stateMachine.SwitchState(new PlayerRollState(stateMachine));
+            }
+            else
+            {
+                if (Time.time - stateMachine.PreviousRollTime < stateMachine.RollCooldownTime)
+                {
+                    return;
+                }
+
+                stateMachine.SetRollCooldownTime(Time.time);
+                SetSubState(new PlayerRollState(stateMachine));
+                // stateMachine.SwitchState(new PlayerRollState(stateMachine));
+            }
         }
     }
 }

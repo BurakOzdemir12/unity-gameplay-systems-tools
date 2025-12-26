@@ -15,7 +15,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             this.stateMachine = stateMachine;
         }
 
-        
+
         protected void Move(Vector3 movement, float deltaTime)
         {
             var motion = stateMachine.ForceReceiver.Movement;
@@ -136,5 +136,6 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         //     stateMachine.SwitchState(new PlayerBlockingState(stateMachine));
         //     return true;
         // }
+
     }
 }

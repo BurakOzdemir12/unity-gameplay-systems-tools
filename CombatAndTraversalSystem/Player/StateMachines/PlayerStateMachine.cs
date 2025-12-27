@@ -1,5 +1,6 @@
 using System;
 using _Project.Core.Scripts;
+using _Project.Systems.CombatAndTraversalSystem.LedgeClimbing;
 using _Project.Systems.CombatAndTraversalSystem.Player.Combat;
 using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
 using _Project.Systems.CombatAndTraversalSystem.Targeting;
@@ -23,6 +24,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         [field: SerializeField] public WeaponLogic WeaponLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
         [field: SerializeField] public Ragdoll Ragdoll { get; private set; }
+        [field: SerializeField] public LedgeValidator LedgeValidator { get; private set; }
         [field: SerializeField] public AttackDataSo[] Attacks { get; private set; }
 
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
@@ -182,18 +184,23 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             set => previousJumpTime = value;
         }
 
-        [Header("Falling - Landing Settings")] [Tooltip("Falling State Start Heightens")] [SerializeField]
-        private float fallingHeightThreshold = 1f;
+        [Header("Falling - Landing Settings")] [Tooltip("Falling State Start Velocity")] [SerializeField]
+        private float fallingVelocityThreshold;
 
-        public float FallingHeightThreshold => fallingHeightThreshold;
+        public float FallingVelocityThreshold => fallingVelocityThreshold;
+
+        [Tooltip("Falling State Start Heightens")] [SerializeField]
+        private float airborneHeightThreshold;
+
+        public float AirborneHeightThreshold => airborneHeightThreshold;
 
         [Tooltip("Landing State Start Heightens")] [SerializeField]
-        private float landingHeightThreshold = 1f;
+        private float landingHeightThreshold;
 
         public float LandingHeightThreshold => landingHeightThreshold;
 
         [Tooltip("Hard Landing  Start Heightens")] [SerializeField]
-        private float landingHardHeightThreshold = 3f;
+        private float landingHardHeightThreshold;
 
         public float LandingHardHeightThreshold => landingHardHeightThreshold;
 
@@ -202,7 +209,10 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float LandingStateExitTime => landingStateExitTime;
 
-        
+        [field: Header("Ledge Climbing")]
+        [field: Tooltip("is Climbing Ledge found Bool")]
+        public bool IsClimbingLedgeFind { get; private set; }
+
         // [Tooltip("Landing Animation Start Time")] [Range(0f, 2f)] [SerializeField]
         // private float landingAnimStartTime;
         //
@@ -328,6 +338,13 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             return true;
         }
 
+        public bool PendingClimbLedge() // if Climbing Ledge found turn true
+        {
+            if (!IsClimbingLedgeFind) return false;
+            IsClimbingLedgeFind = false;
+            return true;
+        }
+
         public void EquipWeapon(WeaponLogic newWeapon)
         {
             WeaponLogic = newWeapon;
@@ -335,9 +352,6 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 WeaponLogic.Initialize(Controller);
         }
 
-        public void LandingAnimationEvent()
-        {
-        }
 
         private void OnDisable()
         {

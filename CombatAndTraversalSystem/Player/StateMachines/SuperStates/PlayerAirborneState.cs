@@ -36,7 +36,6 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperSt
 
         public override void Tick(float deltaTime)
         {
-            Debug.Log(stateMachine.Controller.velocity.y);
             Move(deltaTime);
             if (!stateMachine.Controller.isGrounded) return;
 

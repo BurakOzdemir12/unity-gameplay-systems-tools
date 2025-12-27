@@ -23,7 +23,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Tick(float deltaTime)
         {
             Move(momentum, deltaTime);
-            if (stateMachine.Controller.velocity.y <= stateMachine.FallingHeightThreshold)
+            if (stateMachine.Controller.velocity.y <= stateMachine.FallingVelocityThreshold)
             {
                 AirborneParent?.SwitchSubState(new PlayerFallingState(stateMachine));
                 return;

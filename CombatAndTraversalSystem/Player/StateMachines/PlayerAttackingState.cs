@@ -60,11 +60,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             {
                 if (stateMachine.Targeter.SelectedTarget != null)
                 {
-                    GroundParent.SwitchSubState(new PlayerTargetingState(stateMachine));
+                    GroundParent?.SwitchSubState(new PlayerTargetingState(stateMachine));
                 }
                 else
                 {
-                    GroundParent.SwitchSubState(new PlayerFreeLookState(stateMachine));
+                    GroundParent?.SwitchSubState(new PlayerFreeLookState(stateMachine));
                 }
 
                 // stateMachine.DecideTargetOrLocomotion();
@@ -83,10 +83,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             if (attack.ComboStateIndex == -1) return;
             if (normalizedTime < attack.ComboAttackTime) return;
 
-            stateMachine.SwitchState(
-                new PlayerAttackingState(
-                    stateMachine,
-                    attack.ComboStateIndex));
+            GroundParent?.SwitchSubState(new PlayerAttackingState(stateMachine, attack.ComboStateIndex));
         }
 
         private void TryApplyForce()

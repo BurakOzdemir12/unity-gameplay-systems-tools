@@ -14,6 +14,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public override void Enter()
         {
+            
             momentum = stateMachine.Controller.velocity;
             momentum.y = 0;
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FallingLoopHash, stateMachine.CrossFadeDuration);

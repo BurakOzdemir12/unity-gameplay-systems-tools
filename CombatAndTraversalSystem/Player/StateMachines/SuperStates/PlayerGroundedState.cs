@@ -36,8 +36,13 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperSt
                 return;
             }
 
+            //TODO Create GroundProbe Script Grounded and Fall Distance Check with Raycast or spehere cast
+            //TODO You can add GroundNormal, GroundMaterialType, GroundDistance
+            var fallDistance =
+                Physics.Raycast(stateMachine.transform.position, Vector3.down, stateMachine.AirborneHeightThreshold);
+
             ungroundedTime += deltaTime;
-            if (ungroundedTime >= stateMachine.GroundedGrace)
+            if (ungroundedTime >= stateMachine.GroundedGrace && !fallDistance)
                 SwitchRootState(new PlayerAirborneState(stateMachine));
         }
 

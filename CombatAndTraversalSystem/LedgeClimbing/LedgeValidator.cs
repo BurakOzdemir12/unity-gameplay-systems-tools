@@ -27,11 +27,28 @@ namespace _Project.Systems.CombatAndTraversalSystem.LedgeClimbing
         [SerializeField] private float characterHeight = 1.8f;
         [SerializeField] private LayerMask fitDetectionLayers;
 
+
+        public struct LedgeData
+        {
+            public bool isValid;
+            public Vector3 surfacePoint;
+            public Vector3 groundPoint;
+            public float height;
+            public Vector3 wallNormal;
+        }
+
+        public LedgeData currentLedge;
+        public LedgeData lockedLedge;
+        public bool isLocked;
+
         // Debug & State
         [Header("Debug Info")] [SerializeField]
         private bool canClimbLedge;
 
+        public bool CanClimbLedge => canClimbLedge;
+
         [SerializeField] private float detectedHeight;
+        public float DetectedHeight => detectedHeight;
 
         private Vector3 _debugRayStart;
         private Vector3 _debugSurfacePoint;
@@ -39,13 +56,45 @@ namespace _Project.Systems.CombatAndTraversalSystem.LedgeClimbing
 
         private void Update()
         {
+            if (isLocked)
+            {
+                canClimbLedge = lockedLedge.isValid;
+                detectedHeight = lockedLedge.height;
+                _debugSurfacePoint = lockedLedge.surfacePoint;
+                _debugGroundPoint = lockedLedge.groundPoint;
+                return;
+            }
+
             CheckLedge();
+        }
+
+        public bool LockCurrentLedge()
+        {
+            // if (isLocked) return lockedLedge.isValid;
+
+            if (!currentLedge.isValid)
+            {
+                return false;
+            }
+
+            lockedLedge = currentLedge;
+            isLocked = true;
+            return true;
+        }
+
+        public void ClearLock()
+        {
+            isLocked = false;
+            lockedLedge = default;
         }
 
         private void CheckLedge()
         {
             canClimbLedge = false;
             detectedHeight = 0f;
+
+            currentLedge = default;
+            currentLedge.isValid = false;
 
             if (!Physics.Raycast(
                     eyeLevel.position,
@@ -93,10 +142,17 @@ namespace _Project.Systems.CombatAndTraversalSystem.LedgeClimbing
                 return;
             }
 
-            if (IsPlayerCanFitSpace(surfaceHit.point))
+            if (!IsPlayerCanFitSpace(surfaceHit.point))
             {
-                canClimbLedge = true;
+                return;
             }
+
+            canClimbLedge = true;
+            currentLedge.isValid = true;
+            currentLedge.surfacePoint = surfaceHit.point;
+            currentLedge.groundPoint = groundHit.point;
+            currentLedge.height = objectHeightAboveGround;
+            currentLedge.wallNormal = surfaceHit.normal;
         }
 
         private bool IsPlayerCanFitSpace(Vector3 targetPos)

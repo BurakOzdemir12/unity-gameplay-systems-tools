@@ -3,17 +3,13 @@ using UnityEngine;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates
 {
-    public enum LandType
-    {
-        Hard,
-        Soft
-    }
-
+   
     public class PlayerAirborneState : PlayerBaseState
     {
         private float startY;
         private float fallDistance;
         private bool fromJumping;
+
 
         public PlayerAirborneState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
@@ -24,12 +20,15 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperSt
             startY = stateMachine.transform.position.y;
             fromJumping = stateMachine.ConsumeJump();
 
+
             if (fromJumping)
             {
                 SetSubState(new PlayerJumpingState(stateMachine));
             }
             else
             {
+                // if (TryEnterClimb()) return;
+
                 SetSubState(new PlayerFallingState(stateMachine));
             }
         }
@@ -37,15 +36,20 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperSt
         public override void Tick(float deltaTime)
         {
             Move(deltaTime);
+
             if (!stateMachine.Controller.isGrounded) return;
 
             fallDistance = startY - stateMachine.transform.position.y;
+
+            // Climb edge Control
+
 
             if (!fromJumping && fallDistance < stateMachine.LandingHeightThreshold)
             {
                 SwitchRootState(new PlayerGroundedState(stateMachine));
                 return;
             }
+
 
             LandingType landingType = (fallDistance >= stateMachine.LandingHardHeightThreshold)
                 ? LandingType.Heavy

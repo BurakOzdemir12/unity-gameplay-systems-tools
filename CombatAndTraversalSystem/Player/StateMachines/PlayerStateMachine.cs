@@ -2,6 +2,7 @@ using System;
 using _Project.Core.Scripts;
 using _Project.Systems.CombatAndTraversalSystem.LedgeClimbing;
 using _Project.Systems.CombatAndTraversalSystem.Player.Combat;
+using _Project.Systems.CombatAndTraversalSystem.Player.Enums;
 using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
 using _Project.Systems.CombatAndTraversalSystem.Targeting;
 using _Project.Systems.Core.GravityForce;
@@ -209,9 +210,14 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float LandingStateExitTime => landingStateExitTime;
 
-        [field: Header("Ledge Climbing")]
-        [field: Tooltip("is Climbing Ledge found Bool")]
-        public bool IsClimbingLedgeFind { get; private set; }
+        [Header("Ledge Climbing")] [Tooltip("Auto Climb Max Height")] [SerializeField]
+        private float autoClimbMaxHeight;
+
+        public float AutoClimbMaxHeight => autoClimbMaxHeight;
+
+        [Tooltip("is Climbing Free Flow")]
+        [field: SerializeField]
+        public bool IsFreeFlowClimb { get; private set; }
 
         // [Tooltip("Landing Animation Start Time")] [Range(0f, 2f)] [SerializeField]
         // private float landingAnimStartTime;
@@ -252,6 +258,13 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public readonly int FallingLoopHash = Animator.StringToHash("Falling Loop");
         public readonly int LandingHash = Animator.StringToHash("Falling To Landing");
         public readonly int LandingHeavyHash = Animator.StringToHash("Falling To Landing Heavy");
+        public readonly int IdleToBracedHangingHash = Animator.StringToHash("Idle To Braced Hang");
+        public readonly int BracedHangingHash = Animator.StringToHash("Braced Hanging Idle");
+        public readonly int BracedHangToCrouchClimbHash = Animator.StringToHash("Braced Hang To Crouch");
+        public readonly int JumpToFreeHandHangingHash = Animator.StringToHash("Jump To Freehang");
+        public readonly int FreeHangingIdleHash = Animator.StringToHash("Free Hanging Idle");
+        public readonly int FreeHangClimbHash = Animator.StringToHash("FreeHang Climb");
+
         public int BlockingLayerIndex { get; private set; }
 
         public Transform MainCameraTransform { get; private set; }
@@ -338,12 +351,6 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             return true;
         }
 
-        public bool PendingClimbLedge() // if Climbing Ledge found turn true
-        {
-            if (!IsClimbingLedgeFind) return false;
-            IsClimbingLedgeFind = false;
-            return true;
-        }
 
         public void EquipWeapon(WeaponLogic newWeapon)
         {

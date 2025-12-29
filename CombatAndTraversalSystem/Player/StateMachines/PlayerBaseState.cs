@@ -1,4 +1,8 @@
-﻿using _Project.Systems.CombatAndTraversalSystem.Targeting;
+﻿using System.Collections;
+using System.Collections.Generic;
+using _Project.Systems.CombatAndTraversalSystem.Player.Enums;
+using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
+using _Project.Systems.CombatAndTraversalSystem.Targeting;
 using _Project.Systems.Core.StateMachine;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -127,6 +131,15 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             );
         }
 
+        protected bool TryEnterClimb()
+        {
+            bool findEdge = stateMachine.LedgeValidator.LockCurrentLedge();
+            if (!findEdge)
+                return false;
+
+            SwitchRootState(new PlayerClimbState(stateMachine));
+            return true;
+        }
 
         //  If you want to block state by itself use Changing state code
         // protected bool TrySwitchToBlockState() 
@@ -136,6 +149,5 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         //     stateMachine.SwitchState(new PlayerBlockingState(stateMachine));
         //     return true;
         // }
-
     }
 }

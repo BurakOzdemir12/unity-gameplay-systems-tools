@@ -23,6 +23,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Tick(float deltaTime)
         {
             Move(momentum, deltaTime);
+            // TODO add climbing check when falling !maybe
         }
 
         public override void Exit()

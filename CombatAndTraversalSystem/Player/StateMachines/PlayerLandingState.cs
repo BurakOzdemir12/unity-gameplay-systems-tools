@@ -1,5 +1,5 @@
 ﻿using _Project.Systems.CombatAndTraversalSystem.Player.Enums;
-using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
+using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootStates;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 {

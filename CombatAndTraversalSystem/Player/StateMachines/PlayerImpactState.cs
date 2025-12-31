@@ -1,4 +1,4 @@
-﻿using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
+﻿using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootStates;
 using Unity.AppUI.Core;
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines

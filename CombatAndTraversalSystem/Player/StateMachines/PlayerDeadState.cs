@@ -1,6 +1,4 @@
-﻿using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
-
-namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
+﻿namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 {
     public class PlayerDeadState : PlayerBaseState
     {

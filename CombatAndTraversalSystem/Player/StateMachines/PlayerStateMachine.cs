@@ -1,9 +1,10 @@
 using System;
 using _Project.Core.Scripts;
-using _Project.Systems.CombatAndTraversalSystem.LedgeClimbing;
+using _Project.Systems.ClimbingSystem.LedgeClimbing;
+using _Project.Systems.ClimbingSystem.ScriptableObjects;
 using _Project.Systems.CombatAndTraversalSystem.Player.Combat;
 using _Project.Systems.CombatAndTraversalSystem.Player.Enums;
-using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
+using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootStates;
 using _Project.Systems.CombatAndTraversalSystem.Targeting;
 using _Project.Systems.Core.GravityForce;
 using _Project.Systems.Core.Health;
@@ -25,8 +26,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         [field: SerializeField] public WeaponLogic WeaponLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
         [field: SerializeField] public Ragdoll Ragdoll { get; private set; }
-        [field: SerializeField] public LedgeValidator LedgeValidator { get; private set; }
+        [field: SerializeField] public ClimbController ClimbController { get; private set; }
         [field: SerializeField] public AttackDataSo[] Attacks { get; private set; }
+        [field: SerializeField] public ClimbTypeDataSo[] ClimbTypeDataSet { get; private set; }
 
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
         // public Transform swordHolderR;
@@ -215,9 +217,19 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
 
         public float AutoClimbMaxHeight => autoClimbMaxHeight;
 
+        [Tooltip("Climb Rotation Speed")] [SerializeField]
+        private float climbRotationSpeed = 5f;
+
+        public float ClimbRotationSpeed => climbRotationSpeed;
+
         [Tooltip("is Climbing Free Flow")]
         [field: SerializeField]
         public bool IsFreeFlowClimb { get; private set; }
+
+        [Tooltip("Step up Climb animations crossfade duration")] [SerializeField]
+        private float stepUpClimbCrossFadeDuration = 0.1f;
+
+        public float StepUpClimbCrossFadeDuration => stepUpClimbCrossFadeDuration;
 
         // [Tooltip("Landing Animation Start Time")] [Range(0f, 2f)] [SerializeField]
         // private float landingAnimStartTime;
@@ -228,7 +240,6 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         // private float landingAnimEndTime;
         //
         // public float LandingAnimEndTime => landingAnimEndTime;
-
         [Tooltip("İf Your animations works with the root motion, set this to true")] [SerializeField]
         public bool workWithRootMotion = false;
 
@@ -263,7 +274,11 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public readonly int BracedHangToCrouchClimbHash = Animator.StringToHash("Braced Hang To Crouch");
         public readonly int JumpToFreeHandHangingHash = Animator.StringToHash("Jump To Freehang");
         public readonly int FreeHangingIdleHash = Animator.StringToHash("Free Hanging Idle");
+
         public readonly int FreeHangClimbHash = Animator.StringToHash("FreeHang Climb");
+
+        //Step up and new climbing system
+        public readonly int StepUpClimbHash = Animator.StringToHash("StepUpClimb");
 
         public int BlockingLayerIndex { get; private set; }
 

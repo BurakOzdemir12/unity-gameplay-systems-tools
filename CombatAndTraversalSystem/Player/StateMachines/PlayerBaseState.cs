@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using _Project.Systems.CombatAndTraversalSystem.Player.Enums;
-using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.SuperStates;
 using _Project.Systems.CombatAndTraversalSystem.Targeting;
 using _Project.Systems.Core.StateMachine;
 using UnityEngine;
@@ -130,17 +129,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
                 stateMachine.blockLayerWeight
             );
         }
-
-        protected bool TryEnterClimb()
-        {
-            bool findEdge = stateMachine.LedgeValidator.LockCurrentLedge();
-            if (!findEdge)
-                return false;
-
-            SwitchRootState(new PlayerClimbState(stateMachine));
-            return true;
-        }
-
+        
         //  If you want to block state by itself use Changing state code
         // protected bool TrySwitchToBlockState() 
         // {

@@ -2,7 +2,6 @@
 
 namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootStates
 {
-   
     public class PlayerAirborneState : PlayerBaseState
     {
         private float startY;
@@ -19,18 +18,12 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootSta
             startY = stateMachine.transform.position.y;
             fromJumping = stateMachine.ConsumeJump();
 
-            // if (stateMachine.ClimbController.HasValidLedge)
-            // {
-            //     
-            // }
             if (fromJumping)
             {
                 SetSubState(new PlayerJumpingState(stateMachine));
             }
             else
             {
-                // if (TryEnterClimb()) return;
-
                 SetSubState(new PlayerFallingState(stateMachine));
             }
         }
@@ -38,12 +31,13 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootSta
         public override void Tick(float deltaTime)
         {
             Move(deltaTime);
+            if (fromJumping && stateMachine.Controller.velocity.y > 0f)
+            {
+                return;
+            }
 
-            if (!stateMachine.Controller.isGrounded) return;
-
+            if (!stateMachine.IsGrounded) return;
             fallDistance = startY - stateMachine.transform.position.y;
-
-
 
             if (!fromJumping && fallDistance < stateMachine.LandingHeightThreshold)
             {
@@ -68,34 +62,3 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootSta
         public void SwitchSubState(PlayerBaseState newSubState) => SetSubState(newSubState);
     }
 }
-
-        //
-        // public override void Tick(float deltaTime)
-        // {
-        //     Move(deltaTime);
-        //
-        //     float radius = stateMachine.Controller.radius * 0.9f;
-        //
-        //     float landingProbeDistance = Mathf.Max(0.6f, stateMachine.Controller.stepOffset + 0.2f);
-        //
-        //     bool groundedByCC = stateMachine.Controller.isGrounded;
-        //     bool groundBelowByProbe = ProbeGroundBelow(out _, 0.6f, radius, upOffset: 0.1f);
-        //
-        //     if (!groundedByCC && !groundBelowByProbe)
-        //         return;
-        //
-        //     fallDistance = startY - stateMachine.transform.position.y;
-        //
-        //     if (!fromJumping && fallDistance < stateMachine.LandingHeightThreshold)
-        //     {
-        //         SwitchRootState(new PlayerGroundedState(stateMachine));
-        //         return;
-        //     }
-        //
-        //     LandingType landingType = (fallDistance >= stateMachine.LandingHardHeightThreshold)
-        //         ? LandingType.Heavy
-        //         : LandingType.Light;
-        //
-        //     if (subState is not PlayerLandingState)
-        //         SetSubState(new PlayerLandingState(stateMachine, landingType));
-        // }

@@ -12,6 +12,7 @@ namespace _Project.Systems.ClimbingSystem.States.RootStates
         // private Vector3 wallNormal;
         private Vector3 surfacePoint;
         private Quaternion targetRotation;
+        private ClimbTypeDataSo selectedSo;
 
         public PlayerClimbState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
@@ -23,7 +24,7 @@ namespace _Project.Systems.ClimbingSystem.States.RootStates
             float height = stateMachine.ClimbController.CurrentLedgeHitData.heightRayHitInfo.point.y
                            - stateMachine.transform.position.y;
 
-            ClimbTypeDataSo selectedSo = null;
+            selectedSo = null;
 
             foreach (var so in stateMachine.ClimbTypeDataSet)
             {
@@ -34,11 +35,13 @@ namespace _Project.Systems.ClimbingSystem.States.RootStates
                 }
             }
 
+
             if (selectedSo == null)
             {
                 SwitchRootState(new PlayerGroundedState(stateMachine));
                 return;
             }
+
 
             SetSubState(new PlayerParkourActionState(stateMachine, selectedSo));
             //if You'r going to use different states for each different climb type than use Actionype in So
@@ -46,6 +49,22 @@ namespace _Project.Systems.ClimbingSystem.States.RootStates
 
         public override void Tick(float deltaTime)
         {
+            // #region Rotation To Obstacle -normals
+            //
+            // if (so.rotateToObstacle)
+            // {
+            //     Vector3 normal = hitData.forwardRayHitInfo.normal;
+            //     Quaternion rotationToObstacle = Quaternion.LookRotation(-normal);
+            //     float maxDegreesDelta = so.rotationSpeed * deltaTime;
+            //
+            //     stateMachine.transform.rotation = Quaternion.RotateTowards(stateMachine.transform.rotation,
+            //         rotationToObstacle,
+            //         maxDegreesDelta);
+            // }
+            //
+            // #endregion
+
+
         }
 
         public override void Exit()

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a26408fcb155189418e945e4436a9e9f, type: 3}
+  m_Name: StepUpclimb
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.ClimbingSystem.ScriptableObjects.ParkourControllerSo
+  actionType: 0
+  animName: StepUpClimb
+  animHash: -279429486
+  animTag: StepUp
+  minObstacleHeight: 0.4
+  maxObstacleHeight: 1.5
+  rotateToObstacle: 1
+  rotationSpeed: 360
+  enableTargetMatching: 1
+  matchedBodyPart: 3
+  matchStartTime: 0.12
+  matchTargetTime: 0.35
+  matchPosWeight: {x: 0, y: 1, z: 0}

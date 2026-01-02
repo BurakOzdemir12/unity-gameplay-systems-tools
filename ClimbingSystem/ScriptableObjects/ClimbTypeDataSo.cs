@@ -10,27 +10,48 @@ namespace _Project.Systems.ClimbingSystem.ScriptableObjects
     {
         [Header("Action")] [SerializeField] private ParkourActionType actionType;
 
+        public ParkourActionType ActionType => actionType;
+
         [Header("Animation Settings")] [SerializeField]
         private string animName;
 
         [SerializeField, HideInInspector] private int animHash;
+        public int AnimHash => animHash;
+
         [SerializeField] private string animTag;
+        public string AnimTag => animTag;
+
 
         [Header("Obstacle Rules")] [SerializeField]
         private float minObstacleHeight;
 
         [SerializeField] private float maxObstacleHeight;
 
+        [Header("Rotation Settings")] [SerializeField]
+        public bool rotateToObstacle;
 
-        public ParkourActionType ActionType => actionType;
+        [SerializeField] public float rotationSpeed;
 
-        public int AnimHash => animHash;
-        public string AnimTag => animTag;
+        [Header("Target Matching")] [SerializeField]
+        public bool enableTargetMatching = true;
+
+        [SerializeField] private AvatarTarget matchedBodyPart;
+        public AvatarTarget MatchedBodyPart => matchedBodyPart;
+
+        [SerializeField] private float matchStartTime;
+        public float MatchStartTime => matchStartTime;
+
+        [SerializeField] private float matchTargetTime;
+        public float MatchTargetTime => matchTargetTime;
+        
+        [SerializeField] private Vector3 matchPosWeight;
+        public Vector3 MatchPosWeight => matchPosWeight;
 
         public bool CheckLedgeHeight(float height)
         {
             return height >= minObstacleHeight && height <= maxObstacleHeight;
         }
+
 
         private void OnEnable()
         {

@@ -10,6 +10,7 @@ namespace _Project.Systems.ClimbingSystem.LedgeClimbing
         public bool HasValidLedge => CurrentLedgeHitData.IsValidLedge;
 
         public event Action<LedgeHitData> OnLedgeDataUpdated;
+        private Quaternion TargetRotation { get; set; }
 
         private void Update()
         {
@@ -21,10 +22,12 @@ namespace _Project.Systems.ClimbingSystem.LedgeClimbing
             var hitData = LedgeValidator.DetectLedge();
             if (hitData.IsForwardRaycastHit)
             {
-                Debug.Log("Forward Detected Obstacle " + hitData.forwardRayHitInfo.collider.gameObject.name +
-                          "And Object height is " + hitData.heightRayHitInfo.collider.bounds.size.y +
-                          "Object height for a Player " + (hitData.heightRayHitInfo.point.y - transform.position.y)
-                );
+               
+                //
+                // Debug.Log("Forward Detected Obstacle " + hitData.forwardRayHitInfo.collider.gameObject.name +
+                //           "And Object height is " + hitData.heightRayHitInfo.collider.bounds.size.y +
+                //           "Object height for a Player " + (hitData.heightRayHitInfo.point.y - transform.position.y)
+                // );
             }
         }
     }

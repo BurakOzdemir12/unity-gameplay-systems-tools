@@ -27,6 +27,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         [field: SerializeField] public PlayerHealth Health { get; private set; }
         [field: SerializeField] public Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public ClimbController ClimbController { get; private set; }
+        [field: SerializeField] public GroundChecker GroundChecker { get; private set; }
         [field: SerializeField] public AttackDataSo[] Attacks { get; private set; }
         [field: SerializeField] public ClimbTypeDataSo[] ClimbTypeDataSet { get; private set; }
 
@@ -188,14 +189,10 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         }
 
         [Header("Falling - Landing Settings")] [Tooltip("Falling State Start Velocity")] [SerializeField]
-        private float fallingVelocityThreshold;
+        private float fallingHeightThreshold;
 
-        public float FallingVelocityThreshold => fallingVelocityThreshold;
+        public float FallingHeightThreshold => fallingHeightThreshold;
 
-        [Tooltip("Falling State Start Heightens")] [SerializeField]
-        private float airborneHeightThreshold;
-
-        public float AirborneHeightThreshold => airborneHeightThreshold;
 
         [Tooltip("Landing State Start Heightens")] [SerializeField]
         private float landingHeightThreshold;
@@ -287,8 +284,18 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         private PlayerGroundedState CurrentGrounded => CurrentState as PlayerGroundedState;
         public State CurrentSubState => (CurrentState as State)?.GetSubState();
 
-        [SerializeField] private float groundedGrace = 0.1f;
+        [Space(10)] [Header("Ground Check Settings")] [Tooltip("Grounded Grace Period")] [SerializeField]
+        private float groundedGrace = 0.1f;
+
         public float GroundedGrace => groundedGrace;
+
+        public bool IsGrounded => GroundChecker != null && GroundChecker.IsGrounded;
+
+        [Tooltip("If ground is this close below, we stay in GroundedState (useful for stairs/step-down).")]
+        [SerializeField]
+        private float groundedSnapDistance = 0.2f;
+
+        public float GroundedSnapDistance => groundedSnapDistance;
 
         private void Awake()
         {
@@ -310,21 +317,6 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
             SwitchState(new PlayerGroundedState(this));
         }
 
-        // public void DecideTargetOrLocomotion()
-        // {
-        //     if (Targeter.SelectedTarget != null)
-        //     {
-        //         
-        //         CurrentGrounded.SwitchSubState(new PlayerTargetingState(this));
-        //         // SwitchState(new PlayerTargetingState(this));
-        //     }
-        //     else
-        //     {
-        //         CurrentGrounded.SwitchSubState(new PlayerFreeLookState(this));
-        //
-        //         // SwitchState(new PlayerFreeLookState(this));
-        //     }
-        // }
 
         private void HandleTakeDamage()
         {

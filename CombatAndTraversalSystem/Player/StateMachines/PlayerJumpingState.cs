@@ -24,7 +24,7 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public override void Enter()
         {
             // jumpType = JumpVariant.Normal;
-            
+
             stateMachine.ForceReceiver.ApplyJumpForce(stateMachine.JumpForce);
             momentum = stateMachine.Controller.velocity;
             momentum.y = 0;
@@ -37,7 +37,9 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         {
             Move(momentum, deltaTime);
 
-            if (stateMachine.Controller.velocity.y <= stateMachine.FallingVelocityThreshold)
+            float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, JUMP_TAG);
+            if (stateMachine.GroundChecker.DistanceToGround >= stateMachine.FallingHeightThreshold &&
+                normalizedTime >= 0.4f)
             {
                 AirborneParent?.SwitchSubState(new PlayerFallingState(stateMachine));
                 return;

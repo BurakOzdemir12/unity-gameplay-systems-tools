@@ -31,27 +31,36 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootSta
 
         public override void Tick(float deltaTime)
         {
-            if (stateMachine.Controller.isGrounded)
+            if (stateMachine.IsGrounded)
             {
                 ungroundedTime = 0f;
                 return;
             }
 
-            //TODO Create GroundProbe Script Grounded and Fall Distance Check with Raycast or spehere cast
-            //TODO You can add GroundNormal, GroundMaterialType, GroundDistance
-            
-            Vector3 rayOrigin = stateMachine.transform.position + Vector3.up * 0.1f;
-            float probeDistance = stateMachine.AirborneHeightThreshold;
-            bool isGroundBelow = Physics.Raycast(
-                rayOrigin,
-                Vector3.down,
-                out RaycastHit hit,
-                probeDistance,
-                Physics.DefaultRaycastLayers,
-                QueryTriggerInteraction.Ignore
-            );
+            // // Vector3 rayOrigin = stateMachine.transform.position + Vector3.up * 0.1f;
+            // float probeDistance = stateMachine.AirborneHeightThreshold;
+            // bool isGroundBelow = Physics.Raycast(
+            //     rayOrigin,
+            //     Vector3.down,
+            //     out RaycastHit hit,
+            //     probeDistance,
+            //     Physics.DefaultRaycastLayers,
+            //     QueryTriggerInteraction.Ignore
+            // );
+            // ungroundedTime += deltaTime;
+            // if (ungroundedTime >= stateMachine.GroundedGrace)
+            //     SwitchRootState(new PlayerAirborneState(stateMachine));
+            //
+            //
+            if (stateMachine.GroundChecker != null &&
+                stateMachine.GroundChecker.DistanceToGround <= stateMachine.GroundedSnapDistance)
+            {
+                ungroundedTime = 0f;
+                return;
+            }
+
             ungroundedTime += deltaTime;
-            if (ungroundedTime >= stateMachine.GroundedGrace && !isGroundBelow)
+            if (ungroundedTime >= stateMachine.GroundedGrace)
                 SwitchRootState(new PlayerAirborneState(stateMachine));
         }
 
@@ -144,29 +153,3 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootSta
         }
     }
 }
-
-//
-// public override void Tick(float deltaTime)
-// {
-//     float radius = stateMachine.Controller.radius * 0.9f;
-//
-//     float groundedProbeDist = Mathf.Max(
-//         0.25f,
-//         stateMachine.Controller.stepOffset + stateMachine.Controller.skinWidth + 0.05f
-//     );
-//
-//     bool groundedByCC = stateMachine.Controller.isGrounded;
-//     bool groundedByProbe = ProbeGroundBelow(out _, groundedProbeDist, radius, upOffset: 0.1f);
-//
-//     // Grounded kabulü: OR
-//     if (groundedByCC || groundedByProbe)
-//     {
-//         ungroundedTime = 0f;
-//         return;
-//     }
-//
-//     ungroundedTime += deltaTime;
-//
-//     if (ungroundedTime >= stateMachine.GroundedGrace)
-//         SwitchRootState(new PlayerAirborneState(stateMachine));
-// }

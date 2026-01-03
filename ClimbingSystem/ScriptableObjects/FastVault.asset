@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a26408fcb155189418e945e4436a9e9f, type: 3}
-  m_Name: FullBodyClimb
+  m_Name: FastVault
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.ClimbingSystem.ScriptableObjects.ParkourControllerSo
-  actionType: 0
-  animName: JumpUpClimb
-  animHash: 1861815802
-  animTag: Climb
-  minObstacleHeight: 2.99
-  maxObstacleHeight: 4
+  actionType: 1
+  animName: SpinVault
+  animHash: -712700247
+  animTag: Vault
+  minObstacleHeight: 0.4
+  maxObstacleHeight: 1.5
   rotateToObstacle: 0
-  rotationSpeed: 360
+  rotationSpeed: 150
   enableTargetMatching: 1
-  matchedBodyPart: 5
-  matchStartTime: 0.07
-  matchTargetTime: 0.28
-  matchPosWeight: {x: 0, y: 1, z: 1}
+  matchedBodyPart: 4
+  matchStartTime: 0.13
+  matchTargetTime: 0.26
+  matchPosWeight: {x: 0, y: 0.75, z: 0}

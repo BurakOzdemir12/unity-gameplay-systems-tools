@@ -1,4 +1,7 @@
 ﻿using System;
+using _Project.Systems.ClimbingSystem.Enums;
+using _Project.Systems.ClimbingSystem.ObstacleScripts;
+using FewClicksDev.Core;
 using UnityEngine;
 
 namespace _Project.Systems.ClimbingSystem.LedgeClimbing
@@ -12,23 +15,16 @@ namespace _Project.Systems.ClimbingSystem.LedgeClimbing
         public event Action<LedgeHitData> OnLedgeDataUpdated;
         private Quaternion TargetRotation { get; set; }
 
+        public ParkourActionType? DetectedActionType { get; private set; }
+        public ParkourObstacle DetectedObstacle { get; private set; }
+       
         private void Update()
         {
             if (LedgeValidator == null) return;
-
             CurrentLedgeHitData = LedgeValidator.DetectLedge();
             OnLedgeDataUpdated?.Invoke(CurrentLedgeHitData);
-
-            var hitData = LedgeValidator.DetectLedge();
-            if (hitData.IsForwardRaycastHit)
-            {
-               
-                //
-                // Debug.Log("Forward Detected Obstacle " + hitData.forwardRayHitInfo.collider.gameObject.name +
-                //           "And Object height is " + hitData.heightRayHitInfo.collider.bounds.size.y +
-                //           "Object height for a Player " + (hitData.heightRayHitInfo.point.y - transform.position.y)
-                // );
-            }
         }
+
+       
     }
 }

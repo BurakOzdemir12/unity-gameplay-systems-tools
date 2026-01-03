@@ -1,5 +1,6 @@
 using _Project.Systems.ClimbingSystem.Enums;
 using _Project.Systems.ClimbingSystem.LedgeClimbing;
+using _Project.Systems.ClimbingSystem.Structs;
 using UnityEngine;
 
 namespace _Project.Systems.ClimbingSystem.ScriptableObjects
@@ -36,22 +37,35 @@ namespace _Project.Systems.ClimbingSystem.ScriptableObjects
         public bool enableTargetMatching = true;
 
         [SerializeField] private AvatarTarget matchedBodyPart;
-        public AvatarTarget MatchedBodyPart => matchedBodyPart;
+
+        public AvatarTarget MatchedBodyPart
+        {
+            get => matchedBodyPart;
+            protected set => matchedBodyPart = value;
+        }
 
         [SerializeField] private float matchStartTime;
         public float MatchStartTime => matchStartTime;
 
         [SerializeField] private float matchTargetTime;
         public float MatchTargetTime => matchTargetTime;
-        
+
         [SerializeField] private Vector3 matchPosWeight;
         public Vector3 MatchPosWeight => matchPosWeight;
 
-        public bool CheckLedgeHeight(float height)
+        public bool MirrorAnim { get; protected set; } = false;
+
+        public bool MatchesActionType(ParkourActionType type)
         {
-            return height >= minObstacleHeight && height <= maxObstacleHeight;
+            return this.actionType == type;
         }
 
+        public virtual ParkourDecision Evaluate(float height, in LedgeHitData hit, Vector3 playerPos,
+            Vector3 playerRight)
+        {
+            bool valid = hit.IsValidLedge && height >= minObstacleHeight && height <= maxObstacleHeight;
+            return valid ? new ParkourDecision(true, false, matchedBodyPart) : ParkourDecision.Invalid;
+        }
 
         private void OnEnable()
         {

@@ -15,10 +15,10 @@ MonoBehaviour:
   actionType: 0
   animName: StepUpClimb
   animHash: -279429486
-  animTag: StepUp
+  animTag: Climb
   minObstacleHeight: 0.4
   maxObstacleHeight: 1.5
-  rotateToObstacle: 1
+  rotateToObstacle: 0
   rotationSpeed: 360
   enableTargetMatching: 1
   matchedBodyPart: 3

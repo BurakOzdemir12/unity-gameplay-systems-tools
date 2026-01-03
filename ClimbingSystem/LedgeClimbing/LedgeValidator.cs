@@ -39,7 +39,7 @@ namespace _Project.Systems.ClimbingSystem.LedgeClimbing
             #region Forward Edge Raycast
 
             hitData.IsForwardRaycastHit = Physics.Raycast(transform.position + rayOriginOffset, transform.forward,
-                out hitData.forwardRayHitInfo,
+                out hitData.ForwardRayHitInfo,
                 forwardRayLength,
                 obstacleLayers);
             #endregion
@@ -48,9 +48,9 @@ namespace _Project.Systems.ClimbingSystem.LedgeClimbing
 
             if (hitData.IsForwardRaycastHit)
             {
-                heightOriginOffset = hitData.forwardRayHitInfo.point + Vector3.up * heightRayLength;
+                heightOriginOffset = hitData.ForwardRayHitInfo.point + Vector3.up * heightRayLength;
                 hitData.IsHeightRaycastHit = Physics.Raycast(heightOriginOffset, Vector3.down,
-                    out hitData.heightRayHitInfo, heightRayLength,
+                    out hitData.HeightRayHitInfo, heightRayLength,
                     obstacleLayers);
             }
             #endregion
@@ -75,8 +75,8 @@ public struct LedgeHitData
 {
     public bool IsForwardRaycastHit;
     public bool IsHeightRaycastHit;
-    public RaycastHit forwardRayHitInfo;
-    public RaycastHit heightRayHitInfo;
+    public RaycastHit ForwardRayHitInfo;
+    public RaycastHit HeightRayHitInfo;
     
     public bool IsValidLedge => IsForwardRaycastHit && IsHeightRaycastHit;
 }

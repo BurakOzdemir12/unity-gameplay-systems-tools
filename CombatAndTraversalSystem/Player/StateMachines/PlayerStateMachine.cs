@@ -271,11 +271,8 @@ namespace _Project.Systems.CombatAndTraversalSystem.Player.StateMachines
         public readonly int BracedHangToCrouchClimbHash = Animator.StringToHash("Braced Hang To Crouch");
         public readonly int JumpToFreeHandHangingHash = Animator.StringToHash("Jump To Freehang");
         public readonly int FreeHangingIdleHash = Animator.StringToHash("Free Hanging Idle");
-
         public readonly int FreeHangClimbHash = Animator.StringToHash("FreeHang Climb");
-
-        //Step up and new climbing system
-        public readonly int StepUpClimbHash = Animator.StringToHash("StepUpClimb");
+        public readonly int Mirror = Animator.StringToHash("Mirror");
 
         public int BlockingLayerIndex { get; private set; }
 

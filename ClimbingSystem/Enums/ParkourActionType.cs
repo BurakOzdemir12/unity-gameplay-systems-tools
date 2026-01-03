@@ -2,8 +2,7 @@
 {
     public enum ParkourActionType
     {
-        StepUp,
+        Climb,
         Vault,
-        ClimbUp
     }
 }

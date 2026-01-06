@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc19a63febe54faba7b120e14cf492ef, type: 3}
+  m_Name: FallingLandingDataSo
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.MovementSystem.ScriptableObjects.FallLandDataSo
+  fallingHeightThreshold: 2
+  landingHeightThreshold: 1.5
+  landingHardHeightThreshold: 3
+  landingStateExitTime: 0.694

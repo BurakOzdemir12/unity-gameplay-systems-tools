@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a26408fcb155189418e945e4436a9e9f, type: 3}
+  m_Name: StrongStepUpClimb
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.ClimbingSystem.ScriptableObjects.ParkourControllerSo
+  actionType: 0
+  priority: 20
+  animName: StrongJumpClimb
+  animHash: 503746793
+  animTag: Climb
+  minObstacleHeight: 1.5
+  maxObstacleHeight: 2.99
+  rotateToObstacle: 1
+  rotationSpeed: 360
+  enableTargetMatching: 1
+  matchedBodyPart: 3
+  matchStartTime: 0.15
+  matchTargetTime: 0.28
+  matchPosWeight: {x: 0, y: 1, z: 1}

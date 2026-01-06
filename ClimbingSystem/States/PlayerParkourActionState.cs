@@ -1,17 +1,19 @@
-﻿using _Project.Systems.ClimbingSystem.ScriptableObjects;
+﻿using _Project.Systems._Core.StateMachine.Player;
+using _Project.Systems.ClimbingSystem.ScriptableObjects;
 using _Project.Systems.ClimbingSystem.Structs;
-using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines;
-using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootStates;
+using _Project.Systems.MovementSystem.Player.States.RootStates;
 using UnityEngine;
 
 namespace _Project.Systems.ClimbingSystem.States
 {
     public class PlayerParkourActionState : PlayerBaseState
     {
-        private string stepUpTag;
+        private string animTag;
         private bool hasMatchedTarget;
         private readonly ClimbTypeDataSo so;
         private readonly ParkourDecision decision;
+        private LedgeHitData hitData;
+        private Vector3 normal;
 
         public PlayerParkourActionState(PlayerStateMachine stateMachine, ClimbTypeDataSo so, ParkourDecision decision) :
             base(stateMachine)
@@ -22,19 +24,29 @@ namespace _Project.Systems.ClimbingSystem.States
 
         public override void Enter()
         {
-            stepUpTag = so.AnimTag;
+            hitData = stateMachine.ClimbController.CurrentLedgeHitData;
+            normal = hitData.ForwardRayHitInfo.normal;
+            normal.y = 0f;
+
+            Vector3 toHit = hitData.ForwardRayHitInfo.point - stateMachine.transform.position;
+            toHit.y = 0f;
+
+            if (Vector3.Dot(normal.normalized, toHit.normalized) > 0f)
+                normal = -normal;
+
+            animTag = so.AnimTag;
             stateMachine.Animator.applyRootMotion = true;
-            stateMachine.Controller.enabled = false;
+            // stateMachine.Controller.enabled = false;
 
             stateMachine.Animator.SetBool(stateMachine.Mirror, decision.Mirror);
 
-            stateMachine.Animator.CrossFadeInFixedTime(so.AnimHash, stateMachine.StepUpClimbCrossFadeDuration);
+            stateMachine.Animator.CrossFadeInFixedTime(so.AnimHash, so.ClimbCrossFadeDuration);
             hasMatchedTarget = false;
         }
 
         public override void Tick(float deltaTime)
         {
-            float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, stepUpTag);
+            float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, animTag);
             if (normalizedTime > 1f)
             {
                 SwitchRootState(new PlayerGroundedState(stateMachine));
@@ -49,16 +61,9 @@ namespace _Project.Systems.ClimbingSystem.States
         {
             if (so.rotateToObstacle && normalizedTime < 1f)
             {
-                var hitData = stateMachine.ClimbController.CurrentLedgeHitData;
-
-                if (so.rotateToObstacle)
-                {
-                    Vector3 normal = hitData.ForwardRayHitInfo.normal;
-                    normal.y = 0f;
-                    Quaternion matchRotation = Quaternion.LookRotation(-normal.normalized, Vector3.up);
-                    stateMachine.transform.rotation = Quaternion.RotateTowards(stateMachine.transform.rotation,
-                        matchRotation, so.rotationSpeed * deltaTime);
-                }
+                Quaternion matchRotation = Quaternion.LookRotation(-normal.normalized, Vector3.up);
+                stateMachine.transform.rotation = Quaternion.RotateTowards(stateMachine.transform.rotation,
+                    matchRotation, so.rotationSpeed * deltaTime);
             }
         }
 
@@ -92,7 +97,7 @@ namespace _Project.Systems.ClimbingSystem.States
         public override void Exit()
         {
             stateMachine.Animator.applyRootMotion = false;
-            stateMachine.Controller.enabled = true;
+            // stateMachine.Controller.enabled = true;
 
             stateMachine.Animator.SetBool(stateMachine.Mirror, false);
         }

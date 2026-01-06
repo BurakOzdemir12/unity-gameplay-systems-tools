@@ -13,6 +13,13 @@ namespace _Project.Systems.ClimbingSystem.ScriptableObjects
 
         public ParkourActionType ActionType => actionType;
 
+        [Header("Selection")]
+        [Tooltip("Higher priority wins when multiple SOs are valid (e.g., CenterVault > NormalVault).")]
+        [SerializeField]
+        private int priority = 0;
+
+        public int Priority => priority;
+
         [Header("Animation Settings")] [SerializeField]
         private string animName;
 
@@ -36,35 +43,34 @@ namespace _Project.Systems.ClimbingSystem.ScriptableObjects
         [Header("Target Matching")] [SerializeField]
         public bool enableTargetMatching = true;
 
-        [SerializeField] private AvatarTarget matchedBodyPart;
+        [SerializeField] private AvatarTarget matchedBodyPart = AvatarTarget.LeftHand;
+        public AvatarTarget MatchedBodyPart => matchedBodyPart;
 
-        public AvatarTarget MatchedBodyPart
-        {
-            get => matchedBodyPart;
-            protected set => matchedBodyPart = value;
-        }
-
-        [SerializeField] private float matchStartTime;
+        [SerializeField, Range(0f, 1f)] private float matchStartTime;
         public float MatchStartTime => matchStartTime;
 
-        [SerializeField] private float matchTargetTime;
+        [SerializeField, Range(0f, 1f)] private float matchTargetTime;
         public float MatchTargetTime => matchTargetTime;
 
         [SerializeField] private Vector3 matchPosWeight;
         public Vector3 MatchPosWeight => matchPosWeight;
-
-        public bool MirrorAnim { get; protected set; } = false;
 
         public bool MatchesActionType(ParkourActionType type)
         {
             return this.actionType == type;
         }
 
-        public virtual ParkourDecision Evaluate(float height, in LedgeHitData hit, Vector3 playerPos,
-            Vector3 playerRight)
+        [Tooltip("Step up Climb animations crossfade duration")] [SerializeField]
+        private float climbCrossFadeDuration = 0.1f;
+
+        public float ClimbCrossFadeDuration => climbCrossFadeDuration;
+
+        public virtual ParkourDecision Evaluate(float height, in LedgeHitData hit)
         {
             bool valid = hit.IsValidLedge && height >= minObstacleHeight && height <= maxObstacleHeight;
-            return valid ? new ParkourDecision(true, false, matchedBodyPart) : ParkourDecision.Invalid;
+            return valid
+                ? new ParkourDecision(true, isCenter: false, mirror: false, matchedBodyPart)
+                : ParkourDecision.Invalid;
         }
 
         private void OnEnable()

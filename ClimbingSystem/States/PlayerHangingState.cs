@@ -1,5 +1,5 @@
-﻿using _Project.Systems.ClimbingSystem.States.RootStates;
-using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines;
+﻿using _Project.Systems._Core.StateMachine.Player;
+using _Project.Systems.ClimbingSystem.States.RootStates;
 
 namespace _Project.Systems.ClimbingSystem.States
 {

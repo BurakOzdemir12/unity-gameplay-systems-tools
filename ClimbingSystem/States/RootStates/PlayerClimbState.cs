@@ -1,9 +1,9 @@
-﻿using _Project.Systems.ClimbingSystem.Enums;
+﻿using _Project.Systems._Core.StateMachine.Player;
+using _Project.Systems.ClimbingSystem.Enums;
 using _Project.Systems.ClimbingSystem.ObstacleScripts;
 using _Project.Systems.ClimbingSystem.ScriptableObjects;
 using _Project.Systems.ClimbingSystem.Structs;
-using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines;
-using _Project.Systems.CombatAndTraversalSystem.Player.StateMachines.RootStates;
+using _Project.Systems.MovementSystem.Player.States.RootStates;
 using UnityEngine;
 
 namespace _Project.Systems.ClimbingSystem.States.RootStates
@@ -53,23 +53,22 @@ namespace _Project.Systems.ClimbingSystem.States.RootStates
 
             selectedSo = null;
             selectedDecision = ParkourDecision.Invalid;
+            int bestPriority = int.MinValue;
 
-            Vector3 playerPos = stateMachine.transform.position;
-            Vector3 playerRight = stateMachine.transform.right;
-
-            foreach (var so in stateMachine.ClimbTypeDataSet)
+            foreach (var so in stateMachine.PlayerConfigSo.ClimbTypeDataSet)
             {
                 if (so is null) continue;
                 if (!so.MatchesActionType(desiredType)) continue;
-                var decision = so.Evaluate(height, hit, playerPos, playerRight);
+
+                var decision = so.Evaluate(height, hit);
                 if (!decision.IsValid) continue;
 
-                // if (so.CheckLedgeHeight(height, hit))
-                // {
-                selectedSo = so;
-                selectedDecision = decision;
-                break;
-                // }
+                if (so.Priority > bestPriority)
+                {
+                    bestPriority = so.Priority;
+                    selectedSo = so;
+                    selectedDecision = decision;
+                }
             }
 
             if (selectedSo is null)

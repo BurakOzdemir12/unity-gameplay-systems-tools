@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c7a6565b9494151847d967f0bee13de, type: 3}
+  m_Name: Enemy_SwordsMan_CombatData
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.CombatSystem.ScriptableObjects.Combat.EnemyCombatDataSo
+  attackDamage: 25
+  rotationDampTimeWhileAttack: 0.1
+  impactDuration: 0.75
+  blockingLayerChangeSpeed: 0.1
+  rotationDampTimeWhileBlock: 2
+  attackRange: 1.5
+  attackDetectionLayers:
+    serializedVersion: 2
+    m_Bits: 65536
+  attackCoolDown: 1.5
+  attackKnockBackForce: 2
+  forceTime: 0
+  crossFadeDurationCombat: 0.1

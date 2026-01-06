@@ -15,7 +15,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             stateMachine.Agent.isStopped = false;
 
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LocomotionBlendTreeHash,
-                stateMachine.LocomotionBlendTreeDuration);
+                stateMachine.EnemyConfigSo.MovementData.LocomotionBlendTreeDuration);
         }
 
         public override void Tick(float deltaTime)
@@ -34,7 +34,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
             MoveToPlayer(deltaTime);
             stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 1f,
-                stateMachine.LocomotionAnimationDampTime,
+                stateMachine.EnemyConfigSo.MovementData.LocomotionAnimatorDampTime,
                 deltaTime);
         }
 
@@ -60,7 +60,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
             Vector3 dir = to.sqrMagnitude > 0.001f ? to.normalized : Vector3.zero;
 
-            Move(dir * stateMachine.MoveSpeed, deltaTime);
+            Move(dir * stateMachine.EnemyConfigSo.MovementData.FreeMovementSpeed, deltaTime);
 
             RotateToPlayer(deltaTime);
             // stateMachine.Agent.velocity = stateMachine.Controller.velocity;

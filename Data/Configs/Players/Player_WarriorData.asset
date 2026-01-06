@@ -24,3 +24,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6f0fd97d48a7ad24a8ff72a07a52d6e8, type: 2}
   - {fileID: 11400000, guid: cab1541b9ece86d43ae5315410797f52, type: 2}
   - {fileID: 11400000, guid: 250d398e448d0764f994b33737d683ad, type: 2}
+  AttackTypeDataSet:
+  - {fileID: 11400000, guid: 62d6349fe51764c44ad5d0efd642b0b4, type: 2}
+  - {fileID: 11400000, guid: 4a5499d68c7dcd84cbd28b2edd6c076b, type: 2}
+  - {fileID: 11400000, guid: 2d1602bfa334e8040b14279487e0bb31, type: 2}

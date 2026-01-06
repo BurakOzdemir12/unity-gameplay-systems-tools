@@ -12,7 +12,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         public override void Enter()
         {
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LocomotionBlendTreeHash,
-                stateMachine.CrossFadeDuration);
+                stateMachine.EnemyConfigSo.MovementData.CrossFadeDuration);
         }
 
         public override void Tick(float deltaTime)
@@ -33,7 +33,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             }
 
             stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 0f,
-                stateMachine.LocomotionAnimationDampTime,
+                stateMachine.EnemyConfigSo.MovementData.LocomotionAnimatorDampTime,
                 deltaTime);
         }
 

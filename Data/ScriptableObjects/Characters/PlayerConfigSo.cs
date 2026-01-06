@@ -1,4 +1,5 @@
-﻿using _Project.Systems.ClimbingSystem.ScriptableObjects;
+﻿using _Project.Data.ScriptableObjects.Animator_Profile;
+using _Project.Systems.ClimbingSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat.Dodge_Roll;
 using _Project.Systems.MovementSystem.ScriptableObjects;
@@ -18,5 +19,6 @@ namespace _Project.Data.ScriptableObjects.Characters
         public FallLandDataSo FallLandData;
         public ClimbTypeDataSo[] ClimbTypeDataSet;
         public AttackDataSo[] AttackTypeDataSet;
+        // public AnimationProfileSo AnimationProfileData;
     }
 }

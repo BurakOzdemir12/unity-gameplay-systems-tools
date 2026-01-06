@@ -14,8 +14,8 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         public override void Enter()
         {
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.CombatIdleHash,
-                stateMachine.CrossFadeDurationCombat);
-            coolDownTimer = stateMachine.AttackCoolDown;
+                stateMachine.EnemyConfigSo.CombatData.CrossFadeDurationCombat);
+            coolDownTimer = stateMachine.EnemyConfigSo.CombatData.AttackCoolDown;
         }
 
         public override void Tick(float deltaTime)

@@ -13,10 +13,10 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
         public override void Enter()
         {
-             remainingImpactTime = stateMachine.ImpactDuration;
+             remainingImpactTime = stateMachine.EnemyConfigSo.CombatData.ImpactDuration;
             
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LightImpactHash,
-                stateMachine.CrossFadeDurationCombat);
+                stateMachine.EnemyConfigSo.CombatData.CrossFadeDurationCombat);
         }
 
         public override void Tick(float deltaTime)

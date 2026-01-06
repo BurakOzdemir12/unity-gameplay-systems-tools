@@ -88,7 +88,7 @@ namespace _Project.Systems._Core.StateMachine.Player
             set => inAlertMode = value;
         }
 
-        // TODO Create scriptable object or seperated static class for stock animator hashes
+        //TODO Use animation override controller or create AnimationProfileSo for Hashes 
 
         public readonly int FreeLookSpeedParamHash = Animator.StringToHash("FreeLookSpeed");
         public readonly int FreeLookBlendTreeHash = Animator.StringToHash("FreeLookBlendTree");

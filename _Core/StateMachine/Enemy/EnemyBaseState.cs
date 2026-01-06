@@ -15,9 +15,9 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         {
             int detectedCount = Physics.OverlapSphereNonAlloc(
                 stateMachine.transform.position,
-                stateMachine.ChaseDetectionRange,
+                stateMachine.EnemyConfigSo.MovementData.ChaseDetectionRange,
                 stateMachine.buffersForChase,
-                stateMachine.ChaseDetectionLayers,
+                stateMachine.EnemyConfigSo.MovementData.ChaseDetectionLayers,
                 QueryTriggerInteraction.Ignore
             );
 
@@ -38,9 +38,9 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         {
             int detected = Physics.OverlapSphereNonAlloc(
                 stateMachine.transform.position,
-                stateMachine.AttackRange,
+                stateMachine.EnemyConfigSo.CombatData.AttackRange,
                 stateMachine.buffersForAttack,
-                stateMachine.AttackDetectionLayers,
+                stateMachine.EnemyConfigSo.CombatData.AttackDetectionLayers,
                 QueryTriggerInteraction.Ignore);
             if (detected == 0)
             {
@@ -106,7 +106,7 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             var targetRot = Quaternion.LookRotation(directionToPlayer);
             Transform t = stateMachine.transform;
             t.rotation = Quaternion.Slerp(t.rotation, targetRot,
-                stateMachine.RotationDampTime * deltaTime
+                stateMachine.EnemyConfigSo.MovementData.RotationDampTime * deltaTime
             );
         }
     }

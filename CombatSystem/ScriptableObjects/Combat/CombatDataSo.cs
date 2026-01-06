@@ -30,5 +30,6 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         private float rotationDampTimeWhileBlock = 2f;
 
         public float RotationDampTimeWhileBlock => rotationDampTimeWhileBlock;
+        
     }
 }

@@ -1,8 +1,8 @@
 using _Project.Core.Scripts;
-using _Project.Data.ScriptableObjects.Characters;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.GroundCheck;
 using _Project.Systems._Core.Health;
+using _Project.Systems._Core.ScriptableObjects.Characters;
 using _Project.Systems.ClimbingSystem.LedgeClimbing;
 using _Project.Systems.ClimbingSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.Player.States;

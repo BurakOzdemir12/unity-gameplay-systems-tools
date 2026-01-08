@@ -1,6 +1,6 @@
-using _Project.Data.ScriptableObjects.Characters;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.Health;
+using _Project.Systems._Core.ScriptableObjects.Characters;
 using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Targeting;
 using _Project.Systems.MovementSystem.Enemy.States;

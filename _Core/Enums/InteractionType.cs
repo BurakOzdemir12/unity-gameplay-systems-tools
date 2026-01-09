@@ -5,7 +5,5 @@ namespace _Project.Systems._Core.Enums
         Footstep,
         Land,
         Jump,
-        Attack,
-        GetHit
     }
 }

@@ -43,7 +43,7 @@ namespace _Project.Systems.MovementSystem.Player.States
             Move(movement * data.FreeMovementSpeed, deltaTime);
             // stateMachine.Controller.Move(movement * stateMachine.FreeMovementSpeed * deltaTime); without force receiver -gravity
 
-            if (stateMachine.InputHandler.Move.sqrMagnitude < 0.001f)
+            if (stateMachine.InputHandler.Move.sqrMagnitude < 0.0001f)
             {
                 stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, 0,
                     data.LocomotionAnimatorDampTime, deltaTime);

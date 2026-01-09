@@ -18,7 +18,7 @@ MonoBehaviour:
   rotationDampTime: 4
   freeMovementSpeed: 2
   targetingMovementSpeed: 0
-  chaseDetectionRange: 6
+  chaseDetectionRange: 20
   <ChaseDetectionLayers>k__BackingField:
     serializedVersion: 2
     m_Bits: 65536

@@ -10,6 +10,8 @@ namespace _Project.Systems.MovementSystem
 
         private GameObject currentWeaponHitbox;
 
+        public GameObject CurrentWeaponHitBox => currentWeaponHitbox;
+
         private void Start()
         {
             WeaponLogic weaponLogic = currentWeaponRoot.GetComponentInChildren<WeaponLogic>(true);

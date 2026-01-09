@@ -42,6 +42,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         {
             stateMachine.Agent.ResetPath();
             stateMachine.Agent.isStopped = true;
+            stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 0);
         }
 
         private void MoveToPlayer(float deltaTime)

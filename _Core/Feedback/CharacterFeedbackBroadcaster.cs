@@ -9,6 +9,9 @@ namespace _Project.Systems._Core.Feedback
     [RequireComponent(typeof(SurfaceDetection))]
     public class CharacterFeedbackBroadcaster : MonoBehaviour
     {
+        [SerializeField] private Transform rFoot;
+        [SerializeField] private Transform lFoot;
+
         private SurfaceDetection surfaceDetection;
 
         private void Awake()
@@ -17,18 +20,22 @@ namespace _Project.Systems._Core.Feedback
         }
 
         // Called via Animation Event (string format: "Footstep", "Land", "Attack:Claw")
-        public void OnAnimEvent(string eventData)
+        public void OnInteractionAnimEvent(string eventData)
         {
-            string[] parts = eventData.Split(':');
-            string actionName = parts[0];
-            string tag = parts.Length > 1 ? parts[1] : "";
+            Debug.Log($"[Broadcaster] OnAnimEvent called: {eventData} at {Time.time}");
+
+            var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
 
             if (System.Enum.TryParse(actionName, true, out InteractionType type))
             {
-                Vector3 pos = transform.position;
-                SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
+                if (side.Equals("Left", System.StringComparison.OrdinalIgnoreCase))
+                    spawnPosition = lFoot.position;
+                else if (side.Equals("Right", System.StringComparison.OrdinalIgnoreCase))
+                    spawnPosition = rFoot.position;
 
-                var evt = new CharacterInteractionEvent(this.gameObject, type, surface, pos, tag);
+                SurfaceType surface = surfaceDetection.GetSurfaceData(spawnPosition);
+
+                var evt = new CharacterInteractionEvent(this.gameObject, type, surface, spawnPosition, tag);
                 EventBus<CharacterInteractionEvent>.Publish(evt);
             }
             else
@@ -37,13 +44,43 @@ namespace _Project.Systems._Core.Feedback
             }
         }
 
+
+        public void OnCombatAnimEvent(string eventData)
+        {
+            var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
+
+            if (System.Enum.TryParse(actionName, true, out ActionType type))
+            {
+                Vector3 pos = transform.position;
+                SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
+                var evt = new CharacterCombatActionEvent(this.gameObject, type, surface, pos, tag);
+                EventBus<CharacterCombatActionEvent>.Publish(evt);
+            }
+            else
+            {
+                Debug.LogWarning($"Unknown Action type in AnimEvent: {actionName} on {name}");
+            }
+        }
+
+        private string SplitEventDataIntoComponents(string eventData, out string tag, out string side,
+            out Vector3 spawnPosition)
+        {
+            string[] parts = eventData.Split(':');
+            string actionName = parts[0];
+            tag = parts.Length > 1 ? parts[1] : "";
+            side = parts.Length > 2 ? parts[2] : "";
+
+            spawnPosition = transform.position;
+            return actionName;
+        }
+
         // Direct call helpers for non-animation events (e.g. from code)
         public void BroadcastAction(InteractionType type, string tag = "")
         {
-             Vector3 pos = transform.position;
-             SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
-             var evt = new CharacterInteractionEvent(this.gameObject, type, surface, pos, tag);
-             EventBus<CharacterInteractionEvent>.Publish(evt);
+            Vector3 pos = transform.position;
+            SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
+            var evt = new CharacterInteractionEvent(this.gameObject, type, surface, pos, tag);
+            EventBus<CharacterInteractionEvent>.Publish(evt);
         }
     }
 }

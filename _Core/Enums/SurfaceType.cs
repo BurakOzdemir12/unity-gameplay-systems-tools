@@ -5,6 +5,8 @@
         Dirt,
         Grass,
         Sand,
-        Metal
+        Metal,
+        Snow,
+        Water
     }
 }

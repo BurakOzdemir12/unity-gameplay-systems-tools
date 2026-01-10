@@ -8,7 +8,7 @@ namespace _Project.Systems._Core.Effects.Audio
 {
     public class SoundManager : MonoBehaviour
     {
-        private EventBinding<CharacterInteractionEvent> interactionBinding;
+        private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
         [SerializeField] private AudioSource audioSource;
 
@@ -16,29 +16,30 @@ namespace _Project.Systems._Core.Effects.Audio
         {
             audioSource = GetComponent<AudioSource>();
         }
+        //TODO Create HandleImpactActionEvent for impacts and Un/Subscribe 
 
         private void OnEnable()
         {
-            interactionBinding = new EventBinding<CharacterInteractionEvent>(OnInteraction);
-            EventBus<CharacterInteractionEvent>.Subscribe(interactionBinding);
+            interactionBinding = new EventBinding<CharacterTraversalEvent>(HandleTraversalEvent);
+            EventBus<CharacterTraversalEvent>.Subscribe(interactionBinding);
 
-            combatBinding = new EventBinding<CharacterCombatActionEvent>(OnCombatAction);
+            combatBinding = new EventBinding<CharacterCombatActionEvent>(HandleCombatActionEvent);
             EventBus<CharacterCombatActionEvent>.Subscribe(combatBinding);
         }
 
         private void OnDisable()
         {
-            EventBus<CharacterInteractionEvent>.Unsubscribe(interactionBinding);
+            EventBus<CharacterTraversalEvent>.Unsubscribe(interactionBinding);
             EventBus<CharacterCombatActionEvent>.Unsubscribe(combatBinding);
         }
 
-        private void OnInteraction(CharacterInteractionEvent @evt)
+        private void HandleTraversalEvent(CharacterTraversalEvent @evt)
         {
             if (!evt.Source.TryGetComponent(out CharacterFeedbackProfileHolder holder)) return;
             var profile = holder.Profile;
             if (profile == null) return;
 
-            if (!profile.TryGetSurfaceFeedback(
+            if (!profile.TryGetTraversalFeedback(
                     evt.Surface,
                     evt.Type,
                     evt.ActionTag,
@@ -52,13 +53,13 @@ namespace _Project.Systems._Core.Effects.Audio
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
 
-        private void OnCombatAction(CharacterCombatActionEvent evt)
+        private void HandleCombatActionEvent(CharacterCombatActionEvent evt)
         {
             if (!evt.Source.TryGetComponent(out CharacterFeedbackProfileHolder holder)) return;
             var profile = holder.Profile;
             if (profile == null) return;
 
-            if (!profile.TryGetActionFeedback(
+            if (!profile.TryGetCombatActionFeedback(
                     evt.Surface,
                     evt.Type,
                     evt.ActionTag,
@@ -70,5 +71,6 @@ namespace _Project.Systems._Core.Effects.Audio
             audioSource.PlayOneShot(clip, volume);
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
+        
     }
 }

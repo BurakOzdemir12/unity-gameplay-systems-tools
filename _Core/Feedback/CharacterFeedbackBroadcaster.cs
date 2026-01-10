@@ -20,13 +20,13 @@ namespace _Project.Systems._Core.Feedback
         }
 
         // Called via Animation Event (string format: "Footstep", "Land", "Attack:Claw")
-        public void OnInteractionAnimEvent(string eventData)
+        public void OnTraversalAnimEvent(string eventData)
         {
-            Debug.Log($"[Broadcaster] OnAnimEvent called: {eventData} at {Time.time}");
+            // Debug.Log($"[Broadcaster] OnAnimEvent called: {eventData} at {Time.time}");
 
             var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
 
-            if (System.Enum.TryParse(actionName, true, out InteractionType type))
+            if (System.Enum.TryParse(actionName, true, out TraversalType type))
             {
                 if (side.Equals("Left", System.StringComparison.OrdinalIgnoreCase))
                     spawnPosition = lFoot.position;
@@ -35,8 +35,8 @@ namespace _Project.Systems._Core.Feedback
 
                 SurfaceType surface = surfaceDetection.GetSurfaceData(spawnPosition);
 
-                var evt = new CharacterInteractionEvent(this.gameObject, type, surface, spawnPosition, tag);
-                EventBus<CharacterInteractionEvent>.Publish(evt);
+                var evt = new CharacterTraversalEvent(this.gameObject, type, surface, spawnPosition, tag);
+                EventBus<CharacterTraversalEvent>.Publish(evt);
             }
             else
             {
@@ -49,7 +49,7 @@ namespace _Project.Systems._Core.Feedback
         {
             var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
 
-            if (System.Enum.TryParse(actionName, true, out ActionType type))
+            if (System.Enum.TryParse(actionName, true, out CombatActionType type))
             {
                 Vector3 pos = transform.position;
                 SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
@@ -59,6 +59,23 @@ namespace _Project.Systems._Core.Feedback
             else
             {
                 Debug.LogWarning($"Unknown Action type in AnimEvent: {actionName} on {name}");
+            }
+        }
+
+        public void OnLootAnimEvent(string eventData)
+        {
+            var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
+
+            if (System.Enum.TryParse(actionName,true,out LootActionType type))
+            {
+                Vector3 pos = transform.position;
+                SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
+                var evt = new CharacterLootActionEvent(this.gameObject, type, surface, pos, tag);
+                EventBus<CharacterLootActionEvent>.Publish(evt);
+            }
+            else
+            {
+                Debug.LogWarning($"Unknown Action type in AnimEvent: { actionName} on {name}");
             }
         }
 
@@ -75,12 +92,12 @@ namespace _Project.Systems._Core.Feedback
         }
 
         // Direct call helpers for non-animation events (e.g. from code)
-        public void BroadcastAction(InteractionType type, string tag = "")
+        public void BroadcastAction(TraversalType type, string tag = "")
         {
             Vector3 pos = transform.position;
             SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
-            var evt = new CharacterInteractionEvent(this.gameObject, type, surface, pos, tag);
-            EventBus<CharacterInteractionEvent>.Publish(evt);
+            var evt = new CharacterTraversalEvent(this.gameObject, type, surface, pos, tag);
+            EventBus<CharacterTraversalEvent>.Publish(evt);
         }
     }
 }

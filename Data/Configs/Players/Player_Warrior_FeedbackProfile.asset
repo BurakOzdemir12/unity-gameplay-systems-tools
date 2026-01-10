@@ -15,7 +15,7 @@ MonoBehaviour:
   surfaceFeedbackList:
   - Name: Running on Dirt
     Surface: 0
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: 9e68ea1ebd76aa44c8cfa5beb9850830, type: 3}
@@ -29,10 +29,10 @@ MonoBehaviour:
     - {fileID: 8300000, guid: fdc05ea2699023143ba7e93533cc5a0b, type: 3}
     - {fileID: 8300000, guid: f26cf9ded47cf0140957490a16f85acc, type: 3}
     VFX: {fileID: 5222117830268790141, guid: 3bf0e130d015dc7458c0a9f5528c6345, type: 3}
-    Volume: 3
+    Volume: 0.4
   - Name: Running on Grass
     Surface: 1
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: 9a30499e47789df48aa9bdb1ec7b0982, type: 3}
@@ -51,10 +51,10 @@ MonoBehaviour:
     - {fileID: 8300000, guid: b04914b5801123b4dafba88cbcb5bc74, type: 3}
     - {fileID: 8300000, guid: 3ec9ef3892d02044a9d62e412eb45ffb, type: 3}
     VFX: {fileID: 0}
-    Volume: 3
+    Volume: 0.4
   - Name: Running on Snow
     Surface: 4
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: ba6dc99376c85b4468a50ff05f135162, type: 3}
@@ -68,10 +68,10 @@ MonoBehaviour:
     - {fileID: 8300000, guid: f20b2086edb0fa14194625121c56cecc, type: 3}
     - {fileID: 8300000, guid: 763409ee05f3fce4a8e83df52710a28e, type: 3}
     VFX: {fileID: 0}
-    Volume: 3
+    Volume: 0.4
   - Name: Running on Water
     Surface: 5
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: 518cdd508d673124da33c3a5cdd93f05, type: 3}
@@ -80,10 +80,10 @@ MonoBehaviour:
     - {fileID: 8300000, guid: a86f0a1ad946e34429c0e3caac1a484c, type: 3}
     - {fileID: 8300000, guid: 7b6895e4d3b50784daa1c49222e8eac5, type: 3}
     VFX: {fileID: 0}
-    Volume: 3
+    Volume: 0.4
   - Name: Running on Metal
     Surface: 3
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: b25225c72201cd740b16b95b86d57940, type: 3}
@@ -102,12 +102,15 @@ MonoBehaviour:
     - {fileID: 8300000, guid: e2b868994c062864eaa867681aeac0d8, type: 3}
     - {fileID: 8300000, guid: 034986a81cc0be546a288ff268b8783e, type: 3}
     VFX: {fileID: 0}
-    Volume: 3
+    Volume: 0.4
   actionFeedbackList:
-  - Name: Sword Attack on Dirt
+  - Name: Sword Attack Male Voice
     Surface: 0
-    Action: 0
-    SpecificTag: 
-    Clips: []
+    combatAction: 0
+    SpecificTag: Sword
+    Clips:
+    - {fileID: 8300000, guid: 17eaccd8f692843cf9652d4cec294fe2, type: 3}
     VFX: {fileID: 0}
-    Volume: 0
+    Volume: 1
+  lootActionFeedbackList: []
+  impactActionFeedbackList: []

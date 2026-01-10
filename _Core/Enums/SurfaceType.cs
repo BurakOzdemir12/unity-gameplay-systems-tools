@@ -7,6 +7,9 @@
         Sand,
         Metal,
         Snow,
-        Water
+        Water,
+        Flesh,
+        Wood,
+        Stone
     }
 }

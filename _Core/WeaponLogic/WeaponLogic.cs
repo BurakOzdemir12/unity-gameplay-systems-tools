@@ -1,4 +1,8 @@
 using System.Collections.Generic;
+using _Project.Systems._Core.Components;
+using _Project.Systems._Core.Enums;
+using _Project.Systems._Core.EventBus;
+using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems._Core.GravityForce.Interfaces;
 using _Project.Systems._Core.Health.Interfaces;
 using UnityEngine;
@@ -9,12 +13,18 @@ namespace _Project.Systems._Core.WeaponLogic
     {
         [SerializeField] private Collider characterOwnCollider;
         private readonly HashSet<Collider> hitColliders = new HashSet<Collider>();
-        
+        private SurfaceDetection surfaceDetection;
+
         private bool active;
         private float currentDamage;
         private float currentKnockbackForce;
 
         private float currentAttackMultiplier = 1f;
+
+        private void Awake()
+        {
+            surfaceDetection = GetComponent<SurfaceDetection>();
+        }
 
         private void OnEnable()
         {
@@ -36,10 +46,10 @@ namespace _Project.Systems._Core.WeaponLogic
         {
             currentDamage = finalDamage;
             currentKnockbackForce = finalKnockbackForce;
-            
+
             hitColliders.Clear();
             active = true;
-            
+
             gameObject.SetActive(true);
         }
 
@@ -50,7 +60,7 @@ namespace _Project.Systems._Core.WeaponLogic
 
             gameObject.SetActive(false);
         }
-        
+
         private void OnTriggerEnter(Collider other)
         {
             if (!active) return;
@@ -58,9 +68,14 @@ namespace _Project.Systems._Core.WeaponLogic
             if (other == characterOwnCollider) return;
             if (!hitColliders.Add(other)) return;
 
+            if (HandleImpact(other)) return;
+        }
+
+        private bool HandleImpact(Collider other)
+        {
             if (other.TryGetComponent<IDamageable>(out var damageable))
             {
-                if (damageable == null) return;
+                if (damageable == null) return true;
 
 
                 damageable.ApplyDamage(currentDamage);
@@ -68,13 +83,58 @@ namespace _Project.Systems._Core.WeaponLogic
 
             if (other.TryGetComponent<IKnockable>(out var knockable))
             {
-                if (knockable == null) return;
+                if (knockable == null) return true;
                 Vector3 dir = (other.transform.position - transform.root.position);
                 // Vector3 dir = (other.transform.position - characterOwnCollider.transform.position);
                 dir.y = 0f;
                 knockable.ApplyKnockback(currentKnockbackForce, dir);
             }
+
+            ProcessImpactEvent(other);
+
+            return false;
         }
+
+        private void ProcessImpactEvent(Collider other)
+        {
+            Vector3 weaponPosition = transform.position;
+
+            Vector3 hitPoint = other.ClosestPoint(weaponPosition);
+
+            Vector3 hitDir = (hitPoint - weaponPosition).normalized;
+
+            Vector3 normal = -hitDir;
+            normal.Normalize();
+            SurfaceType surface = surfaceDetection.GetSurfaceData(hitPoint);
+            GameObject target = other.gameObject;
+
+            //Calculate impact type by surface
+            ImpactActionType impactType = ImpactCalculations(surface);
+
+            var evt = new CharacterImpactActionEvent(this.gameObject, target, impactType, surface,
+                normal);
+            EventBus<CharacterImpactActionEvent>.Publish(evt);
+        }
+
+        private ImpactActionType ImpactCalculations(SurfaceType surface)
+        {
+            ImpactActionType impactType = ImpactActionType.generalImpact;
+            switch (surface)
+            {
+                case SurfaceType.Flesh:
+                    impactType = ImpactActionType.swordOnFlesh;
+                    break;
+                case SurfaceType.Metal:
+                    impactType = ImpactActionType.swordOnMetal;
+                    break;
+                default:
+                    return ImpactActionType.generalImpact;
+                    break;
+            }
+
+            return impactType;
+        }
+
 
         // public void SetAttackAttributes(float damageMultiplier, float knockbackForce, float attackDamage)
         // {

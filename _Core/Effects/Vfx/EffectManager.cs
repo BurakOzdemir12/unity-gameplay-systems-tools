@@ -8,7 +8,7 @@ namespace _Project.Systems._Core.Effects.Vfx
 {
     public class EffectManager : MonoBehaviour
     {
-        private EventBinding<CharacterInteractionEvent> interactionBinding;
+        private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
 
 
@@ -18,8 +18,8 @@ namespace _Project.Systems._Core.Effects.Vfx
 
         private void OnEnable()
         {
-            interactionBinding = new EventBinding<CharacterInteractionEvent>(OnInteraction);
-            EventBus<CharacterInteractionEvent>.Subscribe(interactionBinding);
+            interactionBinding = new EventBinding<CharacterTraversalEvent>(OnInteraction);
+            EventBus<CharacterTraversalEvent>.Subscribe(interactionBinding);
 
             combatBinding = new EventBinding<CharacterCombatActionEvent>(OnCombatAction);
             EventBus<CharacterCombatActionEvent>.Subscribe(combatBinding);
@@ -27,17 +27,17 @@ namespace _Project.Systems._Core.Effects.Vfx
 
         private void OnDisable()
         {
-            EventBus<CharacterInteractionEvent>.Unsubscribe(interactionBinding);
+            EventBus<CharacterTraversalEvent>.Unsubscribe(interactionBinding);
             EventBus<CharacterCombatActionEvent>.Unsubscribe(combatBinding);
         }
 
-        private void OnInteraction(CharacterInteractionEvent @evt)
+        private void OnInteraction(CharacterTraversalEvent @evt)
         {
             if (!evt.Source.TryGetComponent(out CharacterFeedbackProfileHolder holder)) return;
             var profile = holder.Profile;
             if (profile == null) return;
 
-            if (!profile.TryGetSurfaceFeedback(evt.Surface, evt.Type, evt.ActionTag, out var clip, out var vfx,
+            if (!profile.TryGetTraversalFeedback(evt.Surface, evt.Type, evt.ActionTag, out var clip, out var vfx,
                     out var volume)) return;
             SpawnVfx(vfx, evt.Position);
         }
@@ -48,7 +48,7 @@ namespace _Project.Systems._Core.Effects.Vfx
             var profile = holder.Profile;
             if (profile == null) return;
 
-            if (!profile.TryGetActionFeedback(evt.Surface, evt.Type, evt.ActionTag, out var clip, out var vfx,
+            if (!profile.TryGetCombatActionFeedback(evt.Surface, evt.Type, evt.ActionTag, out var clip, out var vfx,
                     out var volume)) return;
             SpawnVfx(vfx, evt.Position);
         }

@@ -5,7 +5,12 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
     [CreateAssetMenu(fileName = "CombatData", menuName = "Scriptable Objects/Combat/Combat Data")]
     public class CombatDataSo : ScriptableObject
     {
-        [Header("Attack settings")] [Tooltip(" Attack damage")] [SerializeField]
+        [Header("Attack settings")] [SerializeField]
+        private string attackType;
+
+        public string AttackType => attackType;
+
+        [Tooltip(" Attack damage")] [SerializeField]
         private float attackDamage = 20f;
 
         public float AttackDamage => attackDamage;
@@ -30,6 +35,5 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         private float rotationDampTimeWhileBlock = 2f;
 
         public float RotationDampTimeWhileBlock => rotationDampTimeWhileBlock;
-        
     }
 }

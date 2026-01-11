@@ -20,7 +20,7 @@ namespace _Project.Systems.CombatSystem.Enemy.States
             float finalDamage = stateMachine.EnemyConfigSo.CombatData.AttackDamage;
             float finalKnockbackForce = stateMachine.EnemyConfigSo.CombatData.AttackKnockBackForce;
 
-            stateMachine.WeaponLogic.BeginAttack(finalDamage, finalKnockbackForce);
+            stateMachine.WeaponLogic.BeginAttack(finalDamage, finalKnockbackForce, "normal");
 
             // stateMachine.WeaponLogic.SetAttackAttributes(1f, stateMachine.AttackKnockBackForce,
             //     stateMachine.AttackDamage);
@@ -36,12 +36,12 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         {
             Move(deltaTime);
 
-            
+
             RotateToPlayer(deltaTime);
             //TODO Create State Machine behaviour script (EnemyAttackStateBehaviour ) for changes between states.
 
 
-            float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0,ATTACK_TAG);
+            float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, ATTACK_TAG);
             if (normalizedTime >= 1f)
             {
                 stateMachine.SwitchState(IsInAttackRange()

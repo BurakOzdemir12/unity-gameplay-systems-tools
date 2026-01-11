@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SlashAttackData
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.PlayerControllerSystem.Combat.AttackData
   <AnimationName>k__BackingField: Sword And Shield Slash
+  <AttackType>k__BackingField: Light
   <TransitionDuration>k__BackingField: 0.1
   <ComboStateIndex>k__BackingField: 1
   <ComboAttackTime>k__BackingField: 0.9

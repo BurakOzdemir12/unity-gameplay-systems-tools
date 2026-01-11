@@ -42,22 +42,10 @@ namespace _Project.Systems._Core.Feedback
             public AudioClip[] Clips;
             public GameObject VFX;
             public float Volume;
-        }[System.Serializable]
-        public struct ImpactActionFeedbackEntry
-        {
-            public string Name;
-            public SurfaceType Surface;
-            public ImpactActionType ımpactActionType;
-            public string SpecificTag; // harvest/gatheer
-            public AudioClip[] Clips;
-            public GameObject VFX;
-            public float Volume;
         }
-
         [SerializeField] private List<SurfaceFeedbackEntry> surfaceFeedbackList;
         [SerializeField] private List<ActionFeedbackEntry> actionFeedbackList;
         [SerializeField] private List<LootActionFeddbackEntry> lootActionFeedbackList;
-        [SerializeField] private List<ImpactActionFeedbackEntry> impactActionFeedbackList;
 
         // ---------------- SURFACE ----------------
         public bool TryGetTraversalFeedback(
@@ -162,37 +150,6 @@ namespace _Project.Systems._Core.Feedback
 
             return false;
         }
-        // ---------------- IMPACT ACTION ----------------
-
-        public bool TryGetImpactActionFeedback(SurfaceType surface, ImpactActionType ımpactActionType, string tag,
-            out AudioClip clip, out GameObject vfx, out float volume)
-        {
-            clip = null;
-            vfx = null;
-            volume = 1f;
-
-            foreach (var entry in impactActionFeedbackList)
-            {
-                if (entry.Surface != surface) return false;
-                if (entry.ımpactActionType != ımpactActionType) return false;
-
-
-                bool tagMatch =
-                    string.IsNullOrEmpty(entry.SpecificTag) ||
-                    entry.SpecificTag.Equals(tag, StringComparison.OrdinalIgnoreCase);
-
-                if (!tagMatch) return false;
-
-                if (entry.Clips.Length > 0)
-                    clip = entry.Clips[UnityEngine.Random.Range(0, entry.Clips.Length)];
-
-
-                vfx = entry.VFX;
-                volume = entry.Volume <= 0 ? 1f : entry.Volume;
-                return true;
-            }
-
-            return false;
-        }
+       
     }
 }

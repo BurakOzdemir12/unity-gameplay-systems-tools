@@ -25,8 +25,9 @@ namespace _Project.Systems.CombatSystem.Player.States
             //     stateMachine.attackDamage);
             float finalDamage = stateMachine.PlayerConfigSo.CombatData.AttackDamage * attack.DamageMultiplier;
             float finalKnockbackForce = attack.KnockBackForce;
+            string attackType = attack.AttackType;
 
-            stateMachine.WeaponLogic.BeginAttack(finalDamage, finalKnockbackForce);
+            stateMachine.WeaponLogic.BeginAttack(finalDamage, finalKnockbackForce,attackType);
 
             stateMachine.Animator.CrossFadeInFixedTime(attack.AnimationName, attack.TransitionDuration);
         }

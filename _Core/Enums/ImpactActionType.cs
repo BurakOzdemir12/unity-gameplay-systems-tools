@@ -3,9 +3,10 @@
     public enum ImpactActionType
     {
         generalImpact,
-        axeOnWood,
-        pickaxeOnStone,
-        swordOnFlesh,
-        swordOnMetal,
+        sword,
+        axe,
+        pickaxe,
+        heavySword,
+        arrow,
     }
 }

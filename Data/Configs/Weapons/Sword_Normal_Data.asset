@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a01f8fa86c842e6a9b56e292f43a4ad, type: 3}
+  m_Name: Sword_Normal_Data
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems._Core.WeaponLogic.ScriptableObjects.WeaponDataSo
+  impactFeedbackProfile: {fileID: 11400000, guid: 7fda51a3909006a4784ba9e172d7558f, type: 2}
+  "\u0131mpactActionType": 1
+  damage: 0
+  knockback: 0
+  staminaCost: 0
+  durability: 0

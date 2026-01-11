@@ -5,31 +5,36 @@ using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems._Core.GravityForce.Interfaces;
 using _Project.Systems._Core.Health.Interfaces;
+using _Project.Systems._Core.WeaponLogic.ScriptableObjects;
 using UnityEngine;
 
 namespace _Project.Systems._Core.WeaponLogic
 {
     public class WeaponLogic : MonoBehaviour
     {
-        [SerializeField] private Collider characterOwnCollider;
+        [Header("Weapon Data")] [SerializeField]
+        private WeaponDataSo weaponData;
+
+        public WeaponDataSo WeaponData => weaponData;
+
+        [Header("Collider References (Set in Inspector")] [SerializeField]
+        private Collider characterOwnCollider;
+
         private readonly HashSet<Collider> hitColliders = new HashSet<Collider>();
-        private SurfaceDetection surfaceDetection;
+
+        [Header("Impact Normal Improve (Optional)")] [SerializeField]
+        private bool useNormalRaycast = true;
+
+        [SerializeField] private float normalRayDistance = 0.25f;
+        [SerializeField] private LayerMask normalRayMask = ~0;
 
         private bool active;
         private float currentDamage;
         private float currentKnockbackForce;
 
-        private float currentAttackMultiplier = 1f;
+        private string currentAttackType;
 
-        private void Awake()
-        {
-            surfaceDetection = GetComponent<SurfaceDetection>();
-        }
-
-        private void OnEnable()
-        {
-            hitColliders.Clear();
-        }
+        private void OnEnable() => hitColliders.Clear();
 
         private void OnDisable()
         {
@@ -37,15 +42,15 @@ namespace _Project.Systems._Core.WeaponLogic
             active = false;
         }
 
-        public void Initialize(Collider ownerCollider)
-        {
-            characterOwnCollider = ownerCollider;
-        }
+        public void Initialize(Collider ownerCollider) => characterOwnCollider = ownerCollider;
 
-        public void BeginAttack(float finalDamage, float finalKnockbackForce)
+        public void BeginAttack(float finalDamage, float finalKnockbackForce,
+            string impactTag)
         {
             currentDamage = finalDamage;
             currentKnockbackForce = finalKnockbackForce;
+
+            currentAttackType = impactTag;
 
             hitColliders.Clear();
             active = true;
@@ -57,7 +62,6 @@ namespace _Project.Systems._Core.WeaponLogic
         {
             active = false;
             hitColliders.Clear();
-
             gameObject.SetActive(false);
         }
 
@@ -68,79 +72,72 @@ namespace _Project.Systems._Core.WeaponLogic
             if (other == characterOwnCollider) return;
             if (!hitColliders.Add(other)) return;
 
-            if (HandleImpact(other)) return;
+
+            ApplyDamageAndKnockback(other);
+            PublishImpactEvent(other);
         }
 
-        private bool HandleImpact(Collider other)
+        private void ApplyDamageAndKnockback(Collider other)
         {
-            if (other.TryGetComponent<IDamageable>(out var damageable))
+            if (other.TryGetComponent<IDamageable>(out var damageable) && damageable != null)
             {
-                if (damageable == null) return true;
-
-
                 damageable.ApplyDamage(currentDamage);
             }
 
-            if (other.TryGetComponent<IKnockable>(out var knockable))
+            if (other.TryGetComponent<IKnockable>(out var knockable) && knockable != null)
             {
-                if (knockable == null) return true;
                 Vector3 dir = (other.transform.position - transform.root.position);
-                // Vector3 dir = (other.transform.position - characterOwnCollider.transform.position);
                 dir.y = 0f;
                 knockable.ApplyKnockback(currentKnockbackForce, dir);
             }
-
-            ProcessImpactEvent(other);
-
-            return false;
         }
 
-        private void ProcessImpactEvent(Collider other)
+        private void PublishImpactEvent(Collider other)
         {
-            Vector3 weaponPosition = transform.position;
+            Vector3 weaponPos = transform.position;
+            Vector3 hitPoint = other.ClosestPoint(weaponPos);
 
-            Vector3 hitPoint = other.ClosestPoint(weaponPosition);
+            Vector3 hitDir = (hitPoint - weaponPos);
+            Vector3 normal = hitDir.sqrMagnitude > 0.0001f ? (-hitDir.normalized) : (-transform.forward);
 
-            Vector3 hitDir = (hitPoint - weaponPosition).normalized;
-
-            Vector3 normal = -hitDir;
-            normal.Normalize();
-            SurfaceType surface = surfaceDetection.GetSurfaceData(hitPoint);
-            GameObject target = other.gameObject;
-
-            //Calculate impact type by surface
-            ImpactActionType impactType = ImpactCalculations(surface);
-
-            var evt = new CharacterImpactActionEvent(this.gameObject, target, impactType, surface,
-                normal);
-            EventBus<CharacterImpactActionEvent>.Publish(evt);
-        }
-
-        private ImpactActionType ImpactCalculations(SurfaceType surface)
-        {
-            ImpactActionType impactType = ImpactActionType.generalImpact;
-            switch (surface)
+            if (useNormalRaycast)
             {
-                case SurfaceType.Flesh:
-                    impactType = ImpactActionType.swordOnFlesh;
-                    break;
-                case SurfaceType.Metal:
-                    impactType = ImpactActionType.swordOnMetal;
-                    break;
-                default:
-                    return ImpactActionType.generalImpact;
-                    break;
+                Vector3 rayDir = (hitPoint - weaponPos);
+                if (rayDir.sqrMagnitude > 0.0001f)
+                {
+                    rayDir.Normalize();
+
+                    if (Physics.Raycast(weaponPos, rayDir, out var hit, normalRayDistance, normalRayMask,
+                            QueryTriggerInteraction.Ignore))
+                    {
+                        normal = hit.normal;
+                        hitPoint = hit.point;
+                    }
+                }
             }
 
-            return impactType;
+            SurfaceType surface = SurfaceType.Dirt; // fallback
+            var def = other.GetComponentInParent<SurfaceDefinition>();
+            if (def != null)
+            {
+                surface = def.SurfaceType;
+            }
+
+            GameObject sourceCharacter = transform.root.gameObject;
+            GameObject target = other.gameObject;
+
+            var evt = new WeaponImpactActionEvent(
+                sourceCharacter,
+                gameObject,
+                target,
+                tag: currentAttackType,
+                weaponData: weaponData,
+                surface,
+                hitPoint,
+                normal
+            );
+
+            EventBus<WeaponImpactActionEvent>.Publish(evt);
         }
-
-
-        // public void SetAttackAttributes(float damageMultiplier, float knockbackForce, float attackDamage)
-        // {
-        //     this.currentAttackMultiplier = damageMultiplier;
-        //     this.currentKnockbackForce = knockbackForce;
-        //     this.currentDamage = attackDamage;
-        // }
     }
 }

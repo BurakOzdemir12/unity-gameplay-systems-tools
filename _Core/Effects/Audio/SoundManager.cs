@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems._Core.Feedback;
@@ -10,13 +11,13 @@ namespace _Project.Systems._Core.Effects.Audio
     {
         private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
+        private EventBinding<WeaponImpactActionEvent> impactBinding;
         [SerializeField] private AudioSource audioSource;
 
         private void Awake()
         {
             audioSource = GetComponent<AudioSource>();
         }
-        //TODO Create HandleImpactActionEvent for impacts and Un/Subscribe 
 
         private void OnEnable()
         {
@@ -25,12 +26,17 @@ namespace _Project.Systems._Core.Effects.Audio
 
             combatBinding = new EventBinding<CharacterCombatActionEvent>(HandleCombatActionEvent);
             EventBus<CharacterCombatActionEvent>.Subscribe(combatBinding);
+
+            impactBinding = new EventBinding<WeaponImpactActionEvent>(HandleImpactEvent);
+            EventBus<WeaponImpactActionEvent>.Subscribe(impactBinding);
         }
+
 
         private void OnDisable()
         {
             EventBus<CharacterTraversalEvent>.Unsubscribe(interactionBinding);
             EventBus<CharacterCombatActionEvent>.Unsubscribe(combatBinding);
+            EventBus<WeaponImpactActionEvent>.Unsubscribe(impactBinding);
         }
 
         private void HandleTraversalEvent(CharacterTraversalEvent @evt)
@@ -49,7 +55,7 @@ namespace _Project.Systems._Core.Effects.Audio
                 return;
 
             audioSource.PlayOneShot(clip, volume);
-            
+
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
 
@@ -71,6 +77,31 @@ namespace _Project.Systems._Core.Effects.Audio
             audioSource.PlayOneShot(clip, volume);
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
-        
+
+        //TODO Create HandleLootActionEvent for impacts and Un/Subscribe
+        private void HandleImpactEvent(WeaponImpactActionEvent evt)
+        {
+            var weaponData = evt.WeaponData;
+            if (weaponData == null) return;
+
+            var profile = weaponData.impactFeedbackProfile;
+            if (profile == null) return;
+
+            ImpactActionType impactType = weaponData.ımpactActionType;
+
+            if (!profile.TryGetImpactActionFeedback(
+                    evt.Surface,
+                    impactType,
+                    evt.Tag,
+                    out var clip,
+                    out _,
+                    out var volume
+                )) return;
+            
+            audioSource.PlayOneShot(clip, volume);
+            
+            // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
+
+        }
     }
 }

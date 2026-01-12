@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c7a6565b9494151847d967f0bee13de, type: 3}
   m_Name: Enemy_SwordsMan_CombatData
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.CombatSystem.ScriptableObjects.Combat.EnemyCombatDataSo
-  attackDamage: 25
+  attackDamage: 0
   rotationDampTimeWhileAttack: 0.1
   impactDuration: 0.75
   blockingLayerChangeSpeed: 0.1

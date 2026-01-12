@@ -30,6 +30,8 @@ namespace _Project.Systems._Core.Health
             OnTakeDamage?.Invoke();
         }
 
+      
+
         private void HandlePlayerDeath()
         {
             OnDeath?.Invoke();

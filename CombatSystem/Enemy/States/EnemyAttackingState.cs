@@ -20,7 +20,7 @@ namespace _Project.Systems.CombatSystem.Enemy.States
             float finalDamage = stateMachine.EnemyConfigSo.CombatData.AttackDamage;
             float finalKnockbackForce = stateMachine.EnemyConfigSo.CombatData.AttackKnockBackForce;
 
-            stateMachine.WeaponLogic.BeginAttack(finalDamage, finalKnockbackForce, "normal");
+            stateMachine.WeaponLogic.SetupAttack(finalDamage, finalKnockbackForce, "normal");
 
             // stateMachine.WeaponLogic.SetAttackAttributes(1f, stateMachine.AttackKnockBackForce,
             //     stateMachine.AttackDamage);

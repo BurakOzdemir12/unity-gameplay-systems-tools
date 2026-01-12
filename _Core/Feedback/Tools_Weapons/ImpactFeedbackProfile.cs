@@ -14,8 +14,11 @@ namespace _Project.Systems._Core.Feedback.Tools_Weapons
         {
             public string Name;
             public SurfaceType Surface;
-            public ImpactActionType ımpactActionType;
-            public string SpecificTag; // Use for specific impact actions heavy/light attack, breaking, etc.
+            public WeaponToolType ımpactActionType;
+
+            [Tooltip("Can use for specific attack or swing types like light/heavy attack, breaking, etc.")]
+            public string SpecificTag;
+
             public AudioClip[] Clips;
             public GameObject VFX;
             public float Volume;
@@ -25,7 +28,7 @@ namespace _Project.Systems._Core.Feedback.Tools_Weapons
 
         // ---------------- IMPACT ACTION ----------------
 
-        public bool TryGetImpactActionFeedback(SurfaceType surface, ImpactActionType ımpactActionType, string tag,
+        public bool TryGetImpactActionFeedback(SurfaceType surface, WeaponToolType ımpactActionType, string tag,
             out AudioClip clip, out GameObject vfx, out float volume)
         {
             clip = null;
@@ -41,11 +44,11 @@ namespace _Project.Systems._Core.Feedback.Tools_Weapons
 
                 bool isGenericTag = string.IsNullOrEmpty(entry.SpecificTag);
 
-                bool isMatch =
+                bool isTagMatch =
                     isGenericTag ||
                     entry.SpecificTag.Equals(tag, StringComparison.OrdinalIgnoreCase);
 
-                if (!isMatch) continue;
+                if (!isTagMatch) continue;
 
                 if (isGenericTag)
                 {

@@ -26,6 +26,7 @@ namespace _Project.Systems._Core.Feedback
             public string Name;
             public SurfaceType Surface;
             public CombatActionType combatAction;
+            public WeaponToolType weaponToolType;
             public string SpecificTag; // Sword / Claw
             public AudioClip[] Clips;
             public GameObject VFX;
@@ -43,6 +44,7 @@ namespace _Project.Systems._Core.Feedback
             public GameObject VFX;
             public float Volume;
         }
+
         [SerializeField] private List<SurfaceFeedbackEntry> surfaceFeedbackList;
         [SerializeField] private List<ActionFeedbackEntry> actionFeedbackList;
         [SerializeField] private List<LootActionFeddbackEntry> lootActionFeedbackList;
@@ -86,6 +88,7 @@ namespace _Project.Systems._Core.Feedback
         public bool TryGetCombatActionFeedback(
             SurfaceType surface,
             CombatActionType combatAction,
+            WeaponToolType weaponToolType,
             string tag,
             out AudioClip clip,
             out GameObject vfx,
@@ -95,17 +98,18 @@ namespace _Project.Systems._Core.Feedback
             vfx = null;
             volume = 1f;
 
+
             foreach (var entry in actionFeedbackList)
             {
-                if (entry.Surface != surface) return false;
-                if (entry.combatAction != combatAction) return false;
+                if (entry.Surface != surface) continue;
+                if (entry.combatAction != combatAction) continue;
+                if (entry.weaponToolType != weaponToolType) continue;
 
+                bool isGeneric = string.IsNullOrEmpty(entry.SpecificTag);
+                bool tagMatch = isGeneric ||
+                                entry.SpecificTag.Equals(tag, StringComparison.OrdinalIgnoreCase);
 
-                bool tagMatch =
-                    string.IsNullOrEmpty(entry.SpecificTag) ||
-                    entry.SpecificTag.Equals(tag, StringComparison.OrdinalIgnoreCase);
-
-                if (!tagMatch) return false;
+                if (!tagMatch) continue;
 
                 if (entry.Clips.Length > 0)
                     clip = entry.Clips[UnityEngine.Random.Range(0, entry.Clips.Length)];
@@ -129,15 +133,15 @@ namespace _Project.Systems._Core.Feedback
 
             foreach (var entry in lootActionFeedbackList)
             {
-                if (entry.Surface != surface) return false;
-                if (entry.lootAction != lootAction) return false;
+                if (entry.Surface != surface) continue;
+                if (entry.lootAction != lootAction) continue;
 
 
                 bool tagMatch =
                     string.IsNullOrEmpty(entry.SpecificTag) ||
                     entry.SpecificTag.Equals(tag, StringComparison.OrdinalIgnoreCase);
 
-                if (!tagMatch) return false;
+                if (!tagMatch) continue;
 
                 if (entry.Clips.Length > 0)
                     clip = entry.Clips[UnityEngine.Random.Range(0, entry.Clips.Length)];
@@ -150,6 +154,5 @@ namespace _Project.Systems._Core.Feedback
 
             return false;
         }
-       
     }
 }

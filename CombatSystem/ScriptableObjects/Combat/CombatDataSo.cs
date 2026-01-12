@@ -5,10 +5,7 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
     [CreateAssetMenu(fileName = "CombatData", menuName = "Scriptable Objects/Combat/Combat Data")]
     public class CombatDataSo : ScriptableObject
     {
-        [Header("Attack settings")] [SerializeField]
-        private string attackType;
-
-        public string AttackType => attackType;
+        [Header("Attack settings")] 
 
         [Tooltip(" Attack damage")] [SerializeField]
         private float attackDamage = 20f;

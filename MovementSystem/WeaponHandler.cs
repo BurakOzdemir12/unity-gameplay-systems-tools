@@ -9,8 +9,10 @@ namespace _Project.Systems.MovementSystem
         private GameObject currentWeaponRoot;
 
         private GameObject currentWeaponHitbox;
-
         public GameObject CurrentWeaponHitBox => currentWeaponHitbox;
+
+        private WeaponLogic currentWeaponLogic;
+        public WeaponLogic CurrentWeaponLogic => currentWeaponLogic;
 
         private void Start()
         {
@@ -21,6 +23,7 @@ namespace _Project.Systems.MovementSystem
                 return;
             }
 
+            currentWeaponLogic = weaponLogic;
             currentWeaponHitbox = weaponLogic.gameObject;
             currentWeaponHitbox.SetActive(false);
         }
@@ -28,13 +31,15 @@ namespace _Project.Systems.MovementSystem
         private void EnableWeapon()
         {
             if (currentWeaponHitbox != null)
-                currentWeaponHitbox.SetActive(true);
+                currentWeaponLogic.PerformAttack();
+            // currentWeaponHitbox.SetActive(true);
         }
 
         private void DisableWeapon()
         {
             if (currentWeaponHitbox != null)
-                currentWeaponHitbox.SetActive(false);
+                currentWeaponLogic.EndAttack();
+            // currentWeaponHitbox.SetActive(false);
         }
     }
 }

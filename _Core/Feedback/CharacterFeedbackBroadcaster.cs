@@ -2,6 +2,7 @@ using _Project.Systems._Core.Components;
 using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
+using _Project.Systems.MovementSystem;
 using UnityEngine;
 
 namespace _Project.Systems._Core.Feedback
@@ -13,10 +14,21 @@ namespace _Project.Systems._Core.Feedback
         [SerializeField] private Transform lFoot;
 
         private SurfaceDetection surfaceDetection;
+        private WeaponHandler weaponHandler;
 
         private void Awake()
         {
             surfaceDetection = GetComponent<SurfaceDetection>();
+            weaponHandler = GetComponent<WeaponHandler>();
+            
+            if (surfaceDetection == null)
+            {
+                Debug.LogError($"{name}: Surface Detection not found on character!", this);
+            }
+            if (weaponHandler == null)
+            {
+                Debug.LogError($"{name}: WeaponHandler not found on character!", this);
+            }
         }
 
         // Called via Animation Event (string format: "Footstep", "Land", "Attack:Claw")
@@ -53,7 +65,8 @@ namespace _Project.Systems._Core.Feedback
             {
                 Vector3 pos = transform.position;
                 SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
-                var evt = new CharacterCombatActionEvent(this.gameObject, type, surface, pos, tag);
+                WeaponToolType weaponToolType = weaponHandler.CurrentWeaponLogic.WeaponData.weaponToolType;
+                var evt = new CharacterCombatActionEvent(this.gameObject, type, weaponToolType, surface, pos, tag);
                 EventBus<CharacterCombatActionEvent>.Publish(evt);
             }
             else
@@ -66,7 +79,7 @@ namespace _Project.Systems._Core.Feedback
         {
             var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
 
-            if (System.Enum.TryParse(actionName,true,out LootActionType type))
+            if (System.Enum.TryParse(actionName, true, out LootActionType type))
             {
                 Vector3 pos = transform.position;
                 SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
@@ -75,7 +88,7 @@ namespace _Project.Systems._Core.Feedback
             }
             else
             {
-                Debug.LogWarning($"Unknown Action type in AnimEvent: { actionName} on {name}");
+                Debug.LogWarning($"Unknown Action type in AnimEvent: {actionName} on {name}");
             }
         }
 

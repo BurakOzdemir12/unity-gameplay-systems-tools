@@ -8,7 +8,7 @@ namespace _Project.Systems._Core.WeaponLogic.ScriptableObjects
     public class WeaponDataSo : ScriptableObject
     {
         public ImpactFeedbackProfile impactFeedbackProfile;
-        public ImpactActionType ımpactActionType;
+        public WeaponToolType weaponToolType;
 
         public float damage;
         public float knockback;

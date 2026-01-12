@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using _Project.Systems._Core.Components;
 using _Project.Systems._Core.Enums;
@@ -28,54 +29,60 @@ namespace _Project.Systems._Core.WeaponLogic
         [SerializeField] private float normalRayDistance = 0.25f;
         [SerializeField] private LayerMask normalRayMask = ~0;
 
-        private bool active;
+        private bool hitWindowActive;
         private float currentDamage;
         private float currentKnockbackForce;
 
         private string currentAttackType;
+        private Vector3 impactPointDebug;
 
         private void OnEnable() => hitColliders.Clear();
 
         private void OnDisable()
         {
             hitColliders.Clear();
-            active = false;
+            hitWindowActive = false;
         }
 
         public void Initialize(Collider ownerCollider) => characterOwnCollider = ownerCollider;
 
-        public void BeginAttack(float finalDamage, float finalKnockbackForce,
+        
+        public void SetupAttack(float finalDamage, float finalKnockbackForce,
             string impactTag)
         {
             currentDamage = finalDamage;
             currentKnockbackForce = finalKnockbackForce;
-
             currentAttackType = impactTag;
-
+        }
+        
+        public void PerformAttack()
+        {
             hitColliders.Clear();
-            active = true;
+            hitWindowActive = true;
 
             gameObject.SetActive(true);
         }
-
         public void EndAttack()
         {
-            active = false;
+            hitWindowActive = false;
             hitColliders.Clear();
             gameObject.SetActive(false);
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!active) return;
+            if (!hitWindowActive) return;
 
             if (other == characterOwnCollider) return;
             if (!hitColliders.Add(other)) return;
 
+            Debug.Log("Hit collider " + other.name +": Tag:"+ other.tag);
 
             ApplyDamageAndKnockback(other);
             PublishImpactEvent(other);
         }
+
+        #region Apply Damage And Knockback
 
         private void ApplyDamageAndKnockback(Collider other)
         {
@@ -92,8 +99,13 @@ namespace _Project.Systems._Core.WeaponLogic
             }
         }
 
+        #endregion
+
+        #region Impact Events
+
         private void PublishImpactEvent(Collider other)
         {
+
             Vector3 weaponPos = transform.position;
             Vector3 hitPoint = other.ClosestPoint(weaponPos);
 
@@ -136,8 +148,16 @@ namespace _Project.Systems._Core.WeaponLogic
                 hitPoint,
                 normal
             );
-
+            impactPointDebug = hitPoint;
             EventBus<WeaponImpactActionEvent>.Publish(evt);
+        }
+
+        #endregion
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = hitColliders.Count > 0 ? Color.paleGreen : Color.red;
+            Gizmos.DrawWireCube(impactPointDebug, Vector3.one * 0.2f);
         }
     }
 }

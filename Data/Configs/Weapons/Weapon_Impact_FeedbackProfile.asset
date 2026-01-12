@@ -15,25 +15,34 @@ MonoBehaviour:
   impactActionFeedbackList:
   - Name: Impact to Flesh
     Surface: 6
-    "\u0131mpactActionType": 1
+    "\u0131mpactActionType": 2
     SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: bf41174656142473e91f5a9cd18a0a6f, type: 3}
-    VFX: {fileID: 0}
-    Volume: 1
+    - {fileID: 8300000, guid: 253e5321d96024a238d5ba8c5af88d16, type: 3}
+    - {fileID: 8300000, guid: 5a42c7d8eeef34136900d10be894483b, type: 3}
+    - {fileID: 8300000, guid: 0d37e6c4b00564acb902eac4803eee82, type: 3}
+    - {fileID: 8300000, guid: 07657fe7b15f249de9e254b7f3dc9646, type: 3}
+    VFX: {fileID: 2818207238856855281, guid: 3ba173983e3007d49b6b712016a29020, type: 3}
+    Volume: 0.5
   - Name: Impact to Metal
     Surface: 3
-    "\u0131mpactActionType": 1
-    SpecificTag: Light
-    Clips:
-    - {fileID: 8300000, guid: 112f4f7b9609442a6baf072e594d13bf, type: 3}
-    VFX: {fileID: 0}
-    Volume: 1
-  - Name: Impact to Dirt
-    Surface: 0
-    "\u0131mpactActionType": 1
+    "\u0131mpactActionType": 2
     SpecificTag: 
     Clips:
-    - {fileID: 8300000, guid: 705f86f289138439b8c519a5dfc9a81e, type: 3}
-    VFX: {fileID: 0}
-    Volume: 1
+    - {fileID: 8300000, guid: 112f4f7b9609442a6baf072e594d13bf, type: 3}
+    VFX: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d, type: 3}
+    Volume: 0.5
+  - Name: Impact to Dirt
+    Surface: 0
+    "\u0131mpactActionType": 2
+    SpecificTag: 
+    Clips:
+    - {fileID: 8300000, guid: 286b7f63f77e74b54b7014b48cf14ebd, type: 3}
+    - {fileID: 8300000, guid: 7f1b5a7e8b08b4f9591f1f6f1751330a, type: 3}
+    - {fileID: 8300000, guid: 1d6e7e82954724dc5939c52ed921779b, type: 3}
+    - {fileID: 8300000, guid: 49b7a02858a754fce8a57d148abfbba7, type: 3}
+    - {fileID: 8300000, guid: 124d7ae73acfc44cdb2f693c33a6c622, type: 3}
+    - {fileID: 8300000, guid: 44d6ce5e5e611480984f4d11b42d27d6, type: 3}
+    VFX: {fileID: 1000011190285628, guid: beb3acff7ab73944fb8f470f24d74ed3, type: 3}
+    Volume: 0.5

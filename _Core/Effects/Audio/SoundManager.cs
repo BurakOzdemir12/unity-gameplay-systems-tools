@@ -68,6 +68,7 @@ namespace _Project.Systems._Core.Effects.Audio
             if (!profile.TryGetCombatActionFeedback(
                     evt.Surface,
                     evt.Type,
+                    evt.WeaponToolType,
                     evt.ActionTag,
                     out var clip,
                     out _,
@@ -87,11 +88,11 @@ namespace _Project.Systems._Core.Effects.Audio
             var profile = weaponData.impactFeedbackProfile;
             if (profile == null) return;
 
-            ImpactActionType impactType = weaponData.ımpactActionType;
+            WeaponToolType currentWeaponToolType = weaponData.weaponToolType;
 
             if (!profile.TryGetImpactActionFeedback(
                     evt.Surface,
-                    impactType,
+                    currentWeaponToolType,
                     evt.Tag,
                     out var clip,
                     out _,

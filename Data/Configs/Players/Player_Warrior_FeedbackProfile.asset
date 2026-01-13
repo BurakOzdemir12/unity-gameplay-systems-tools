@@ -107,7 +107,7 @@ MonoBehaviour:
   - Name: Sword Attack Male Voice
     Surface: 0
     combatAction: 0
-    weaponToolType: 2
+    weaponType: 2
     SpecificTag: Light
     Clips:
     - {fileID: 8300000, guid: 2a1cfd41c98d1460d816233f23e6152f, type: 3}
@@ -117,11 +117,19 @@ MonoBehaviour:
   - Name: 'Sword Heavy Attack Male Voice '
     Surface: 0
     combatAction: 0
-    weaponToolType: 2
+    weaponType: 2
     SpecificTag: Heavy
     Clips:
     - {fileID: 8300000, guid: 962fed30cb2044e488376207e9cd60f3, type: 3}
     - {fileID: 8300000, guid: 940905f8a21c145119b64f16e7131c47, type: 3}
     VFX: {fileID: 0}
     Volume: 0.5
-  lootActionFeedbackList: []
+  lootActionFeedbackList:
+  - Name: 
+    Surface: 0
+    lootAction: 0
+    ToolType: 0
+    SpecificTag: 
+    Clips: []
+    VFX: {fileID: 0}
+    Volume: 0

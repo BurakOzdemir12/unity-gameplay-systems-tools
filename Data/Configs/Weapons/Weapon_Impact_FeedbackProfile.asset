@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Weapon_Impact_FeedbackProfile
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems._Core.Feedback.Tools_Weapons.ImpactFeedbackProfile
   impactActionFeedbackList:
-  - Name: Impact to Flesh
+  - Name: Sword Impact to Flesh
     Surface: 6
-    "\u0131mpactActionType": 2
+    impactActionType: 2
     SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: bf41174656142473e91f5a9cd18a0a6f, type: 3}
@@ -25,17 +25,17 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 07657fe7b15f249de9e254b7f3dc9646, type: 3}
     VFX: {fileID: 2818207238856855281, guid: 3ba173983e3007d49b6b712016a29020, type: 3}
     Volume: 0.5
-  - Name: Impact to Metal
+  - Name: Sword Impact to Metal
     Surface: 3
-    "\u0131mpactActionType": 2
+    impactActionType: 2
     SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: 112f4f7b9609442a6baf072e594d13bf, type: 3}
     VFX: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d, type: 3}
     Volume: 0.5
-  - Name: Impact to Dirt
+  - Name: Sword Impact to Dirt
     Surface: 0
-    "\u0131mpactActionType": 2
+    impactActionType: 2
     SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: 286b7f63f77e74b54b7014b48cf14ebd, type: 3}

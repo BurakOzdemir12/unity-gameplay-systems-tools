@@ -9,17 +9,17 @@ namespace _Project.Systems._Core.EventBus.Events
         public GameObject Source;
         public SurfaceType Surface;
         public CombatActionType Type;
-        public WeaponToolType WeaponToolType;
+        public WeaponType WeaponType;
         public string ActionTag;
         public Vector3 Position;
 
-        public CharacterCombatActionEvent(GameObject source, CombatActionType type, WeaponToolType weaponToolType,
+        public CharacterCombatActionEvent(GameObject source, CombatActionType type, WeaponType weaponType,
             SurfaceType surface, Vector3 position,
             string actionTag = "")
         {
             Source = source;
             Type = type;
-            WeaponToolType = weaponToolType;
+            WeaponType = weaponType;
             Surface = surface;
             Position = position;
             ActionTag = actionTag;

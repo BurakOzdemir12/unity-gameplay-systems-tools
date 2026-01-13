@@ -11,7 +11,8 @@ namespace _Project.Systems._Core.Effects.Vfx
     {
         private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
-        private EventBinding<WeaponImpactActionEvent> wImpactBinding;
+        private EventBinding<WeaponImpactActionEvent> weaponImpactBinding;
+        private EventBinding<ToolImpactActionEvent> toolImpactBinding;
 
         [SerializeField] private Transform vfxParent;
 
@@ -27,8 +28,11 @@ namespace _Project.Systems._Core.Effects.Vfx
             combatBinding = new EventBinding<CharacterCombatActionEvent>(HandleCombatActionEvent);
             EventBus<CharacterCombatActionEvent>.Subscribe(combatBinding);
 
-            wImpactBinding = new EventBinding<WeaponImpactActionEvent>(HandleImpactEvent);
-            EventBus<WeaponImpactActionEvent>.Subscribe(wImpactBinding);
+            weaponImpactBinding = new EventBinding<WeaponImpactActionEvent>(HandleWeaponImpactEvent);
+            EventBus<WeaponImpactActionEvent>.Subscribe(weaponImpactBinding);
+            
+            toolImpactBinding = new EventBinding<ToolImpactActionEvent>(HandleToolImpact);
+            EventBus<ToolImpactActionEvent>.Subscribe(toolImpactBinding);
         }
 
 
@@ -36,7 +40,8 @@ namespace _Project.Systems._Core.Effects.Vfx
         {
             EventBus<CharacterTraversalEvent>.Unsubscribe(interactionBinding);
             EventBus<CharacterCombatActionEvent>.Unsubscribe(combatBinding);
-            EventBus<WeaponImpactActionEvent>.Unsubscribe(wImpactBinding);
+            EventBus<WeaponImpactActionEvent>.Unsubscribe(weaponImpactBinding);
+            EventBus<ToolImpactActionEvent>.Unsubscribe(toolImpactBinding);
         }
 
         private void HandleTraversalEvent(CharacterTraversalEvent @evt)
@@ -56,25 +61,48 @@ namespace _Project.Systems._Core.Effects.Vfx
             var profile = holder.Profile;
             if (profile == null) return;
 
-            if (!profile.TryGetCombatActionFeedback(evt.Surface, evt.Type, evt.WeaponToolType, evt.ActionTag,
+            if (!profile.TryGetCombatActionFeedback(evt.Surface, evt.Type, evt.WeaponType, evt.ActionTag,
                     out var clip, out var vfx,
                     out var volume)) return;
             SpawnVfx(vfx, evt.Position, Quaternion.identity);
         }
 
-        private void HandleImpactEvent(WeaponImpactActionEvent evt)
+        private void HandleWeaponImpactEvent(WeaponImpactActionEvent evt)
         {
             if (evt.SourceTool == null) return;
 
             var weaponData = evt.WeaponData;
             if (weaponData == null) return;
 
-            var profile = weaponData.impactFeedbackProfile;
+            var profile = weaponData.weaponImpactFeedbackProfile;
             if (profile == null) return;
 
-            WeaponToolType impactType = weaponData.weaponToolType;
+            WeaponType impactType = weaponData.weaponType;
 
-            if (!profile.TryGetImpactActionFeedback(
+            if (!profile.TryGetWeaponImpactActionFeedback(
+                    evt.Surface,
+                    impactType,
+                    evt.Tag,
+                    out _,
+                    out var vfx,
+                    out _)) return;
+
+            SpawnVfx(vfx, evt.Position, Quaternion.LookRotation(evt.Normal));
+        }
+
+        private void HandleToolImpact(ToolImpactActionEvent evt)
+        {
+            if (evt.SourceTool == null) return;
+
+            var toolData = evt.ToolData;
+            if (toolData == null) return;
+
+            var profile = toolData.toolImpactFeedbackProfile;
+            if (profile == null) return;
+
+            ToolType impactType = toolData.toolType;
+
+            if (!profile.TryGetToolImpactActionFeedback(
                     evt.Surface,
                     impactType,
                     evt.Tag,

@@ -2,8 +2,8 @@
 {
     public enum LootActionType
     {
-        pickaxeSwing,
-        axeSwing,
+        chopTree,
+        mining,
         gather,
         skinPeeling,
     }

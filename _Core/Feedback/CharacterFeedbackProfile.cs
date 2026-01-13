@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _Project.Systems._Core.Feedback
 {
-    [CreateAssetMenu(fileName = "NewCharacterProfile", menuName = "Systems/Feedback/Character Profile")]
+    [CreateAssetMenu(fileName = "NewCharacterProfile", menuName = "Scriptable Objects/Feedback/Character Profile")]
     public class CharacterFeedbackProfile : ScriptableObject
     {
         [System.Serializable]
@@ -21,12 +21,12 @@ namespace _Project.Systems._Core.Feedback
         }
 
         [System.Serializable]
-        public struct ActionFeedbackEntry
+        public struct CombatActionFeedbackEntry
         {
             public string Name;
             public SurfaceType Surface;
             public CombatActionType combatAction;
-            public WeaponToolType weaponToolType;
+            public WeaponType weaponType;
             public string SpecificTag; // Sword / Claw
             public AudioClip[] Clips;
             public GameObject VFX;
@@ -34,11 +34,12 @@ namespace _Project.Systems._Core.Feedback
         }
 
         [System.Serializable]
-        public struct LootActionFeddbackEntry
+        public struct LootActionFeedbackEntry
         {
             public string Name;
             public SurfaceType Surface;
             public LootActionType lootAction;
+            public ToolType ToolType;
             public string SpecificTag; // harvest/gatheer
             public AudioClip[] Clips;
             public GameObject VFX;
@@ -46,8 +47,8 @@ namespace _Project.Systems._Core.Feedback
         }
 
         [SerializeField] private List<SurfaceFeedbackEntry> surfaceFeedbackList;
-        [SerializeField] private List<ActionFeedbackEntry> actionFeedbackList;
-        [SerializeField] private List<LootActionFeddbackEntry> lootActionFeedbackList;
+        [SerializeField] private List<CombatActionFeedbackEntry> actionFeedbackList;
+        [SerializeField] private List<LootActionFeedbackEntry> lootActionFeedbackList;
 
         // ---------------- SURFACE ----------------
         public bool TryGetTraversalFeedback(
@@ -88,7 +89,7 @@ namespace _Project.Systems._Core.Feedback
         public bool TryGetCombatActionFeedback(
             SurfaceType surface,
             CombatActionType combatAction,
-            WeaponToolType weaponToolType,
+            WeaponType weaponType,
             string tag,
             out AudioClip clip,
             out GameObject vfx,
@@ -103,7 +104,7 @@ namespace _Project.Systems._Core.Feedback
             {
                 if (entry.Surface != surface) continue;
                 if (entry.combatAction != combatAction) continue;
-                if (entry.weaponToolType != weaponToolType) continue;
+                if (entry.weaponType != weaponType) continue;
 
                 bool isGeneric = string.IsNullOrEmpty(entry.SpecificTag);
                 bool tagMatch = isGeneric ||
@@ -124,7 +125,8 @@ namespace _Project.Systems._Core.Feedback
         }
         // ---------------- LOOT ACTION ----------------
 
-        public bool TryGetLootActionFeedback(SurfaceType surface, LootActionType lootAction, string tag,
+        public bool TryGetLootActionFeedback(SurfaceType surface,
+            LootActionType lootAction,ToolType toolType, string tag,
             out AudioClip clip, out GameObject vfx, out float volume)
         {
             clip = null;

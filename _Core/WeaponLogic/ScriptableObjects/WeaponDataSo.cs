@@ -7,9 +7,10 @@ namespace _Project.Systems._Core.WeaponLogic.ScriptableObjects
     [CreateAssetMenu(fileName = "WeaponData", menuName = "Scriptable Objects/Weapon/Weapon Data")]
     public class WeaponDataSo : ScriptableObject
     {
-        public ImpactFeedbackProfile impactFeedbackProfile;
-        public WeaponToolType weaponToolType;
+        public WeaponImpactFeedbackProfile weaponImpactFeedbackProfile;
+        public WeaponType weaponType;
 
+        public GameObject weaponPrefab;
         public float damage;
         public float knockback;
         public float staminaCost;

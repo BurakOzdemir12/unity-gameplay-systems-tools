@@ -11,7 +11,8 @@ namespace _Project.Systems._Core.Effects.Audio
     {
         private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
-        private EventBinding<WeaponImpactActionEvent> impactBinding;
+        private EventBinding<WeaponImpactActionEvent> weaponImpactBinding;
+        private EventBinding<ToolImpactActionEvent> toolImpactBinding;
         [SerializeField] private AudioSource audioSource;
 
         private void Awake()
@@ -27,8 +28,11 @@ namespace _Project.Systems._Core.Effects.Audio
             combatBinding = new EventBinding<CharacterCombatActionEvent>(HandleCombatActionEvent);
             EventBus<CharacterCombatActionEvent>.Subscribe(combatBinding);
 
-            impactBinding = new EventBinding<WeaponImpactActionEvent>(HandleImpactEvent);
-            EventBus<WeaponImpactActionEvent>.Subscribe(impactBinding);
+            weaponImpactBinding = new EventBinding<WeaponImpactActionEvent>(HandleWeaponImpactEvent);
+            EventBus<WeaponImpactActionEvent>.Subscribe(weaponImpactBinding);
+
+            toolImpactBinding = new EventBinding<ToolImpactActionEvent>(HandleToolImpactEvent);
+            EventBus<ToolImpactActionEvent>.Subscribe(toolImpactBinding);
         }
 
 
@@ -36,7 +40,9 @@ namespace _Project.Systems._Core.Effects.Audio
         {
             EventBus<CharacterTraversalEvent>.Unsubscribe(interactionBinding);
             EventBus<CharacterCombatActionEvent>.Unsubscribe(combatBinding);
-            EventBus<WeaponImpactActionEvent>.Unsubscribe(impactBinding);
+            EventBus<WeaponImpactActionEvent>.Unsubscribe(weaponImpactBinding);
+            EventBus<ToolImpactActionEvent>.Unsubscribe(toolImpactBinding);
+            
         }
 
         private void HandleTraversalEvent(CharacterTraversalEvent @evt)
@@ -68,7 +74,7 @@ namespace _Project.Systems._Core.Effects.Audio
             if (!profile.TryGetCombatActionFeedback(
                     evt.Surface,
                     evt.Type,
-                    evt.WeaponToolType,
+                    evt.WeaponType,
                     evt.ActionTag,
                     out var clip,
                     out _,
@@ -80,29 +86,50 @@ namespace _Project.Systems._Core.Effects.Audio
         }
 
         //TODO Create HandleLootActionEvent for impacts and Un/Subscribe
-        private void HandleImpactEvent(WeaponImpactActionEvent evt)
+        private void HandleWeaponImpactEvent(WeaponImpactActionEvent evt)
         {
             var weaponData = evt.WeaponData;
             if (weaponData == null) return;
 
-            var profile = weaponData.impactFeedbackProfile;
+            var profile = weaponData.weaponImpactFeedbackProfile;
             if (profile == null) return;
 
-            WeaponToolType currentWeaponToolType = weaponData.weaponToolType;
+            WeaponType currentWeaponType = weaponData.weaponType;
 
-            if (!profile.TryGetImpactActionFeedback(
+            if (!profile.TryGetWeaponImpactActionFeedback(
                     evt.Surface,
-                    currentWeaponToolType,
+                    currentWeaponType,
                     evt.Tag,
                     out var clip,
                     out _,
                     out var volume
                 )) return;
-            
-            audioSource.PlayOneShot(clip, volume);
-            
-            // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
 
+            audioSource.PlayOneShot(clip, volume);
+
+            // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
+        }
+
+        private void HandleToolImpactEvent(ToolImpactActionEvent evt)
+        {
+            var toolData = evt.ToolData;
+            if (toolData == null) return;
+
+            var profile = toolData.toolImpactFeedbackProfile;
+            if (profile == null) return;
+
+            ToolType currentToolType = toolData.toolType;
+
+            if (!profile.TryGetToolImpactActionFeedback(
+                    evt.Surface,
+                    currentToolType,
+                    evt.Tag,
+                    out var clip,
+                    out _,
+                    out var volume
+                )) return;
+
+            audioSource.PlayOneShot(clip, volume);
         }
     }
 }

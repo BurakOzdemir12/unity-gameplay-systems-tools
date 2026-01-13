@@ -2,6 +2,7 @@ using _Project.Systems._Core.Components;
 using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
+using _Project.Systems._Core.Weapon_Tool_Handlers;
 using _Project.Systems.MovementSystem;
 using UnityEngine;
 
@@ -15,16 +16,18 @@ namespace _Project.Systems._Core.Feedback
 
         private SurfaceDetection surfaceDetection;
         private WeaponHandler weaponHandler;
+        private ToolHandler toolHandler;
 
         private void Awake()
         {
             surfaceDetection = GetComponent<SurfaceDetection>();
             weaponHandler = GetComponent<WeaponHandler>();
-            
+
             if (surfaceDetection == null)
             {
                 Debug.LogError($"{name}: Surface Detection not found on character!", this);
             }
+
             if (weaponHandler == null)
             {
                 Debug.LogError($"{name}: WeaponHandler not found on character!", this);
@@ -65,8 +68,8 @@ namespace _Project.Systems._Core.Feedback
             {
                 Vector3 pos = transform.position;
                 SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
-                WeaponToolType weaponToolType = weaponHandler.CurrentWeaponLogic.WeaponData.weaponToolType;
-                var evt = new CharacterCombatActionEvent(this.gameObject, type, weaponToolType, surface, pos, tag);
+                WeaponType weaponType = weaponHandler.CurrentWeaponLogic.WeaponData.weaponType;
+                var evt = new CharacterCombatActionEvent(this.gameObject, type, weaponType, surface, pos, tag);
                 EventBus<CharacterCombatActionEvent>.Publish(evt);
             }
             else
@@ -83,6 +86,8 @@ namespace _Project.Systems._Core.Feedback
             {
                 Vector3 pos = transform.position;
                 SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
+                ToolType toolType = toolHandler.CurrentToolLogic.ToolData.toolType;
+                
                 var evt = new CharacterLootActionEvent(this.gameObject, type, surface, pos, tag);
                 EventBus<CharacterLootActionEvent>.Publish(evt);
             }

@@ -28,6 +28,8 @@ namespace _Project.Systems.CombatSystem.Player.States
             string attackType = attack.AttackType;
 
             stateMachine.WeaponLogic.SetupAttack(finalDamage, finalKnockbackForce,attackType);
+            
+            stateMachine.ToolLogic.SetupLootAction(finalDamage, finalKnockbackForce,attackType);
 
             stateMachine.Animator.CrossFadeInFixedTime(attack.AnimationName, attack.TransitionDuration);
         }

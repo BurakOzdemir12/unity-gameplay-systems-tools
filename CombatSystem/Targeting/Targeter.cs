@@ -16,7 +16,7 @@ namespace _Project.Systems.CombatSystem.Targeting
 
         private void Start()
         {
-            mainCamera = Camera.main;
+            if (!mainCamera) mainCamera = Camera.main;
         }
 
         private void OnTriggerEnter(Collider other)

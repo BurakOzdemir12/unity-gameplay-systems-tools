@@ -23,13 +23,14 @@ namespace _Project.Systems._Core.StateMachine.Player
         [field: SerializeField] public Targeter Targeter { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
         [field: SerializeField] public WeaponLogic.WeaponLogic WeaponLogic { get; private set; }
+        [field: SerializeField] public ToolLogic.ToolLogic ToolLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public ClimbController ClimbController { get; private set; }
         [field: SerializeField] public GroundChecker GroundChecker { get; private set; }
 
         [field: SerializeField] public PlayerConfigSo PlayerConfigSo { get; private set; }
-       
+
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
         // public Transform swordHolderR;
 

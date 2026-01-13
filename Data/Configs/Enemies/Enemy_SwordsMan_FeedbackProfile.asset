@@ -15,7 +15,7 @@ MonoBehaviour:
   surfaceFeedbackList:
   - Name: Running on Dirt
     Surface: 0
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: 9e68ea1ebd76aa44c8cfa5beb9850830, type: 3}
@@ -32,7 +32,7 @@ MonoBehaviour:
     Volume: 0.4
   - Name: Running on Grass
     Surface: 1
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: 9a30499e47789df48aa9bdb1ec7b0982, type: 3}
@@ -54,7 +54,7 @@ MonoBehaviour:
     Volume: 1
   - Name: Running on Snow
     Surface: 4
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: ba6dc99376c85b4468a50ff05f135162, type: 3}
@@ -71,7 +71,7 @@ MonoBehaviour:
     Volume: 0.4
   - Name: Running on Water
     Surface: 5
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: 518cdd508d673124da33c3a5cdd93f05, type: 3}
@@ -83,7 +83,7 @@ MonoBehaviour:
     Volume: 0.4
   - Name: Running on Metal
     Surface: 3
-    Interaction: 0
+    traversal: 0
     SpecificTag: Run
     Clips:
     - {fileID: 8300000, guid: b25225c72201cd740b16b95b86d57940, type: 3}
@@ -104,3 +104,4 @@ MonoBehaviour:
     VFX: {fileID: 0}
     Volume: 0.4
   actionFeedbackList: []
+  lootActionFeedbackList: []

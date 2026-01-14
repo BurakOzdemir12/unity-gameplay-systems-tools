@@ -33,6 +33,7 @@ namespace _Project.Systems._Core.StateMachine
             return s;
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         protected void SetSubState(State newSubState)
         {
             if (subState != null)

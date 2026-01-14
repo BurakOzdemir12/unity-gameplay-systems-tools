@@ -1,4 +1,5 @@
 using _Project.Core.Scripts;
+using _Project.Systems._Core.BaseScriptableObjects.Characters;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.GroundCheck;
 using _Project.Systems._Core.Health;
@@ -9,6 +10,7 @@ using _Project.Systems.CombatSystem.Player.States;
 using _Project.Systems.CombatSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
 using _Project.Systems.CombatSystem.Targeting;
+using _Project.Systems.GatheringSystem.Detector_Controller;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.MovementSystem.ScriptableObjects;
 using UnityEngine;
@@ -27,6 +29,7 @@ namespace _Project.Systems._Core.StateMachine.Player
         [field: SerializeField] public PlayerHealth Health { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public ClimbController ClimbController { get; private set; }
+        [field: SerializeField] public GatheringController GatheringController { get; private set; }
         [field: SerializeField] public GroundChecker GroundChecker { get; private set; }
 
         [field: SerializeField] public PlayerConfigSo PlayerConfigSo { get; private set; }
@@ -89,9 +92,12 @@ namespace _Project.Systems._Core.StateMachine.Player
             set => inAlertMode = value;
         }
 
-        //TODO Use animation override controller or create AnimationProfileSo for Hashes 
+        [Header("Interact Allowance Time")] private float nextInteractAllowedTime = 0.5f;
+        public float NextInteractAllowedTime => nextInteractAllowedTime;
 
+        //TODO Use animation override controller or create AnimationProfileSo for Hashes 
         public readonly int FreeLookSpeedParamHash = Animator.StringToHash("FreeLookSpeed");
+
         public readonly int FreeLookBlendTreeHash = Animator.StringToHash("FreeLookBlendTree");
         public readonly int TargetingBlendTreeHash = Animator.StringToHash("TargetingBlendTree");
         public readonly int TargetingForwardSpeedHash = Animator.StringToHash("TargetingForwardSpeed");
@@ -199,6 +205,12 @@ namespace _Project.Systems._Core.StateMachine.Player
             return true;
         }
 
+        public bool CanUseInteractNow(float cooldown)
+        {
+            if (Time.time < nextInteractAllowedTime) return false;
+            nextInteractAllowedTime = Time.time + cooldown;
+            return true;
+        }
 
         public void EquipWeapon(WeaponLogic.WeaponLogic newWeapon)
         {

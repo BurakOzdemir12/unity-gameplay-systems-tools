@@ -34,11 +34,11 @@ namespace _Project.Systems._Core.Feedback
         }
 
         [System.Serializable]
-        public struct LootActionFeedbackEntry
+        public struct GatherActionFeedbackEntry
         {
             public string Name;
             public SurfaceType Surface;
-            public LootActionType lootAction;
+            public GatherActionType gatherAction;
             public ToolType ToolType;
             public string SpecificTag; // harvest/gatheer
             public AudioClip[] Clips;
@@ -48,7 +48,7 @@ namespace _Project.Systems._Core.Feedback
 
         [SerializeField] private List<SurfaceFeedbackEntry> surfaceFeedbackList;
         [SerializeField] private List<CombatActionFeedbackEntry> actionFeedbackList;
-        [SerializeField] private List<LootActionFeedbackEntry> lootActionFeedbackList;
+        [SerializeField] private List<GatherActionFeedbackEntry> gatherActionFeedbackList;
 
         // ---------------- SURFACE ----------------
         public bool TryGetTraversalFeedback(
@@ -125,18 +125,18 @@ namespace _Project.Systems._Core.Feedback
         }
         // ---------------- LOOT ACTION ----------------
 
-        public bool TryGetLootActionFeedback(SurfaceType surface,
-            LootActionType lootAction,ToolType toolType, string tag,
+        public bool TryGetGatherActionFeedback(SurfaceType surface,
+            GatherActionType gatherAction,ToolType toolType, string tag,
             out AudioClip clip, out GameObject vfx, out float volume)
         {
             clip = null;
             vfx = null;
             volume = 1f;
 
-            foreach (var entry in lootActionFeedbackList)
+            foreach (var entry in gatherActionFeedbackList)
             {
                 if (entry.Surface != surface) continue;
-                if (entry.lootAction != lootAction) continue;
+                if (entry.gatherAction != gatherAction) continue;
 
 
                 bool tagMatch =

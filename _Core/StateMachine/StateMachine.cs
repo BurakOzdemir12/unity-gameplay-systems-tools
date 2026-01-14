@@ -17,6 +17,7 @@ namespace _Project.Systems._Core.StateMachine
             currentState?.UpdateStates(Time.deltaTime);
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         public void SwitchState(State newState)
         {
             currentState?.Exit();

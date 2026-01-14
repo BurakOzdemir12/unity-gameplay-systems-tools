@@ -1,6 +1,7 @@
 ﻿using _Project.Systems._Core.StateMachine.Player;
 using _Project.Systems.ClimbingSystem.States.RootStates;
 using _Project.Systems.CombatSystem.Player.States;
+using _Project.Systems.GatheringSystem.Player.States;
 using UnityEngine;
 
 namespace _Project.Systems.MovementSystem.Player.States.RootStates
@@ -18,8 +19,8 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
             stateMachine.InputHandler.DodgeEvent += OnDodge;
             stateMachine.InputHandler.RollEvent += OnRoll;
             stateMachine.InputHandler.JumpEvent += OnJump;
-            stateMachine.InputHandler.RollOrJumpEvent += OnRollOrJumpEvent;
-
+            stateMachine.InputHandler.RollOrJumpEvent += OnRollOrJump;
+            stateMachine.InputHandler.InteractEvent += OnInteraction;
 
             if (stateMachine.Targeter.SelectedTarget != null)
             {
@@ -54,6 +55,7 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
             //     SwitchRootState(new PlayerAirborneState(stateMachine));
             //
             //
+
             if (stateMachine.GroundChecker != null &&
                 stateMachine.GroundChecker.DistanceToGround <= stateMachine.GroundedSnapDistance)
             {
@@ -72,7 +74,8 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
             stateMachine.InputHandler.DodgeEvent -= OnDodge;
             stateMachine.InputHandler.RollEvent -= OnRoll;
             stateMachine.InputHandler.JumpEvent -= OnJump;
-            stateMachine.InputHandler.RollOrJumpEvent -= OnRollOrJumpEvent;
+            stateMachine.InputHandler.RollOrJumpEvent -= OnRollOrJump;
+            stateMachine.InputHandler.InteractEvent -= OnInteraction;
 
 
             ClearSubState();
@@ -121,7 +124,7 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
             // stateMachine.SwitchState(new PlayerRollState(stateMachine));
         }
 
-        private void OnRollOrJumpEvent()
+        private void OnRollOrJump()
         {
             if (!stateMachine.IsInAlertMode)
             {
@@ -152,6 +155,30 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
                 SetSubState(new PlayerRollState(stateMachine));
                 // stateMachine.SwitchState(new PlayerRollState(stateMachine));
             }
+        }
+
+        private void OnInteraction()
+        {
+            if (stateMachine.IsInAlertMode)
+            {
+                Debug.Log("Interaction not allowed in alert mode");
+                return;
+            }
+
+            float cd = stateMachine.PlayerConfigSo.GatheringDataSet.cooldown;
+
+            if (!stateMachine.CanUseInteractNow(cd)) return;
+
+            if (stateMachine.CurrentSubState is PlayerGatheringState)
+            {
+                SetSubState(new PlayerFreeLookState(stateMachine));
+                return;
+            }
+
+            bool isGatherOk = stateMachine.GatheringController.TryGatherAction();
+            if (!isGatherOk) return;
+
+            SetSubState(new PlayerGatheringState(stateMachine));
         }
     }
 }

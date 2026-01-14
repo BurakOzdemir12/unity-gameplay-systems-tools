@@ -12,15 +12,23 @@ namespace _Project.Systems.GatheringSystem.Detector_Controller
 
         private void Update()
         {
-            if (!GatheringValidator) return;
-            CurrentResourcesData = GatheringValidator.CheckForGatherableResources();
-            if (CurrentResourcesData.HasTarget)
-                Debug.Log(CurrentResourcesData.TargetTransform.name);
         }
 
-        public void TryGatherAction()
+        public bool TryGatherAction()
         {
-            
+            if (!GatheringValidator) return false;
+
+            CurrentResourcesData = GatheringValidator.CheckForGatherableResources();
+
+            // Debug.Log(CurrentResourcesData.TargetTransform.name);
+            return CurrentResourcesData.HasTarget;
+        }
+
+        public void CancelGatherAction()
+        {
+            // loop stop / reset target
+            // stop hit window
+            // UI cancel
         }
     }
 }

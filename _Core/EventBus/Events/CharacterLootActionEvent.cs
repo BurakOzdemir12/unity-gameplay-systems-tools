@@ -7,12 +7,12 @@ namespace _Project.Systems._Core.EventBus.Events
     public struct CharacterLootActionEvent : IEvent
     {
         public GameObject Source;
-        public LootActionType Type;
+        public GatherActionType Type;
         public SurfaceType Surface;
         public string ActionTag;
         public Vector3 Position;
 
-        public CharacterLootActionEvent(GameObject source, LootActionType type, SurfaceType surface,
+        public CharacterLootActionEvent(GameObject source, GatherActionType type, SurfaceType surface,
             Vector3 position = default, string actionTag = "")
         {
             Type = type;

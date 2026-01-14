@@ -73,7 +73,7 @@ namespace _Project.Systems._Core.ToolLogic
             if (other == characterOwnCollider) return;
             if (!hitColliders.Add(other)) return;
 
-            Debug.Log("Hit collider " + other.name + ": Tag:" + other.tag);
+            // Debug.Log("Hit collider " + other.name + ": Tag:" + other.tag);
 
             ApplyDamageAndKnockback(other);
             PublishImpactEvent(other);

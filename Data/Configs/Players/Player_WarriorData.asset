@@ -18,6 +18,7 @@ MonoBehaviour:
   RollData: {fileID: 11400000, guid: 384c45c7c5f494d498efe399b6c58c85, type: 2}
   JumpData: {fileID: 11400000, guid: d06184e58687a004e8264a56825c5ca9, type: 2}
   FallLandData: {fileID: 11400000, guid: 2bc0d74d0d69cb84d86cd11e08a65593, type: 2}
+  GatheringDataSet: {fileID: 11400000, guid: 1dcb189ae7d108842a95a6181fed43d1, type: 2}
   ClimbTypeDataSet:
   - {fileID: 11400000, guid: 677542daeb13651478cc76041545835e, type: 2}
   - {fileID: 11400000, guid: d546fadce18b8a148b7c4def11f324fc, type: 2}

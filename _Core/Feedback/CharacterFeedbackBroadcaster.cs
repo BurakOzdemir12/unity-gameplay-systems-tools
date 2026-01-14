@@ -82,7 +82,7 @@ namespace _Project.Systems._Core.Feedback
         {
             var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
 
-            if (System.Enum.TryParse(actionName, true, out LootActionType type))
+            if (System.Enum.TryParse(actionName, true, out GatherActionType type))
             {
                 Vector3 pos = transform.position;
                 SurfaceType surface = surfaceDetection.GetSurfaceData(pos);

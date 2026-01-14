@@ -1,4 +1,7 @@
 ﻿using _Project.Systems._Core.StateMachine.Player;
+using _Project.Systems.MovementSystem.Player.States;
+using _Project.Systems.MovementSystem.Player.States.RootStates;
+using UnityEngine;
 
 namespace _Project.Systems.GatheringSystem.Player.States
 {
@@ -8,12 +11,53 @@ namespace _Project.Systems.GatheringSystem.Player.States
         {
         }
 
+        private float moveCancelTimer;
+        private PlayerGroundedState GatherParent => GetSuperState() as PlayerGroundedState;
+
         public override void Enter()
         {
+            var animHash = stateMachine.PlayerConfigSo.GatheringDataSet.AnimHash;
+
+            stateMachine.Animator.CrossFadeInFixedTime(animHash, stateMachine.CrossFadeDuration);
         }
 
         public override void Tick(float deltaTime)
         {
+            HandleGatherCancelByMove(deltaTime);
+
+            RotateTowardsToResource(deltaTime);
+        }
+
+        private void HandleGatherCancelByMove(float deltaTime)
+        {
+            float threshold = stateMachine.PlayerConfigSo.GatheringDataSet.cancelMoveThreshold;
+            float holdTime = stateMachine.PlayerConfigSo.GatheringDataSet.cancelMoveHoldTime;
+            bool wantsTheMove = stateMachine.InputHandler.Move.sqrMagnitude > threshold * threshold;
+
+            if (wantsTheMove)
+            {
+                moveCancelTimer += deltaTime;
+            }
+            else
+            {
+                moveCancelTimer = 0f;
+            }
+
+            if (!(moveCancelTimer >= holdTime)) return;
+
+            stateMachine.GatheringController.CancelGatherAction();
+            GatherParent.SwitchSubState(new PlayerFreeLookState(stateMachine));
+        }
+
+        private void RotateTowardsToResource(float deltaTime)
+        {
+            Vector3 dir = stateMachine.GatheringController.CurrentResourcesData.TargetTransform.position -
+                          stateMachine.transform.position;
+            dir.y = 0f;
+
+            Quaternion matchRotation = Quaternion.LookRotation(dir.normalized);
+            stateMachine.transform.rotation =
+                Quaternion.RotateTowards(stateMachine.transform.rotation, matchRotation, deltaTime * 180f);
         }
 
         public override void Exit()

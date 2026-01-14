@@ -898,7 +898,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MiningLoop
+  m_Name: Mining
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -912,7 +912,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 8dc5240687c37f4409f7c965efc6165d, type: 2}
-  m_Tag: 
+  m_Tag: Gathering
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 

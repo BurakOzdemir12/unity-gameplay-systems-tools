@@ -24,3 +24,9 @@ Game play systems and tools like Health, Combat, Movement etc created with Unity
 ## Event Bus System -> Effects
 
 <img width="10698" height="7462" alt="Event Bus System Effects" src="https://github.com/user-attachments/assets/cdef5fbd-df9a-4943-b71c-8befbbfe7334" />
+
+## Gathering System 
+
+<img width="9534" height="4667" alt="Gather System Works" src="https://github.com/user-attachments/assets/78acbd24-ec89-4790-8b07-7338219b08a2" />
+
+

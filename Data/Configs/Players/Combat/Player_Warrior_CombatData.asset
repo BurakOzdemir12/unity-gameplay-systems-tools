@@ -17,3 +17,9 @@ MonoBehaviour:
   impactDuration: 0.5
   blockingLayerChangeSpeed: 5
   rotationDampTimeWhileBlock: 2
+  drawAnimName: Draw A Great Sword 1
+  sheatAnimName: Sheath A Great Sword 1
+  combatIdleAnimName: WeaponHold2H
+  sheatAnimHash: -462947730
+  drawAnimHash: -1954270173
+  combatIdleAnimHash: 1564588203

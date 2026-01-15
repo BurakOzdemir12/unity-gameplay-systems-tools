@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponImpactFeedbackProfile: {fileID: 11400000, guid: 7fda51a3909006a4784ba9e172d7558f, type: 2}
   weaponType: 2
   trailPrefab: {fileID: 1864572845640764174, guid: a64a37f3dcfb87f44a8c6236b5d49b20, type: 3}
-  weaponPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 6039613567015340336, guid: 0824cb7988b75774b8d074a779c45919, type: 3}
   damage: 0
   knockback: 0
   staminaCost: 0

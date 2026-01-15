@@ -126,6 +126,43 @@ namespace _Project.Systems._Core.StateMachine.Player
             );
         }
 
+        protected void HandleCombatLayer(float deltaTime, bool shouldBeActive)
+        {
+            float targetWeight = shouldBeActive ? 1f : 0f;
+
+            // Set Animator Bool for transitions if needed
+            stateMachine.Animator.SetBool(stateMachine.IsArmedBoolHash, stateMachine.isWeaponEquipped);
+
+            stateMachine.armedLayerWeight = Mathf.MoveTowards(
+                stateMachine.armedLayerWeight,
+                targetWeight,
+                deltaTime * 10f); // Smooth transition (10f speed)
+
+            stateMachine.Animator.SetLayerWeight(stateMachine.ArmedLayerIndex, stateMachine.armedLayerWeight);
+        }
+
+        protected void HandleSheathDraw(bool allowSheathDraw = true)
+        {
+            if (stateMachine.CurrentSubState is PlayerDeadState or PlayerAttackingState)
+            {
+                return;
+            }
+
+            if (!allowSheathDraw) return;
+
+            bool isWeaponInHand = stateMachine.isWeaponEquipped;
+
+            // Set Layer weight to 1 instantly to ensure visibility
+            stateMachine.upperBodyLayerWeight = 1f;
+            stateMachine.Animator.SetLayerWeight(stateMachine.UpperBodyLayerIndex, 1f);
+
+            var combatData = stateMachine.PlayerConfigSo.CombatData;
+            int hash = isWeaponInHand ? combatData.SheatAnimHash : combatData.DrawAnimHash;
+
+            stateMachine.Animator.CrossFadeInFixedTime(hash, stateMachine.CrossFadeDuration,
+                stateMachine.UpperBodyLayerIndex);
+        }
+
         //  If you want to block state by itself use Changing state code
         // protected bool TrySwitchToBlockState() 
         // {

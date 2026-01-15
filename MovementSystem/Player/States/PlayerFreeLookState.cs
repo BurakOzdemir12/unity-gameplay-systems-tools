@@ -21,6 +21,7 @@ namespace _Project.Systems.MovementSystem.Player.States
             data = stateMachine.PlayerConfigSo.MovementData;
 
             stateMachine.InputHandler.TargetEvent += OnTarget;
+
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,
                 data.CrossFadeDurationBetweenBlendTrees);
         }
@@ -34,6 +35,7 @@ namespace _Project.Systems.MovementSystem.Player.States
                 // stateMachine.SwitchState(new PlayerAttackingState(stateMachine, 0));
                 return;
             }
+
 
             // TrySwitchToBlockState(); If you want to block state by itself use blockstate
             HandleBlocking(deltaTime, allowBlocking: true);

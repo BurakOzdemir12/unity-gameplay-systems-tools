@@ -27,15 +27,16 @@ namespace _Project.Systems.CombatSystem.Player.States
             float finalKnockbackForce = attack.KnockBackForce;
             string attackType = attack.AttackType;
 
-            stateMachine.WeaponLogic.SetupAttack(finalDamage, finalKnockbackForce,attackType);
-            
-            stateMachine.ToolLogic.SetupLootAction(finalDamage, finalKnockbackForce,attackType);
+            stateMachine.WeaponLogic.SetupAttack(finalDamage, finalKnockbackForce, attackType);
+
+            stateMachine.ToolLogic.SetupLootAction(finalDamage, finalKnockbackForce, attackType);
 
             stateMachine.Animator.CrossFadeInFixedTime(attack.AnimationName, attack.TransitionDuration);
         }
 
         public override void Tick(float deltaTime)
         {
+
             // Move(deltaTime, attack.AttackForceTargetPos, attack.AttackForce);
             Move(deltaTime);
             // FaceTarget(stateMachine.Targeter.SelectedTarget, deltaTime);

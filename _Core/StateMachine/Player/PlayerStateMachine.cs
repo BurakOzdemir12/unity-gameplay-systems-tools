@@ -25,6 +25,11 @@ namespace _Project.Systems._Core.StateMachine.Player
         [field: SerializeField] public Targeter Targeter { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
         [field: SerializeField] public WeaponLogic.WeaponLogic WeaponLogic { get; private set; }
+
+        public void SetWeaponLogic(WeaponLogic.WeaponLogic logic)
+        {
+            WeaponLogic = logic;
+        }
         [field: SerializeField] public ToolLogic.ToolLogic ToolLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
@@ -36,6 +41,15 @@ namespace _Project.Systems._Core.StateMachine.Player
 
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
         // public Transform swordHolderR;
+
+        [Header("Upper Body Layer Wight")] [field: SerializeField]
+        public bool isWeaponEquipped = false;
+
+        [Header("Upper Body Layer Wight")] [field: SerializeField]
+        public float upperBodyLayerWeight;
+
+        [Header("Upper Body Layer Wight")] [field: SerializeField]
+        public float armedLayerWeight;
 
         [Header("Blocking Settings")] [field: SerializeField]
         public float blockLayerWeight = 1;
@@ -75,25 +89,10 @@ namespace _Project.Systems._Core.StateMachine.Player
             set => previousJumpTime = value;
         }
 
-        [Tooltip("is Climbing Free Flow")]
-        [field: SerializeField]
-        public bool IsFreeFlowClimb { get; private set; }
-
-
-        [Tooltip("İf Your animations works with the root motion, set this to true")] [SerializeField]
-        public bool workWithRootMotion = false;
-
-        [Tooltip("In Combat or alert mode, its gonna roll but in normal mode jump will work ")] [SerializeField]
-        private bool inAlertMode = false;
-
-        public bool IsInAlertMode
-        {
-            get => inAlertMode;
-            set => inAlertMode = value;
-        }
-
         [Header("Interact Allowance Time")] private float nextInteractAllowedTime = 0.5f;
+
         public float NextInteractAllowedTime => nextInteractAllowedTime;
+
 
         //TODO Use animation override controller or create AnimationProfileSo for Hashes 
         public readonly int FreeLookSpeedParamHash = Animator.StringToHash("FreeLookSpeed");
@@ -123,8 +122,12 @@ namespace _Project.Systems._Core.StateMachine.Player
         public readonly int FreeHangingIdleHash = Animator.StringToHash("Free Hanging Idle");
         public readonly int FreeHangClimbHash = Animator.StringToHash("FreeHang Climb");
         public readonly int Mirror = Animator.StringToHash("Mirror");
+        public readonly int IsArmedBoolHash = Animator.StringToHash("isArmed");
+        
 
         public int BlockingLayerIndex { get; private set; }
+        public int UpperBodyLayerIndex { get; private set; }
+        public int ArmedLayerIndex { get; private set; }
 
         public Transform MainCameraTransform { get; private set; }
 
@@ -144,9 +147,34 @@ namespace _Project.Systems._Core.StateMachine.Player
 
         public float GroundedSnapDistance => groundedSnapDistance;
 
+        #region Testing Debugging
+
+        [Header("For Testing Purposes")]
+        [Tooltip("is Climbing Free Flow")]
+        [field: SerializeField]
+        public bool IsFreeFlowClimb { get; private set; }
+
+
+        [Tooltip("İf Your animations works with the root motion, set this to true")] [SerializeField]
+        public bool workWithRootMotion = false;
+
+        [Tooltip("In Combat or alert mode, its gonna roll but in normal mode jump will work ")] [SerializeField]
+        private bool inAlertMode = false;
+
+        public bool IsInAlertMode
+        {
+            get => inAlertMode;
+            set => inAlertMode = value;
+        }
+
+        #endregion
+
+
         private void Awake()
         {
             BlockingLayerIndex = Animator.GetLayerIndex("Block Layer");
+            UpperBodyLayerIndex = Animator.GetLayerIndex("Upper Body");
+            ArmedLayerIndex = Animator.GetLayerIndex("Armed Layer");
         }
 
         private void OnEnable()
@@ -212,18 +240,14 @@ namespace _Project.Systems._Core.StateMachine.Player
             return true;
         }
 
-        public void EquipWeapon(WeaponLogic.WeaponLogic newWeapon)
-        {
-            WeaponLogic = newWeapon;
-            if (WeaponLogic != null)
-                WeaponLogic.Initialize(Controller);
-        }
-
-
+        
+        
         private void OnDisable()
         {
             Health.OnTakeDamage -= HandleTakeDamage;
             Health.OnDeath -= HandleDeath;
         }
+        
+        
     }
 }

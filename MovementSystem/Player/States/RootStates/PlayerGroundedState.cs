@@ -21,6 +21,7 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
             stateMachine.InputHandler.JumpEvent += OnJump;
             stateMachine.InputHandler.RollOrJumpEvent += OnRollOrJump;
             stateMachine.InputHandler.InteractEvent += OnInteraction;
+            stateMachine.InputHandler.DrawSheathEvent += OnDrawSheath;
 
             if (stateMachine.Targeter.SelectedTarget != null)
             {
@@ -34,6 +35,9 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
 
         public override void Tick(float deltaTime)
         {
+            bool isValidState = stateMachine.CurrentSubState is PlayerFreeLookState or PlayerTargetingState;
+            HandleCombatLayer(deltaTime, stateMachine.isWeaponEquipped && isValidState);
+            
             if (stateMachine.IsGrounded)
             {
                 ungroundedTime = 0f;
@@ -76,6 +80,7 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
             stateMachine.InputHandler.JumpEvent -= OnJump;
             stateMachine.InputHandler.RollOrJumpEvent -= OnRollOrJump;
             stateMachine.InputHandler.InteractEvent -= OnInteraction;
+            stateMachine.InputHandler.DrawSheathEvent -= OnDrawSheath;
 
 
             ClearSubState();
@@ -179,6 +184,11 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
             if (!isGatherOk) return;
 
             SetSubState(new PlayerGatheringState(stateMachine));
+        }
+
+        private void OnDrawSheath()
+        {
+            HandleSheathDraw();
         }
     }
 }

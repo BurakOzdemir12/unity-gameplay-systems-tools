@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems._Core.ToolLogic.ScriptableObjects.ToolDataSo
   toolImpactFeedbackProfile: {fileID: 11400000, guid: d5cff6f38070fba4da27216c4bd380c0, type: 2}
   toolType: 0
+  trailPrefab: {fileID: 2613462060424995206, guid: 101a8868c1adc5b40bdaf7526f47b7b5, type: 3}
   toolPrefab: {fileID: 0}
   staminaCost: 0
   durability: 0

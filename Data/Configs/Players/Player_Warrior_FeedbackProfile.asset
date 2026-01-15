@@ -124,4 +124,13 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 940905f8a21c145119b64f16e7131c47, type: 3}
     VFX: {fileID: 0}
     Volume: 0.5
-  gatherActionFeedbackList: []
+  gatherActionFeedbackList:
+  - Name: Mining Effects
+    Surface: 8
+    gatherAction: 1
+    ToolType: 0
+    SpecificTag: 
+    Clips:
+    - {fileID: 8300000, guid: d637bacd075454147bb398300d59dc3e, type: 3}
+    VFX: {fileID: 0}
+    Volume: 0.4

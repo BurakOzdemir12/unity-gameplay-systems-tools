@@ -7,6 +7,7 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
     {
         [Header("Assign ToolRoot here (not Hitbox)")] [SerializeField]
         private GameObject currentToolRoot;
+        public GameObject CurrentToolRoot => currentToolRoot;
 
         [Header("ToolLogic ")] private GameObject currentToolHitbox;
         public GameObject CurrentToolHitBox => currentToolHitbox;

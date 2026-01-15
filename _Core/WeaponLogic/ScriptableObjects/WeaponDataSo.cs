@@ -10,6 +10,7 @@ namespace _Project.Systems._Core.WeaponLogic.ScriptableObjects
         public WeaponImpactFeedbackProfile weaponImpactFeedbackProfile;
         public WeaponType weaponType;
 
+        public GameObject trailPrefab;
         public GameObject weaponPrefab;
         public float damage;
         public float knockback;

@@ -125,9 +125,9 @@ namespace _Project.Systems._Core.Feedback
         }
         // ---------------- LOOT ACTION ----------------
 
-        public bool TryGetGatherActionFeedback(SurfaceType surface,
-            GatherActionType gatherAction,ToolType toolType, string tag,
-            out AudioClip clip, out GameObject vfx, out float volume)
+        public bool TryGetGatherActionFeedback(
+            GatherActionType gatherAction, ToolType toolType, string tag,
+            out AudioClip clip, out GameObject vfx, out float volume) //SurfaceType surface,
         {
             clip = null;
             vfx = null;
@@ -135,8 +135,9 @@ namespace _Project.Systems._Core.Feedback
 
             foreach (var entry in gatherActionFeedbackList)
             {
-                if (entry.Surface != surface) continue;
+                // if (entry.Surface != surface) continue;
                 if (entry.gatherAction != gatherAction) continue;
+                if (entry.ToolType != toolType) continue;
 
 
                 bool tagMatch =

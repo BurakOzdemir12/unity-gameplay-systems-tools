@@ -30,6 +30,11 @@ namespace _Project.Systems.GatheringSystem.Player.States
 
         private void HandleGatherCancelByMove(float deltaTime)
         {
+            float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0,
+                stateMachine.PlayerConfigSo.GatheringDataSet.AnimTag);
+
+            if (normalizedTime < 1f) return;
+
             float threshold = stateMachine.PlayerConfigSo.GatheringDataSet.cancelMoveThreshold;
             float holdTime = stateMachine.PlayerConfigSo.GatheringDataSet.cancelMoveHoldTime;
             bool wantsTheMove = stateMachine.InputHandler.Move.sqrMagnitude > threshold * threshold;

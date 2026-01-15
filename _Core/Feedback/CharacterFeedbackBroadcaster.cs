@@ -14,14 +14,18 @@ namespace _Project.Systems._Core.Feedback
         [SerializeField] private Transform rFoot;
         [SerializeField] private Transform lFoot;
 
-        private SurfaceDetection surfaceDetection;
-        private WeaponHandler weaponHandler;
-        private ToolHandler toolHandler;
+        [SerializeField] private SurfaceDetection surfaceDetection;
+        [SerializeField] private WeaponHandler weaponHandler;
+        [SerializeField] private ToolHandler toolHandler;
 
         private void Awake()
         {
-            surfaceDetection = GetComponent<SurfaceDetection>();
-            weaponHandler = GetComponent<WeaponHandler>();
+            if (!surfaceDetection)
+                surfaceDetection = GetComponent<SurfaceDetection>();
+            if (!weaponHandler)
+                weaponHandler = GetComponent<WeaponHandler>();
+            if (!toolHandler)
+                toolHandler = GetComponent<ToolHandler>();
 
             if (surfaceDetection == null)
             {
@@ -39,7 +43,7 @@ namespace _Project.Systems._Core.Feedback
         {
             // Debug.Log($"[Broadcaster] OnAnimEvent called: {eventData} at {Time.time}");
 
-            var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
+            var actionName = SplitEventDataIntoComponents(eventData, out var actionTag, out var side, out var spawnPosition);
 
             if (System.Enum.TryParse(actionName, true, out TraversalType type))
             {
@@ -50,7 +54,7 @@ namespace _Project.Systems._Core.Feedback
 
                 SurfaceType surface = surfaceDetection.GetSurfaceData(spawnPosition);
 
-                var evt = new CharacterTraversalEvent(this.gameObject, type, surface, spawnPosition, tag);
+                var evt = new CharacterTraversalEvent(this.gameObject, type, surface, spawnPosition, actionTag);
                 EventBus<CharacterTraversalEvent>.Publish(evt);
             }
             else
@@ -62,14 +66,14 @@ namespace _Project.Systems._Core.Feedback
 
         public void OnCombatAnimEvent(string eventData)
         {
-            var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
+            var actionName = SplitEventDataIntoComponents(eventData, out var actionTag, out var side, out var spawnPosition);
 
             if (System.Enum.TryParse(actionName, true, out CombatActionType type))
             {
                 Vector3 pos = transform.position;
                 SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
                 WeaponType weaponType = weaponHandler.CurrentWeaponLogic.WeaponData.weaponType;
-                var evt = new CharacterCombatActionEvent(this.gameObject, type, weaponType, surface, pos, tag);
+                var evt = new CharacterCombatActionEvent(this.gameObject, type, weaponType, surface, pos, actionTag);
                 EventBus<CharacterCombatActionEvent>.Publish(evt);
             }
             else
@@ -78,18 +82,18 @@ namespace _Project.Systems._Core.Feedback
             }
         }
 
-        public void OnLootAnimEvent(string eventData)
+        public void OnGatherAnimEvent(string eventData)
         {
-            var actionName = SplitEventDataIntoComponents(eventData, out var tag, out var side, out var spawnPosition);
+            var actionName = SplitEventDataIntoComponents(eventData, out var actionTag, out var side, out var spawnPosition);
 
             if (System.Enum.TryParse(actionName, true, out GatherActionType type))
             {
-                Vector3 pos = transform.position;
-                SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
+                Vector3 pos = toolHandler.CurrentToolHitBox.transform.position;
+                // SurfaceType surface = surfaceDetection.GetSurfaceData(pos);
                 ToolType toolType = toolHandler.CurrentToolLogic.ToolData.toolType;
-                
-                var evt = new CharacterLootActionEvent(this.gameObject, type, surface, pos, tag);
-                EventBus<CharacterLootActionEvent>.Publish(evt);
+
+                var evt = new CharacterGatheringActionEvent(this.gameObject, type, toolType, pos, actionTag);
+                EventBus<CharacterGatheringActionEvent>.Publish(evt);
             }
             else
             {
@@ -97,12 +101,12 @@ namespace _Project.Systems._Core.Feedback
             }
         }
 
-        private string SplitEventDataIntoComponents(string eventData, out string tag, out string side,
+        private string SplitEventDataIntoComponents(string eventData, out string actionTag, out string side,
             out Vector3 spawnPosition)
         {
             string[] parts = eventData.Split(':');
             string actionName = parts[0];
-            tag = parts.Length > 1 ? parts[1] : "";
+            actionTag = parts.Length > 1 ? parts[1] : "";
             side = parts.Length > 2 ? parts[2] : "";
 
             spawnPosition = transform.position;

@@ -11,6 +11,7 @@ namespace _Project.Systems._Core.Effects.Audio
     {
         private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
+        private EventBinding<CharacterGatheringActionEvent> gatheringBinding;
         private EventBinding<WeaponImpactActionEvent> weaponImpactBinding;
         private EventBinding<ToolImpactActionEvent> toolImpactBinding;
         [SerializeField] private AudioSource audioSource;
@@ -28,6 +29,9 @@ namespace _Project.Systems._Core.Effects.Audio
             combatBinding = new EventBinding<CharacterCombatActionEvent>(HandleCombatActionEvent);
             EventBus<CharacterCombatActionEvent>.Subscribe(combatBinding);
 
+            gatheringBinding = new EventBinding<CharacterGatheringActionEvent>(HandleGatheringActionEvent);
+            EventBus<CharacterGatheringActionEvent>.Subscribe(gatheringBinding);
+
             weaponImpactBinding = new EventBinding<WeaponImpactActionEvent>(HandleWeaponImpactEvent);
             EventBus<WeaponImpactActionEvent>.Subscribe(weaponImpactBinding);
 
@@ -40,9 +44,9 @@ namespace _Project.Systems._Core.Effects.Audio
         {
             EventBus<CharacterTraversalEvent>.Unsubscribe(interactionBinding);
             EventBus<CharacterCombatActionEvent>.Unsubscribe(combatBinding);
+            EventBus<CharacterGatheringActionEvent>.Unsubscribe(gatheringBinding);
             EventBus<WeaponImpactActionEvent>.Unsubscribe(weaponImpactBinding);
             EventBus<ToolImpactActionEvent>.Unsubscribe(toolImpactBinding);
-            
         }
 
         private void HandleTraversalEvent(CharacterTraversalEvent @evt)
@@ -124,11 +128,24 @@ namespace _Project.Systems._Core.Effects.Audio
                     evt.Surface,
                     currentToolType,
                     evt.Tag,
-                    out var clip,
-                    out _,
-                    out var volume
+                    out var clip, out _, out var volume
                 )) return;
 
+            audioSource.PlayOneShot(clip, volume);
+        }
+
+        private void HandleGatheringActionEvent(CharacterGatheringActionEvent evt)
+        {
+            if (!evt.Source.TryGetComponent(out CharacterFeedbackProfileHolder holder)) return;
+
+            var profile = holder.Profile;
+            if (profile == null) return;
+
+            if (!profile.TryGetGatherActionFeedback(
+                    evt.Type,
+                    evt.ToolType, evt.ActionTag,
+                    out var clip, out _, out var volume
+                )) return;
             audioSource.PlayOneShot(clip, volume);
         }
     }

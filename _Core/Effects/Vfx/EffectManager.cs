@@ -11,6 +11,7 @@ namespace _Project.Systems._Core.Effects.Vfx
     {
         private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
+        private EventBinding<CharacterGatheringActionEvent> gatheringBinding;
         private EventBinding<WeaponImpactActionEvent> weaponImpactBinding;
         private EventBinding<ToolImpactActionEvent> toolImpactBinding;
 
@@ -28,9 +29,12 @@ namespace _Project.Systems._Core.Effects.Vfx
             combatBinding = new EventBinding<CharacterCombatActionEvent>(HandleCombatActionEvent);
             EventBus<CharacterCombatActionEvent>.Subscribe(combatBinding);
 
+            gatheringBinding = new EventBinding<CharacterGatheringActionEvent>(HandleGatheringActionEvent);
+            EventBus<CharacterGatheringActionEvent>.Subscribe(gatheringBinding);
+
             weaponImpactBinding = new EventBinding<WeaponImpactActionEvent>(HandleWeaponImpactEvent);
             EventBus<WeaponImpactActionEvent>.Subscribe(weaponImpactBinding);
-            
+
             toolImpactBinding = new EventBinding<ToolImpactActionEvent>(HandleToolImpact);
             EventBus<ToolImpactActionEvent>.Subscribe(toolImpactBinding);
         }
@@ -40,6 +44,7 @@ namespace _Project.Systems._Core.Effects.Vfx
         {
             EventBus<CharacterTraversalEvent>.Unsubscribe(interactionBinding);
             EventBus<CharacterCombatActionEvent>.Unsubscribe(combatBinding);
+            EventBus<CharacterGatheringActionEvent>.Unsubscribe(gatheringBinding);
             EventBus<WeaponImpactActionEvent>.Unsubscribe(weaponImpactBinding);
             EventBus<ToolImpactActionEvent>.Unsubscribe(toolImpactBinding);
         }
@@ -112,6 +117,20 @@ namespace _Project.Systems._Core.Effects.Vfx
 
             SpawnVfx(vfx, evt.Position, Quaternion.LookRotation(evt.Normal));
         }
+
+        private void HandleGatheringActionEvent(CharacterGatheringActionEvent evt)
+        {
+            if (!evt.Source.TryGetComponent(out CharacterFeedbackProfileHolder holder)) return;
+            var profile = holder.Profile;
+            if (profile == null) return;
+
+
+            if (!profile.TryGetGatherActionFeedback(evt.Type, evt.ToolType, evt.ActionTag,
+                    out var clip, out var vfx,
+                    out var volume)) return;
+            SpawnVfx(vfx, evt.Position, Quaternion.identity);
+        }
+
 
         private void SpawnVfx(GameObject vfx, Vector3 position, Quaternion rotation = default)
         {

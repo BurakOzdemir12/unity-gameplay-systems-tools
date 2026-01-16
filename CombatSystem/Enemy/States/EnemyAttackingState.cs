@@ -20,7 +20,7 @@ namespace _Project.Systems.CombatSystem.Enemy.States
             float finalDamage = stateMachine.EnemyConfigSo.CombatData.AttackDamage;
             float finalKnockbackForce = stateMachine.EnemyConfigSo.CombatData.AttackKnockBackForce;
 
-            stateMachine.WeaponLogic.SetupAttack(finalDamage, finalKnockbackForce, "normal");
+            stateMachine.WeaponHandler.CurrentWeaponLogic.SetupAttack(finalDamage, finalKnockbackForce, "normal");
 
             // stateMachine.WeaponLogic.SetAttackAttributes(1f, stateMachine.AttackKnockBackForce,
             //     stateMachine.AttackDamage);
@@ -52,7 +52,7 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
         public override void Exit()
         {
-            stateMachine.WeaponLogic.EndAttack();
+            stateMachine.WeaponHandler.CurrentWeaponLogic.EndAttack();
         }
     }
 }

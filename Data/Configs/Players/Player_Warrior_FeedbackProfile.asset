@@ -103,6 +103,23 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 034986a81cc0be546a288ff268b8783e, type: 3}
     VFX: {fileID: 0}
     Volume: 0.5
+  - Name: Sprint on Dirt
+    Surface: 0
+    traversal: 0
+    SpecificTag: Sprint
+    Clips:
+    - {fileID: 8300000, guid: 9e68ea1ebd76aa44c8cfa5beb9850830, type: 3}
+    - {fileID: 8300000, guid: 1deb201b8bf8f89479323a74e421150b, type: 3}
+    - {fileID: 8300000, guid: 7c518e8469a403b4c981664ecb28a79a, type: 3}
+    - {fileID: 8300000, guid: 1f2844efbf7abf647ba3d75d510f823a, type: 3}
+    - {fileID: 8300000, guid: fa95ebee958fb0e41a42a832aab767eb, type: 3}
+    - {fileID: 8300000, guid: 0cfeb72dea261a54cb7672590d2d1656, type: 3}
+    - {fileID: 8300000, guid: 924e3e09c67130946a6d7b666e8b8b68, type: 3}
+    - {fileID: 8300000, guid: 6da235e2573048249bcbe608f984ff48, type: 3}
+    - {fileID: 8300000, guid: fdc05ea2699023143ba7e93533cc5a0b, type: 3}
+    - {fileID: 8300000, guid: f26cf9ded47cf0140957490a16f85acc, type: 3}
+    VFX: {fileID: 5222117830268790141, guid: 3bf0e130d015dc7458c0a9f5528c6345, type: 3}
+    Volume: 1.97
   actionFeedbackList:
   - Name: Sword Attack Male Voice
     Surface: 0

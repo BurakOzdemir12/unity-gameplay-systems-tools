@@ -4,6 +4,8 @@ using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.GroundCheck;
 using _Project.Systems._Core.Health;
 using _Project.Systems._Core.ScriptableObjects.Characters;
+using _Project.Systems._Core.Weapon_Tool_Handlers;
+using _Project.Systems.CameraShaker;
 using _Project.Systems.ClimbingSystem.LedgeClimbing;
 using _Project.Systems.ClimbingSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.Player.States;
@@ -24,19 +26,14 @@ namespace _Project.Systems._Core.StateMachine.Player
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public Targeter Targeter { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
-        [field: SerializeField] public WeaponLogic.WeaponLogic WeaponLogic { get; private set; }
+        [field: SerializeField] public WeaponHandler WeaponHandler { get; private set; }
 
-        public void SetWeaponLogic(WeaponLogic.WeaponLogic logic)
-        {
-            WeaponLogic = logic;
-        }
         [field: SerializeField] public ToolLogic.ToolLogic ToolLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public ClimbController ClimbController { get; private set; }
         [field: SerializeField] public GatheringController GatheringController { get; private set; }
         [field: SerializeField] public GroundChecker GroundChecker { get; private set; }
-
         [field: SerializeField] public PlayerConfigSo PlayerConfigSo { get; private set; }
 
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
@@ -123,7 +120,7 @@ namespace _Project.Systems._Core.StateMachine.Player
         public readonly int FreeHangClimbHash = Animator.StringToHash("FreeHang Climb");
         public readonly int Mirror = Animator.StringToHash("Mirror");
         public readonly int IsArmedBoolHash = Animator.StringToHash("isArmed");
-        
+
 
         public int BlockingLayerIndex { get; private set; }
         public int UpperBodyLayerIndex { get; private set; }
@@ -188,7 +185,8 @@ namespace _Project.Systems._Core.StateMachine.Player
         {
             if (UnityEngine.Camera.main == null) Debug.LogError("No main camera found!");
             if (UnityEngine.Camera.main != null) MainCameraTransform = UnityEngine.Camera.main.transform;
-
+            // if (WeaponHandler != null)
+            //     WeaponHandler.CurrentWeaponLogic.Initialize(GetComponent<CharacterController>());
             SwitchState(new PlayerGroundedState(this));
         }
 
@@ -240,14 +238,11 @@ namespace _Project.Systems._Core.StateMachine.Player
             return true;
         }
 
-        
-        
+
         private void OnDisable()
         {
             Health.OnTakeDamage -= HandleTakeDamage;
             Health.OnDeath -= HandleDeath;
         }
-        
-        
     }
 }

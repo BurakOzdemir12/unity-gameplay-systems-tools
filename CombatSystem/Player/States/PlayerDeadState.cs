@@ -1,9 +1,9 @@
 ﻿using _Project.Systems._Core.StateMachine.Player;
+
 namespace _Project.Systems.CombatSystem.Player.States
 {
     public class PlayerDeadState : PlayerBaseState
     {
-
         public PlayerDeadState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -14,7 +14,7 @@ namespace _Project.Systems.CombatSystem.Player.States
             stateMachine.Animator.SetLayerWeight(stateMachine.BlockingLayerIndex, 0f);
 
             stateMachine.Ragdoll.ToggleRagdoll(true);
-            stateMachine.WeaponLogic.gameObject.SetActive(false);
+            stateMachine.WeaponHandler.CurrentWeaponLogic.gameObject.SetActive(false);
         }
 
         public override void Tick(float deltaTime)

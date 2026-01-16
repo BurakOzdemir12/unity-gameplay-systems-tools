@@ -1,6 +1,7 @@
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.Health;
 using _Project.Systems._Core.ScriptableObjects.Characters;
+using _Project.Systems._Core.Weapon_Tool_Handlers;
 using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Targeting;
 using _Project.Systems.MovementSystem.Enemy.States;
@@ -16,7 +17,8 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         [field: SerializeField] public Animator Animator { get; private set; }
         [field: SerializeField] public NavMeshAgent Agent { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
-        [field: SerializeField] public WeaponLogic.WeaponLogic WeaponLogic { get; private set; }
+        [field: SerializeField] public WeaponHandler WeaponHandler { get; private set; }
+
         [field: SerializeField] public EnemyHealth Health { get; private set; }
         [field: SerializeField] public Target Target { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
@@ -68,21 +70,13 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             SwitchState(new EnemyDeadState(this));
         }
 
-        public void EquipWeapon(WeaponLogic.WeaponLogic newWeapon)
-        {
-            WeaponLogic = newWeapon;
-            if (WeaponLogic != null)
-                WeaponLogic.Initialize(Controller);
-        }
-
-
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position,EnemyConfigSo.MovementData.ChaseDetectionRange);
+            Gizmos.DrawWireSphere(transform.position, EnemyConfigSo.MovementData.ChaseDetectionRange);
 
             Gizmos.color = Color.darkRed;
-            Gizmos.DrawWireSphere(transform.position,EnemyConfigSo.CombatData.AttackRange);
+            Gizmos.DrawWireSphere(transform.position, EnemyConfigSo.CombatData.AttackRange);
         }
 
         private void OnDisable()

@@ -17,4 +17,5 @@ MonoBehaviour:
   targetingAnimatorDampTime: 0.15
   rotationDampTime: 5.35
   freeMovementSpeed: 4
+  freeSprintSpeed: 6
   targetingMovementSpeed: 2.5

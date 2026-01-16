@@ -16,6 +16,8 @@ namespace _Project.Systems.MovementSystem.Player.States
 
         private PlayerGroundedState GroundedParent => GetSuperState() as PlayerGroundedState;
 
+        float targetSpeed;
+
         public override void Enter()
         {
             data = stateMachine.PlayerConfigSo.MovementData;
@@ -41,8 +43,11 @@ namespace _Project.Systems.MovementSystem.Player.States
             HandleBlocking(deltaTime, allowBlocking: true);
 
             Vector3 movement = CalculateMovementDirection();
+            bool isSprinting = stateMachine.InputHandler.IsSprinting;
 
-            Move(movement * data.FreeMovementSpeed, deltaTime);
+            var finalSpeed = isSprinting ? data.FreeSprintSpeed : data.FreeMovementSpeed;
+
+            Move(movement * finalSpeed, deltaTime);
             // stateMachine.Controller.Move(movement * stateMachine.FreeMovementSpeed * deltaTime); without force receiver -gravity
 
             if (stateMachine.InputHandler.Move.sqrMagnitude < 0.0001f)
@@ -52,7 +57,10 @@ namespace _Project.Systems.MovementSystem.Player.States
                 return;
             }
 
-            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, 1,
+            targetSpeed = isSprinting ? 1f : .5f;
+
+
+            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, targetSpeed,
                 data.LocomotionAnimatorDampTime,
                 deltaTime);
 

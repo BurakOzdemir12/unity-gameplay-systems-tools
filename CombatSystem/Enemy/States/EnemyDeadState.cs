@@ -11,11 +11,8 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
         public override void Enter()
         {
-            
-            
-            
             stateMachine.Ragdoll.ToggleRagdoll(true);
-            stateMachine.WeaponLogic.gameObject.SetActive(false);
+            stateMachine.WeaponHandler.CurrentWeaponLogic.gameObject.SetActive(false);
             Object.Destroy(stateMachine.Target);
         }
 

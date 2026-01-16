@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Project.Systems.MovementSystem.ScriptableObjects
 {
-    [CreateAssetMenu(fileName ="MovementData" ,menuName = "Scriptable Objects/Movement/Movement Data")]
+    [CreateAssetMenu(fileName = "MovementData", menuName = "Scriptable Objects/Movement/Movement Data")]
     public class MovementDataSo : ScriptableObject
     {
         [Header("Animation Damp Times")]
@@ -35,13 +35,16 @@ namespace _Project.Systems.MovementSystem.ScriptableObjects
 
         public float FreeMovementSpeed => freeMovementSpeed;
 
+        [Tooltip(" The speed at which the player moves when in Sprinting")] [SerializeField]
+        private float freeSprintSpeed;
+
+        public float FreeSprintSpeed => freeSprintSpeed;
+
         [Header("Targeting Settings")]
         [Tooltip(" The speed at which the player moves when in targeting mode")]
         [SerializeField]
         private float targetingMovementSpeed;
 
         public float TargetingMovementSpeed => targetingMovementSpeed;
-        
-        
     }
 }

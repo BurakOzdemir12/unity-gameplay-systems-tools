@@ -27,7 +27,7 @@ namespace _Project.Systems.CombatSystem.Player.States
             float finalKnockbackForce = attack.KnockBackForce;
             string attackType = attack.AttackType;
 
-            stateMachine.WeaponLogic.SetupAttack(finalDamage, finalKnockbackForce, attackType);
+            stateMachine.WeaponHandler.CurrentWeaponLogic.SetupAttack(finalDamage, finalKnockbackForce, attackType);
 
             stateMachine.ToolLogic.SetupLootAction(finalDamage, finalKnockbackForce, attackType);
 
@@ -36,7 +36,6 @@ namespace _Project.Systems.CombatSystem.Player.States
 
         public override void Tick(float deltaTime)
         {
-
             // Move(deltaTime, attack.AttackForceTargetPos, attack.AttackForce);
             Move(deltaTime);
             // FaceTarget(stateMachine.Targeter.SelectedTarget, deltaTime);
@@ -81,7 +80,7 @@ namespace _Project.Systems.CombatSystem.Player.States
 
         public override void Exit()
         {
-            stateMachine.WeaponLogic.EndAttack();
+            stateMachine.WeaponHandler.CurrentWeaponLogic.EndAttack();
         }
 
         private void TryComboAttack(float normalizedTime)

@@ -1,11 +1,12 @@
+using System;
 using _Project.Core.Scripts;
 using _Project.Systems._Core.BaseScriptableObjects.Characters;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.GroundCheck;
 using _Project.Systems._Core.Health;
+using _Project.Systems._Core.Pickup_Drop;
 using _Project.Systems._Core.ScriptableObjects.Characters;
 using _Project.Systems._Core.Weapon_Tool_Handlers;
-using _Project.Systems.CameraShaker;
 using _Project.Systems.ClimbingSystem.LedgeClimbing;
 using _Project.Systems.ClimbingSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.Player.States;
@@ -13,6 +14,7 @@ using _Project.Systems.CombatSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
 using _Project.Systems.CombatSystem.Targeting;
 using _Project.Systems.GatheringSystem.Detector_Controller;
+using _Project.Systems.InventorySystem;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.MovementSystem.ScriptableObjects;
 using UnityEngine;
@@ -35,6 +37,8 @@ namespace _Project.Systems._Core.StateMachine.Player
         [field: SerializeField] public GatheringController GatheringController { get; private set; }
         [field: SerializeField] public GroundChecker GroundChecker { get; private set; }
         [field: SerializeField] public PlayerConfigSo PlayerConfigSo { get; private set; }
+        [field: SerializeField] public InventoryManager InventoryManager { get; private set; }
+        [field: SerializeField] public PickupController PickupController { get; private set; }
 
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
         // public Transform swordHolderR;
@@ -158,6 +162,8 @@ namespace _Project.Systems._Core.StateMachine.Player
         [Tooltip("In Combat or alert mode, its gonna roll but in normal mode jump will work ")] [SerializeField]
         private bool inAlertMode = false;
 
+        private Camera camera1;
+
         public bool IsInAlertMode
         {
             get => inAlertMode;
@@ -178,11 +184,16 @@ namespace _Project.Systems._Core.StateMachine.Player
         {
             Health.OnTakeDamage += HandleTakeDamage;
             Health.OnDeath += HandleDeath;
+            InputHandler.InventoryEvent += HandleInventoryToggle;
+            InputHandler.InteractEvent += HandleInteract;
         }
 
 
         private void Start()
         {
+            camera1 = Camera.main;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             if (UnityEngine.Camera.main == null) Debug.LogError("No main camera found!");
             if (UnityEngine.Camera.main != null) MainCameraTransform = UnityEngine.Camera.main.transform;
             // if (WeaponHandler != null)
@@ -190,6 +201,15 @@ namespace _Project.Systems._Core.StateMachine.Player
             SwitchState(new PlayerGroundedState(this));
         }
 
+        private void HandleInteract()
+        {
+            PickupController.TryPickup();
+        }
+
+        private void HandleInventoryToggle()
+        {
+            InventoryManager.ToggleInventoryVisibility();
+        }
 
         private void HandleTakeDamage()
         {
@@ -243,6 +263,8 @@ namespace _Project.Systems._Core.StateMachine.Player
         {
             Health.OnTakeDamage -= HandleTakeDamage;
             Health.OnDeath -= HandleDeath;
+            InputHandler.InventoryEvent -= HandleInventoryToggle;
+            InputHandler.InteractEvent -= HandleInteract;
         }
     }
 }

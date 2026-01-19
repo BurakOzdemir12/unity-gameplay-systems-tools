@@ -12,10 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a01f8fa86c842e6a9b56e292f43a4ad, type: 3}
   m_Name: UnArmed_Data
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems._Core.WeaponLogic.ScriptableObjects.WeaponDataSo
+  itemID: 0
+  itemName: Hand
+  itemIcon: {fileID: 21300000, guid: 313c940257ccc404a82da79cddf49b6f, type: 3}
+  maxStackSize: 18
+  isStackable: 1
+  itemPrefab: {fileID: 5676840300738598790, guid: 2ce7f3f60a7219d478bdc624979d8024, type: 3}
+  handItemPrefab: {fileID: 5676840300738598790, guid: 2ce7f3f60a7219d478bdc624979d8024, type: 3}
   weaponImpactFeedbackProfile: {fileID: 11400000, guid: 7fda51a3909006a4784ba9e172d7558f, type: 2}
   weaponType: 0
   trailPrefab: {fileID: 8099074118825668027, guid: a92ebdf897fa283428c50a41fe4411a5, type: 3}
-  weaponPrefab: {fileID: 6039613567015340336, guid: 0824cb7988b75774b8d074a779c45919, type: 3}
   damage: 0
   knockback: 0
   staminaCost: 0

@@ -3,7 +3,7 @@ using _Project.Systems._Core.EventBus.Events;
 using Unity.Cinemachine;
 using UnityEngine;
 
-namespace _Project.Systems.CameraShaker
+namespace _Project.Systems._Core.CameraShaker
 {
     public class CineMachineShake : MonoBehaviour
     {

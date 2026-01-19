@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace _Project.Systems._Core.WeaponLogic
 {
-    public class WeaponLogic : MonoBehaviour, IPickupable
+    public class WeaponLogic : MonoBehaviour
     {
         [Header("Weapon Data")] [SerializeField]
         private GameObject weaponModel;
@@ -159,10 +159,7 @@ namespace _Project.Systems._Core.WeaponLogic
         #endregion
 
 
-        public void PickUp(ScriptableObject context)
-        {
-            // Destroy(weaponModel);
-        }
+      
 
         private void OnDrawGizmos()
         {

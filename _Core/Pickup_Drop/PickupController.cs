@@ -1,25 +1,61 @@
 ﻿using System;
+using System.Transactions;
 using _Project.Systems._Core.Pickup_Drop.Interfaces;
 using _Project.Systems._Core.Weapon_Tool_Handlers;
+using _Project.Systems._Core.WeaponLogic;
 using _Project.Systems._Core.WeaponLogic.ScriptableObjects;
+using _Project.Systems.InventorySystem;
+using _Project.Systems.InventorySystem.ScriptableObjects;
 using UnityEngine;
 
 namespace _Project.Systems._Core.Pickup_Drop
 {
     public class PickupController : MonoBehaviour
     {
-        [SerializeField] private WeaponHandler weaponHandler;
+        [field: SerializeField] public InventoryManager InventoryManager { get; private set; }
 
-        private ScriptableObject itemData;
+        // public event Action OnPickup;
+        [SerializeField] private float pickUpRange;
+        [SerializeField] private LayerMask pickupableLayer;
 
-        private void OnTriggerEnter(Collider other)
+
+        public void TryPickup()
         {
-            itemData = weaponHandler.CurrentWeaponDataSo;
-            if (other.TryGetComponent<IPickupable>(out var pickable) && pickable != null)
+            if (InventoryManager == null)
             {
-                // pickable.PickUp(itemData);
-                // weaponHandler.SwitchWeapon((WeaponDataSo)itemData);
+                InventoryManager = GetComponentInParent<InventoryManager>();
+                if (InventoryManager == null)
+                {
+                    Debug.LogError("[PickupController] Inventory is NULL.");
+                    return;
+                }
             }
+
+            var cam = Camera.main;
+            if (cam == null) return;
+
+            if (!Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, pickUpRange,
+                    pickupableLayer))
+                return;
+
+            var pickable = hit.collider.GetComponentInParent<IPickupable>();
+            if (pickable == null) return;
+
+            if (pickable.Data == null)
+            {
+                Debug.LogError($"[PickupController] Pickable Data is NULL on {hit.collider.name}");
+                return;
+            }
+
+            InventoryManager.AddItem(pickable.Data, pickable.Amount);
+            pickable.OnPickedUp();
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.darkMagenta;
+            Gizmos.DrawWireSphere(transform.position, pickUpRange);
+
         }
     }
 }

@@ -52,7 +52,7 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
 
         public void SwitchWeapon(WeaponDataSo weaponDataSo)
         {
-            WeaponLogic.WeaponLogic newWeaponLogic = Instantiate(weaponDataSo.weaponPrefab, currentWeaponRoot.transform)
+            WeaponLogic.WeaponLogic newWeaponLogic = Instantiate(weaponDataSo.itemPrefab, currentWeaponRoot.transform)
                 .GetComponentInChildren<WeaponLogic.WeaponLogic>();
 
             currentWeaponData = weaponDataSo;

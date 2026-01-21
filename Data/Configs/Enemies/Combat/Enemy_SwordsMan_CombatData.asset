@@ -17,7 +17,14 @@ MonoBehaviour:
   impactDuration: 0.75
   blockingLayerChangeSpeed: 0.1
   rotationDampTimeWhileBlock: 2
-  attackRange: 1.5
+  drawAnimName: 
+  sheatAnimName: 
+  combatIdleAnimName: 
+  sheatAnimHash: 0
+  drawAnimHash: 0
+  combatIdleAnimHash: 0
+  attackPosition: {x: 0, y: 0.73, z: 0}
+  attackRange: 1.65
   attackDetectionLayers:
     serializedVersion: 2
     m_Bits: 65536

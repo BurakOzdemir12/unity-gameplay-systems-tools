@@ -4,8 +4,8 @@ using _Project.Systems._Core.BaseScriptableObjects.Characters;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.GroundCheck;
 using _Project.Systems._Core.Health;
+using _Project.Systems._Core.HitboxLogic;
 using _Project.Systems._Core.Pickup_Drop;
-using _Project.Systems._Core.ScriptableObjects.Characters;
 using _Project.Systems._Core.Weapon_Tool_Handlers;
 using _Project.Systems.ClimbingSystem.LedgeClimbing;
 using _Project.Systems.ClimbingSystem.ScriptableObjects;
@@ -32,6 +32,7 @@ namespace _Project.Systems._Core.StateMachine.Player
 
         [field: SerializeField] public ToolLogic.ToolLogic ToolLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
+        [field: SerializeField] public PlayerHurtbox PlayerHurtbox { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public ClimbController ClimbController { get; private set; }
         [field: SerializeField] public GatheringController GatheringController { get; private set; }

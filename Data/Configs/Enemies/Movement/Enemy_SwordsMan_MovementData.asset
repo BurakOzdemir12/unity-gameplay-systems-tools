@@ -17,8 +17,10 @@ MonoBehaviour:
   targetingAnimatorDampTime: 0
   rotationDampTime: 4
   freeMovementSpeed: 2
+  freeSprintSpeed: 0
   targetingMovementSpeed: 0
-  chaseDetectionRange: 20
+  chaseDetectionRange: 6.21
+  sightSensorRange: 0
   <ChaseDetectionLayers>k__BackingField:
     serializedVersion: 2
     m_Bits: 65536

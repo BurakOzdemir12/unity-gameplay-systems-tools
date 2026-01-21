@@ -1,17 +1,17 @@
+using _Project.Systems._Core.BaseScriptableObjects.Characters;
+using _Project.Systems._Core.Field_of_View;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.Health;
-using _Project.Systems._Core.ScriptableObjects.Characters;
 using _Project.Systems._Core.Weapon_Tool_Handlers;
 using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Targeting;
 using _Project.Systems.MovementSystem.Enemy.States;
 using UnityEngine;
 using UnityEngine.AI;
-using StateMachine_StateMachine = _Project.Systems._Core.StateMachine.StateMachine;
 
 namespace _Project.Systems._Core.StateMachine.Enemy
 {
-    public class EnemyStateMachine : StateMachine_StateMachine
+    public class EnemyStateMachine : StateMachine
     {
         [field: SerializeField] public CharacterController Controller { get; private set; }
         [field: SerializeField] public Animator Animator { get; private set; }
@@ -23,6 +23,7 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         [field: SerializeField] public Target Target { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public EnemyConfigSo EnemyConfigSo { get; private set; }
+        [field: SerializeField] public FieldOfView FieldOfView { get; private set; }
 
         [Tooltip("Chase and Attack detect buffer length")] [SerializeField]
         private int bufferMax = 4;
@@ -72,11 +73,12 @@ namespace _Project.Systems._Core.StateMachine.Enemy
 
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, EnemyConfigSo.MovementData.ChaseDetectionRange);
+            // Gizmos.color = Color.yellow;
+            // Gizmos.DrawWireSphere(transform.position, EnemyConfigSo.MovementData.ChaseDetectionRange);
 
             Gizmos.color = Color.darkRed;
-            Gizmos.DrawWireSphere(transform.position, EnemyConfigSo.CombatData.AttackRange);
+            Gizmos.DrawWireSphere(transform.position + EnemyConfigSo.CombatData.AttackPosition,
+                EnemyConfigSo.CombatData.AttackRange);
         }
 
         private void OnDisable()

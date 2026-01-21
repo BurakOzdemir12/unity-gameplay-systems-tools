@@ -19,6 +19,8 @@ namespace _Project.Systems._Core.Pickup_Drop
         [SerializeField] private LayerMask pickupableLayer;
 
 
+
+        
         public void TryPickup()
         {
             if (InventoryManager == null)

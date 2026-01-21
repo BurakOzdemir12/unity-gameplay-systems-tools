@@ -91,7 +91,8 @@ namespace _Project.Systems._Core.WeaponLogic
 
         private void ApplyDamageAndKnockback(Collider other)
         {
-            if (other.TryGetComponent<IDamageable>(out var damageable) && damageable != null)
+            var damageable = other.GetComponentInChildren<IDamageable>();
+            if (damageable != null)
             {
                 damageable.ApplyDamage(currentDamage);
             }

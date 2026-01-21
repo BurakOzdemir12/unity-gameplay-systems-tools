@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace _Project.Systems._Core.StateMachine.Enemy
 {
@@ -11,38 +12,39 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             this.stateMachine = stateMachine;
         }
 
-        protected bool IsInChaseRange()
-        {
-            int detectedCount = Physics.OverlapSphereNonAlloc(
-                stateMachine.transform.position,
-                stateMachine.EnemyConfigSo.MovementData.ChaseDetectionRange,
-                stateMachine.buffersForChase,
-                stateMachine.EnemyConfigSo.MovementData.ChaseDetectionLayers,
-                QueryTriggerInteraction.Ignore
-            );
-
-            if (detectedCount == 0)
-            {
-                stateMachine.Player = null;
-                return false;
-            }
-
-            Collider[] colType = stateMachine.buffersForChase;
-            GameObject closestTarget = FindClosestTarget(detectedCount, colType);
-
-
-            return closestTarget != null;
-        }
+        // protected bool IsInChaseRange()
+        // {
+        //     int detectedCount = Physics.OverlapSphereNonAlloc(
+        //         stateMachine.transform.position,
+        //         stateMachine.EnemyConfigSo.MovementData.ChaseDetectionRange,
+        //         stateMachine.buffersForChase,
+        //         stateMachine.EnemyConfigSo.MovementData.ChaseDetectionLayers,
+        //         QueryTriggerInteraction.Ignore
+        //     );
+        //
+        //     if (detectedCount == 0)
+        //     {
+        //         stateMachine.Player = null;
+        //         return false;
+        //     }
+        //
+        //     Collider[] colType = stateMachine.buffersForChase;
+        //     GameObject closestTarget = FindClosestTarget(detectedCount, colType);
+        //
+        //
+        //     return closestTarget != null;
+        // }
 
         protected bool IsInAttackRange()
         {
             int detected = Physics.OverlapSphereNonAlloc(
-                stateMachine.transform.position,
+                stateMachine.transform.position + stateMachine.EnemyConfigSo.CombatData.AttackPosition,
                 stateMachine.EnemyConfigSo.CombatData.AttackRange,
                 stateMachine.buffersForAttack,
                 stateMachine.EnemyConfigSo.CombatData.AttackDetectionLayers,
                 QueryTriggerInteraction.Ignore);
             if (detected == 0)
+                
             {
                 return false;
             }
@@ -52,6 +54,47 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             GameObject closestTarget = FindClosestTarget(detected, colType);
 
             return closestTarget != null;
+        }
+
+        protected bool IsInChaseRange()
+        {
+            var targets = stateMachine.FieldOfView.Targets;
+            if (targets == null || targets.Count == 0)
+            {
+                stateMachine.Player = null;
+                return false;
+            }
+
+            GameObject closestTarget = FindClosestTargetFromTargets(targets);
+            stateMachine.Player = closestTarget;
+
+            return closestTarget != null;
+        }
+
+        private GameObject FindClosestTargetFromTargets(List<GameObject> targets)
+        {
+            Transform enemyTransform = stateMachine.transform;
+
+            float closestSqrDist = Mathf.Infinity;
+            GameObject closest = null;
+
+            for (int i = 0; i < targets.Count; i++)
+            {
+                var go = targets[i];
+                if (!go) continue;
+                if (!go.CompareTag("Player")) continue;
+
+                Vector3 diff = go.transform.position - enemyTransform.position;
+                float sqrDist = diff.sqrMagnitude;
+
+                if (sqrDist < closestSqrDist)
+                {
+                    closestSqrDist = sqrDist;
+                    closest = go;
+                }
+            }
+
+            return closest;
         }
 
 

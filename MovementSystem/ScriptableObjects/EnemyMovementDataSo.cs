@@ -14,6 +14,11 @@ namespace _Project.Systems.MovementSystem.ScriptableObjects
 
         public float ChaseDetectionRange => chaseDetectionRange;
 
+        [Header("Sight Sensor Settings")] [Tooltip("Eye Sight Sensor Range")] [SerializeField]
+        private float sightSensorRange;
+
+        public float SightSensorRange => sightSensorRange;
+
         [Tooltip("Chase Detection Layers")]
         [field: SerializeField]
         public LayerMask ChaseDetectionLayers { get; private set; }

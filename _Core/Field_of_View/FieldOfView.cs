@@ -77,7 +77,7 @@ namespace _Project.Systems._Core.Field_of_View
             }
         }
 
-        public bool IsInSight(GameObject target)
+        private bool IsInSight(GameObject target)
         {
             Vector3 origin = transform.position + Vector3.up * (height * 0.5f);
 

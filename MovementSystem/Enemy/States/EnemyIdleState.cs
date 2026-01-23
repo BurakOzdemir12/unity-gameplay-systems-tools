@@ -1,5 +1,7 @@
-﻿using _Project.Systems._Core.StateMachine.Enemy;
+﻿using _Project.Systems._Core.BaseScriptableObjects.Characters;
+using _Project.Systems._Core.StateMachine.Enemy;
 using _Project.Systems.CombatSystem.Enemy.States;
+using UnityEngine;
 
 namespace _Project.Systems.MovementSystem.Enemy.States
 {
@@ -9,14 +11,19 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         {
         }
 
+        private float timer;
+
         public override void Enter()
         {
+            timer = 0f;
+
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LocomotionBlendTreeHash,
                 stateMachine.EnemyConfigSo.MovementData.CrossFadeDuration);
         }
 
         public override void Tick(float deltaTime)
         {
+            timer += deltaTime;
             Move(deltaTime);
 
 
@@ -30,6 +37,11 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             {
                 stateMachine.SwitchState(new EnemyAttackingState(stateMachine));
                 return;
+            }
+
+            if (timer >= stateMachine.EnemyConfigSo.MovementData.patrolCooldown)
+            {
+                stateMachine.SwitchState(new EnemyPatrolState(stateMachine));
             }
 
             stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 0f,

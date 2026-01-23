@@ -32,5 +32,14 @@ namespace _Project.Systems.MovementSystem.ScriptableObjects
         private float crossFadeDuration = 0.1f;
 
         public float CrossFadeDuration => crossFadeDuration;
+
+        [Header("Patrol Settings")] [Tooltip("Patrol Range")] [SerializeField]
+        public float patrolRange;
+
+        [Tooltip("Patrol Duration")]  [SerializeField]
+        public float patrolDuration;
+
+        [Tooltip("Patrol Cooldown")]  [SerializeField]
+        public float patrolCooldown;
     }
 }

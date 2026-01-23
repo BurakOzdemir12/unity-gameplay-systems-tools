@@ -19,8 +19,6 @@ namespace _Project.Systems._Core.Pickup_Drop
         [SerializeField] private LayerMask pickupableLayer;
 
 
-
-        
         public void TryPickup()
         {
             if (InventoryManager == null)
@@ -36,7 +34,8 @@ namespace _Project.Systems._Core.Pickup_Drop
             var cam = Camera.main;
             if (cam == null) return;
 
-            if (!Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, pickUpRange,
+            Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            if (!Physics.Raycast(ray, out var hit, pickUpRange,
                     pickupableLayer))
                 return;
 
@@ -57,7 +56,6 @@ namespace _Project.Systems._Core.Pickup_Drop
         {
             Gizmos.color = Color.darkMagenta;
             Gizmos.DrawWireSphere(transform.position, pickUpRange);
-
         }
     }
 }

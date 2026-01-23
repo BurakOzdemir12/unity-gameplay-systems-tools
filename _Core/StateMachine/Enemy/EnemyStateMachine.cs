@@ -34,6 +34,8 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         public Collider[] buffersForChase;
         public Collider[] buffersForAttack;
 
+        public Vector3 firstSpawnPoint;
+
         // public readonly int AttackBlendTreeHash = Animator.StringToHash("CombatBlendTree");
         public readonly int CombatIdleHash = Animator.StringToHash("EnemyCombatIdle");
         public readonly int EnemyAttack1RHash = Animator.StringToHash("EnemyAttack1R");
@@ -51,9 +53,7 @@ namespace _Project.Systems._Core.StateMachine.Enemy
 
         private void Start()
         {
-            Agent.updatePosition = false;
-            Agent.updateRotation = false;
-
+            firstSpawnPoint = transform.position;
             Controller = GetComponent<CharacterController>();
 
             buffersForChase = new Collider[bufferMax];
@@ -77,8 +77,22 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             // Gizmos.DrawWireSphere(transform.position, EnemyConfigSo.MovementData.ChaseDetectionRange);
 
             Gizmos.color = Color.darkRed;
-            Gizmos.DrawWireSphere(transform.position + EnemyConfigSo.CombatData.AttackPosition,
+            Gizmos.DrawWireSphere(transform.position + EnemyConfigSo.CombatData.AttackPositionOffset,
                 EnemyConfigSo.CombatData.AttackRange);
+
+            // Gizmos.color = Color.black;
+            // for (int i = 0; i < waypoints.Length; i++)
+            // {
+            //     Gizmos.DrawWireSphere(waypoints[i], 0.35f);
+            //     if (i + 1 < waypoints.Length)
+            //     {
+            //         Gizmos.DrawLine(waypoints[i], waypoints[i + 1]);
+            //     }
+            //     else
+            //     {
+            //         Gizmos.DrawLine(waypoints[i], waypoints[0]);
+            //     }
+            // }
         }
 
         private void OnDisable()

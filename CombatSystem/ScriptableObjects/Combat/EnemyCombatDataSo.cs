@@ -6,9 +6,9 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
     public class EnemyCombatDataSo : CombatDataSo
     {
         [Header("Enemy Specific Attack Settings")] [Tooltip("Attack Position Offset")] [SerializeField]
-        private Vector3 attackPosition;
+        private Vector3 attackPositionOffset;
 
-        public Vector3 AttackPosition => attackPosition;
+        public Vector3 AttackPositionOffset => attackPositionOffset;
 
         [Tooltip("Attack Range")] [SerializeField]
         private float attackRange;

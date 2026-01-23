@@ -38,13 +38,13 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         protected bool IsInAttackRange()
         {
             int detected = Physics.OverlapSphereNonAlloc(
-                stateMachine.transform.position + stateMachine.EnemyConfigSo.CombatData.AttackPosition,
+                stateMachine.transform.position + stateMachine.EnemyConfigSo.CombatData.AttackPositionOffset,
                 stateMachine.EnemyConfigSo.CombatData.AttackRange,
                 stateMachine.buffersForAttack,
                 stateMachine.EnemyConfigSo.CombatData.AttackDetectionLayers,
                 QueryTriggerInteraction.Ignore);
             if (detected == 0)
-                
+
             {
                 return false;
             }
@@ -139,16 +139,27 @@ namespace _Project.Systems._Core.StateMachine.Enemy
 
         protected void RotateToPlayer(float deltaTime)
         {
-            if (stateMachine.Player == null) return;
-
-
-            Vector3 directionToPlayer = stateMachine.Player.transform.position - stateMachine.transform.position;
-            directionToPlayer.y = 0f;
-            directionToPlayer.Normalize();
-
-            var targetRot = Quaternion.LookRotation(directionToPlayer);
             Transform t = stateMachine.transform;
-            t.rotation = Quaternion.Slerp(t.rotation, targetRot,
+
+            if (stateMachine.Player)
+            {
+                Vector3 directionToPlayer = stateMachine.Player.transform.position - stateMachine.transform.position;
+                directionToPlayer.y = 0f;
+                directionToPlayer.Normalize();
+
+                var targetRot = Quaternion.LookRotation(directionToPlayer);
+                t.rotation = Quaternion.Slerp(t.rotation, targetRot,
+                    stateMachine.EnemyConfigSo.MovementData.RotationDampTime * deltaTime
+                );
+                return;
+            }
+
+            Vector3 directionToTarget = stateMachine.Agent.steeringTarget - stateMachine.transform.position;
+            directionToTarget.y = 0f;
+            directionToTarget.Normalize();
+
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            t.rotation = Quaternion.Slerp(t.rotation, targetRotation,
                 stateMachine.EnemyConfigSo.MovementData.RotationDampTime * deltaTime
             );
         }

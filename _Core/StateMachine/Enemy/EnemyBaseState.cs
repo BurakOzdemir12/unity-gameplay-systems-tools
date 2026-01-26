@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using _Project.Systems._Core.BaseScriptableObjects.Characters;
+using _Project.Systems.CombatSystem.Enemy.States;
 using UnityEngine;
 
 namespace _Project.Systems._Core.StateMachine.Enemy
@@ -50,6 +53,8 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             if (targets == null || targets.Count == 0)
             {
                 stateMachine.Player = null;
+                stateMachine.BuffersForChase.Clear();
+                stateMachine.debugBuffersForChase.Clear();
                 return false;
             }
 
@@ -157,6 +162,39 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
             t.rotation = Quaternion.Slerp(t.rotation, targetRotation,
                 stateMachine.EnemyConfigSo.MovementData.RotationDampTime * deltaTime
+            );
+        }
+
+        protected void HandleBlocking(float deltaTime, bool allowBlocking = true)
+        {
+            if (stateMachine.CurrentState is EnemyDeadState or EnemyAttackingState)
+            {
+                return;
+            }
+
+            bool wantsBlock = allowBlocking && stateMachine.EnemyDefenceBrain.canBlockAttack;
+
+            if (wantsBlock)
+            {
+                stateMachine.ShieldHandler.EnableShield();
+            }
+            else
+            {
+                stateMachine.ShieldHandler.DisableShield();
+            }
+
+            stateMachine.Animator.SetBool(stateMachine.EnemyConfigSo.CombatData.IsBlockingParamHash, wantsBlock);
+
+            float targetWeight = wantsBlock ? 1f : 0f;
+
+            stateMachine.blockLayerWeight = Mathf.MoveTowards(
+                stateMachine.blockLayerWeight,
+                targetWeight,
+                deltaTime * stateMachine.EnemyConfigSo.CombatData.BlockingLayerChangeSpeed
+            );
+
+            stateMachine.Animator.SetLayerWeight(stateMachine.BlockingLayerIndex,
+                stateMachine.blockLayerWeight
             );
         }
     }

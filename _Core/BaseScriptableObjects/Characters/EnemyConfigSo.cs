@@ -6,10 +6,11 @@ using UnityEngine;
 namespace _Project.Systems._Core.BaseScriptableObjects.Characters
 {
     [CreateAssetMenu(fileName = "EnemyConfig", menuName = "Scriptable Objects/Characters/Enemy Config")]
-    public class EnemyConfigSo:ScriptableObject
+    public class EnemyConfigSo : ScriptableObject
     {
         public EnemyMovementDataSo MovementData;
         public EnemyCombatDataSo CombatData;
         public DodgeDataSo DodgeData;
+        public EnemyAIBrainDataSo AIBrainData;
     }
 }

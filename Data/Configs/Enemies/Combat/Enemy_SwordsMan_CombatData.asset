@@ -20,10 +20,14 @@ MonoBehaviour:
   drawAnimName: 
   sheatAnimName: 
   combatIdleAnimName: 
+  blockAnimName: 
+  isBlockingParamName: isBlocking
   sheatAnimHash: 0
   drawAnimHash: 0
   combatIdleAnimHash: 0
-  attackPosition: {x: 0, y: 0.73, z: 0}
+  blockAnimHash: 0
+  isBlockingParamHash: -2076059216
+  attackPositionOffset: {x: 0, y: 0, z: 0}
   attackRange: 1.65
   attackDetectionLayers:
     serializedVersion: 2

@@ -13,11 +13,12 @@ namespace _Project.Systems.CombatSystem.Player.States
 
         private float blockLayerWeight;
         private const string BLOCK_TAG = "Block";
+        
         private PlayerGroundedState GroundParent => GetSuperState() as PlayerGroundedState;
 
         public override void Enter()
         {
-            stateMachine.Animator.SetBool(stateMachine.IsBlockingBoolHash, true);
+            stateMachine.Animator.SetBool(stateMachine.PlayerConfigSo.CombatData.IsBlockingParamHash, true);
             blockLayerWeight = stateMachine.Animator.GetLayerWeight(stateMachine.BlockingLayerIndex);
         }
 
@@ -32,7 +33,7 @@ namespace _Project.Systems.CombatSystem.Player.States
 
             if (!stateMachine.InputHandler.IsBlocking)
             {
-                stateMachine.Animator.SetBool(stateMachine.IsBlockingBoolHash, false);
+                stateMachine.Animator.SetBool(stateMachine.PlayerConfigSo.CombatData.IsBlockingParamHash, false);
                 blockLayerWeight =
                     Mathf.MoveTowards(blockLayerWeight, target, deltaTime * stateMachine.PlayerConfigSo.CombatData.BlockingLayerChangeSpeed);
                 stateMachine.Animator.SetLayerWeight(stateMachine.BlockingLayerIndex, blockLayerWeight);
@@ -60,7 +61,7 @@ namespace _Project.Systems.CombatSystem.Player.States
 
         public override void Exit()
         {
-            stateMachine.Animator.SetBool(stateMachine.IsBlockingBoolHash, false);
+            stateMachine.Animator.SetBool(stateMachine.PlayerConfigSo.CombatData.IsBlockingParamHash, false);
             stateMachine.Animator.SetLayerWeight(stateMachine.BlockingLayerIndex, 0f);
         }
     }

@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using _Project.Systems._Core.BaseScriptableObjects.Characters;
 using _Project.Systems._Core.Field_of_View;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.Health;
 using _Project.Systems._Core.Weapon_Tool_Handlers;
+using _Project.Systems.CombatSystem.Enemy;
 using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Targeting;
 using _Project.Systems.MovementSystem.Enemy.States;
@@ -18,21 +20,23 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         [field: SerializeField] public NavMeshAgent Agent { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
         [field: SerializeField] public WeaponHandler WeaponHandler { get; private set; }
-
+        [field: SerializeField] public ShieldHandler ShieldHandler { get; private set; }
         [field: SerializeField] public EnemyHealth Health { get; private set; }
         [field: SerializeField] public Target Target { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public EnemyConfigSo EnemyConfigSo { get; private set; }
         [field: SerializeField] public FieldOfView FieldOfView { get; private set; }
+        [field: SerializeField] public EnemyDefenceBrain EnemyDefenceBrain { get; private set; }
 
         [Tooltip("Chase and Attack detect buffer length")] [SerializeField]
         private int bufferMax = 4;
 
         public int BufferMax => bufferMax;
 
+        [Header("Blocking Settings")] [field: SerializeField]
+        public float blockLayerWeight = 0;
+
         public GameObject Player { get; set; }
-        public Collider[] buffersForChase;
-        public Collider[] buffersForAttack;
 
         public HashSet<Collider> BuffersForChase;
         public HashSet<Collider> BuffersForAttack;

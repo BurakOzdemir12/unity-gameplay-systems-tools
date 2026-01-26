@@ -20,6 +20,8 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
         public override void Tick(float deltaTime)
         {
+            HandleBlocking(deltaTime, true);
+            
             if (!IsInAttackRange())
             {
                 stateMachine.SwitchState(new EnemyIdleState(stateMachine));

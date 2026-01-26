@@ -39,5 +39,7 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         private float crossFadeDurationCombat = 0.1f;
 
         public float CrossFadeDurationCombat => crossFadeDurationCombat;
+
+       
     }
 }

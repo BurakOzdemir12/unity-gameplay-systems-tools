@@ -110,7 +110,7 @@ namespace _Project.Systems._Core.StateMachine.Player
             // Or just use current ststae check know instead allow bool
             bool wantsBlock = allowBlocking && stateMachine.InputHandler.IsBlocking;
 
-            stateMachine.Animator.SetBool(stateMachine.IsBlockingBoolHash, wantsBlock);
+            stateMachine.Animator.SetBool(stateMachine.PlayerConfigSo.CombatData.IsBlockingParamHash, wantsBlock);
 
             float target = wantsBlock ? 1f : 0f;
 

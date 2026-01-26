@@ -10,7 +10,7 @@ namespace _Project.Systems.CombatSystem.Player.States
 
         public override void Enter()
         {
-            stateMachine.Animator.SetBool(stateMachine.IsBlockingBoolHash, false);
+            stateMachine.Animator.SetBool(stateMachine.PlayerConfigSo.CombatData.IsBlockingParamHash, false);
             stateMachine.Animator.SetLayerWeight(stateMachine.BlockingLayerIndex, 0f);
 
             stateMachine.Ragdoll.ToggleRagdoll(true);

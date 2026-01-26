@@ -1,3 +1,4 @@
+using System;
 using _Project.Systems._Core.StateMachine.Player;
 using _Project.Systems.CombatSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
@@ -12,6 +13,7 @@ namespace _Project.Systems.CombatSystem.Player.States
         private float previousFrameTime;
         private bool alreadyAppliedForce = false;
         private const string ATTACK_TAG = "Attack";
+
         private PlayerGroundedState GroundParent => GetSuperState() as PlayerGroundedState;
 
         public PlayerAttackingState(PlayerStateMachine stateMachine, int attackIndex) : base(stateMachine)
@@ -19,10 +21,15 @@ namespace _Project.Systems.CombatSystem.Player.States
             attack = stateMachine.PlayerConfigSo.AttackTypeDataSet[attackIndex];
         }
 
+
         public override void Enter()
         {
-            // stateMachine.WeaponLogic.SetAttackAttributes(attack.DamageMultiplier, attack.KnockBackForce,
-            //     stateMachine.attackDamage);
+            var targetGo = stateMachine.Targeter.SelectedTarget
+                ? stateMachine.Targeter.SelectedTarget.gameObject
+                : null;
+
+            stateMachine.PlayerAttackSignal.RaiseAttack(targetGo, attack);
+
             float finalDamage = stateMachine.PlayerConfigSo.CombatData.AttackDamage * attack.DamageMultiplier;
             float finalKnockbackForce = attack.KnockBackForce;
             string attackType = attack.AttackType;

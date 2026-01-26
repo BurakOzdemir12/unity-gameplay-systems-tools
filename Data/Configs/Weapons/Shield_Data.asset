@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d083b6924b1a492e89e8f0035e58353c, type: 3}
+  m_Name: Shield_Data
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems._Core.Shield_Logic.ScriptableObjects.ShieldDataSo
+  weaponImpactFeedbackProfile: {fileID: 11400000, guid: 7fda51a3909006a4784ba9e172d7558f, type: 2}
+  shieldType: 0
+  shieldKnockbackForce: 2
+  shieldDamage: 3
+  shieldStunPower: 4
+  shieldStaminaCost: 5
+  shieldDurability: 4

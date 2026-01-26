@@ -34,6 +34,6 @@ namespace _Project.Systems._Core.Health
         }
 
         // protected abstract void OnPlayerDeath();
-        // protected abstract void OnPlayerDamaged();
+        // protected abstract void OnCharacterDamaged();
     }
 }

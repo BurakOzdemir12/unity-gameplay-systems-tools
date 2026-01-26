@@ -26,7 +26,8 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             timer += deltaTime;
             Move(deltaTime);
 
-
+            HandleBlocking(deltaTime, true);
+            
             if (IsInChaseRange() && !IsInAttackRange())
             {
                 stateMachine.SwitchState(new EnemyChaseState(stateMachine));

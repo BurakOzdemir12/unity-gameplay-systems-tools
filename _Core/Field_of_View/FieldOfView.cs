@@ -28,7 +28,7 @@ namespace _Project.Systems._Core.Field_of_View
             }
         }
 
-        private List<GameObject> targets = new List<GameObject>();
+        private readonly List<GameObject> targets = new List<GameObject>();
 
         [SerializeField] private Collider[] detectedColliders = new Collider[10];
         public Collider[] DetectedColliders => detectedColliders;

@@ -7,6 +7,8 @@ using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems._Core.GravityForce.Interfaces;
 using _Project.Systems._Core.Health.Interfaces;
 using _Project.Systems._Core.Pickup_Drop.Interfaces;
+using _Project.Systems._Core.Shield_Logic.Interfaces;
+using _Project.Systems._Core.Shield_Logic.Structs;
 using _Project.Systems._Core.WeaponLogic.ScriptableObjects;
 using UnityEngine;
 
@@ -81,6 +83,15 @@ namespace _Project.Systems._Core.WeaponLogic
             if (!hitColliders.Add(other)) return;
 
             Debug.Log("Hit collider " + other.name + ": Tag:" + other.tag);
+
+            var blocker = other.GetComponentInChildren<IBlocker>();
+            if (blocker != null && blocker.CanBlock(transform.root) && blocker.IsBlocking)
+            {
+                blocker.ApplyBlock(new BlockContext(
+                    currentDamage, currentKnockbackForce, transform.root, currentAttackType
+                ));
+                return;
+            }
 
             ApplyDamageAndKnockback(other);
             PublishImpactEvent(other);
@@ -159,8 +170,6 @@ namespace _Project.Systems._Core.WeaponLogic
 
         #endregion
 
-
-      
 
         private void OnDrawGizmos()
         {

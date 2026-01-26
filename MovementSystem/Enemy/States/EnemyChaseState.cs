@@ -37,6 +37,8 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 1f,
                 stateMachine.EnemyConfigSo.MovementData.LocomotionAnimatorDampTime,
                 deltaTime);
+
+            HandleBlocking(deltaTime, true);
         }
 
         public override void Exit()
@@ -67,6 +69,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             RotateToPlayer(deltaTime);
             // stateMachine.Agent.velocity = stateMachine.Controller.velocity;
             stateMachine.Agent.nextPosition = stateMachine.transform.position;
+
         }
     }
 }

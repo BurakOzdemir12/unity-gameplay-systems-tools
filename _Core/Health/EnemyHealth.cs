@@ -10,8 +10,9 @@ namespace _Project.Systems._Core.Health
         // {
         // }
         //
-        // protected override void OnPlayerDamaged()
+        // protected override void OnCharacterDamaged()
         // {
+        //     
         // }
     }
 }

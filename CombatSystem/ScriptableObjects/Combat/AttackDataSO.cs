@@ -32,5 +32,9 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         [Tooltip("Attack Knock Back force to Enemy - to opposite character. ")]
         [field: SerializeField]
         public float KnockBackForce { get; private set; }
+
+        [Tooltip("Attack Score For Defence Calculation")]
+        public float attackScore;
+
     }
 }

@@ -27,5 +27,5 @@ MonoBehaviour:
   locomotionBlendTreeDuration: 0.1
   crossFadeDuration: 0.1
   patrolRange: 41.2
-  patrolDuration: 11.93
+  patrolDuration: 10
   patrolCooldown: 10

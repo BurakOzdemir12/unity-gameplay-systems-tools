@@ -46,15 +46,29 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
 
         public string CombatIdleAnimName => combatIdleAnimName;
 
+        [Tooltip("Blocking Animation Name")] [SerializeField]
+        private string blockAnimName;
+
+        public string BlockAnimName => blockAnimName;
+
+        [Tooltip("isBlocking boolean Parameter")] [SerializeField]
+        private string isBlockingParamName;
+
+        public string IsBlockingParamName => isBlockingParamName;
+
         // ArmedLocomBlendTree
         [Header("Anim Hashes")] [SerializeField, HideInInspector]
         private int sheatAnimHash;
 
         [SerializeField, HideInInspector] private int drawAnimHash;
         [SerializeField, HideInInspector] private int combatIdleAnimHash;
+        [SerializeField, HideInInspector] private int blockAnimHash;
+        [SerializeField, HideInInspector] private int isBlockingParamHash;
         public int SheatAnimHash => sheatAnimHash;
         public int DrawAnimHash => drawAnimHash;
         public int CombatIdleAnimHash => combatIdleAnimHash;
+        public int BlockAnimHash => blockAnimHash;
+        public int IsBlockingParamHash => isBlockingParamHash;
 
         private void RebuildAnimHash()
         {
@@ -65,10 +79,18 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
             sheatAnimHash = string.IsNullOrWhiteSpace(sheatAnimName)
                 ? 0
                 : Animator.StringToHash(sheatAnimName);
-            
+
             combatIdleAnimHash = string.IsNullOrWhiteSpace(combatIdleAnimName)
                 ? 0
                 : Animator.StringToHash(combatIdleAnimName);
+
+            blockAnimHash = string.IsNullOrWhiteSpace(blockAnimName)
+                ? 0
+                : Animator.StringToHash(blockAnimName);
+
+            isBlockingParamHash = string.IsNullOrWhiteSpace(isBlockingParamName)
+                ? 0
+                : Animator.StringToHash(isBlockingParamName);
         }
 
         private void OnEnable() => RebuildAnimHash();

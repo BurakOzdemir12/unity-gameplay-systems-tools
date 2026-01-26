@@ -9,6 +9,7 @@ using _Project.Systems._Core.Pickup_Drop;
 using _Project.Systems._Core.Weapon_Tool_Handlers;
 using _Project.Systems.ClimbingSystem.LedgeClimbing;
 using _Project.Systems.ClimbingSystem.ScriptableObjects;
+using _Project.Systems.CombatSystem.Player;
 using _Project.Systems.CombatSystem.Player.States;
 using _Project.Systems.CombatSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
@@ -32,7 +33,6 @@ namespace _Project.Systems._Core.StateMachine.Player
 
         [field: SerializeField] public ToolLogic.ToolLogic ToolLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
-        [field: SerializeField] public PlayerHurtbox PlayerHurtbox { get; private set; }
         [field: SerializeField] public Ragdoll.Ragdoll Ragdoll { get; private set; }
         [field: SerializeField] public ClimbController ClimbController { get; private set; }
         [field: SerializeField] public GatheringController GatheringController { get; private set; }
@@ -40,6 +40,7 @@ namespace _Project.Systems._Core.StateMachine.Player
         [field: SerializeField] public PlayerConfigSo PlayerConfigSo { get; private set; }
         [field: SerializeField] public InventoryManager InventoryManager { get; private set; }
         [field: SerializeField] public PickupController PickupController { get; private set; }
+        [field: SerializeField] public PlayerAttackSignal PlayerAttackSignal { get; private set; }
 
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
         // public Transform swordHolderR;
@@ -104,7 +105,6 @@ namespace _Project.Systems._Core.StateMachine.Player
         public readonly int TargetingForwardSpeedHash = Animator.StringToHash("TargetingForwardSpeed");
         public readonly int TargetingRightSpeedHash = Animator.StringToHash("TargetingRightSpeed");
         public readonly int LightImpactHash = Animator.StringToHash("ImpactSlight");
-        public readonly int IsBlockingBoolHash = Animator.StringToHash("isBlocking");
         public readonly int DodgeBackwardHash = Animator.StringToHash("Dodge Backward");
         public readonly int DodgeForwardHash = Animator.StringToHash("Dodge Forward");
         public readonly int DodgeRightHash = Animator.StringToHash("Dodge Right");

@@ -12,46 +12,34 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             this.stateMachine = stateMachine;
         }
 
-        // protected bool IsInChaseRange()
-        // {
-        //     int detectedCount = Physics.OverlapSphereNonAlloc(
-        //         stateMachine.transform.position,
-        //         stateMachine.EnemyConfigSo.MovementData.ChaseDetectionRange,
-        //         stateMachine.buffersForChase,
-        //         stateMachine.EnemyConfigSo.MovementData.ChaseDetectionLayers,
-        //         QueryTriggerInteraction.Ignore
-        //     );
-        //
-        //     if (detectedCount == 0)
-        //     {
-        //         stateMachine.Player = null;
-        //         return false;
-        //     }
-        //
-        //     Collider[] colType = stateMachine.buffersForChase;
-        //     GameObject closestTarget = FindClosestTarget(detectedCount, colType);
-        //
-        //
-        //     return closestTarget != null;
-        // }
-
         protected bool IsInAttackRange()
         {
+            Collider[] debugBuffer = new Collider[10];
             int detected = Physics.OverlapSphereNonAlloc(
                 stateMachine.transform.position + stateMachine.EnemyConfigSo.CombatData.AttackPositionOffset,
                 stateMachine.EnemyConfigSo.CombatData.AttackRange,
-                stateMachine.buffersForAttack,
+                debugBuffer,
                 stateMachine.EnemyConfigSo.CombatData.AttackDetectionLayers,
                 QueryTriggerInteraction.Ignore);
             if (detected == 0)
 
             {
+                stateMachine.BuffersForAttack.Clear();
+                stateMachine.debugBuffersForAttack.Clear();
+
                 return false;
             }
 
-            Collider[] colType = stateMachine.buffersForAttack;
+            for (int i = 0; i < detected; i++)
+            {
+                if (debugBuffer[i].TryGetComponent<Collider>(out var coll))
+                {
+                    stateMachine.BuffersForAttack.Add(coll);
+                }
+            }
 
-            GameObject closestTarget = FindClosestTarget(detected, colType);
+            stateMachine.debugBuffersForAttack = stateMachine.BuffersForAttack.ToList();
+            GameObject closestTarget = FindClosestTarget(detected, stateMachine.BuffersForAttack);
 
             return closestTarget != null;
         }
@@ -65,40 +53,48 @@ namespace _Project.Systems._Core.StateMachine.Enemy
                 return false;
             }
 
-            GameObject closestTarget = FindClosestTargetFromTargets(targets);
-            stateMachine.Player = closestTarget;
-
-            return closestTarget != null;
-        }
-
-        private GameObject FindClosestTargetFromTargets(List<GameObject> targets)
-        {
-            Transform enemyTransform = stateMachine.transform;
-
-            float closestSqrDist = Mathf.Infinity;
-            GameObject closest = null;
-
             for (int i = 0; i < targets.Count; i++)
             {
-                var go = targets[i];
-                if (!go) continue;
-                if (!go.CompareTag("Player")) continue;
-
-                Vector3 diff = go.transform.position - enemyTransform.position;
-                float sqrDist = diff.sqrMagnitude;
-
-                if (sqrDist < closestSqrDist)
+                if (targets[i].TryGetComponent<Collider>(out var coll))
                 {
-                    closestSqrDist = sqrDist;
-                    closest = go;
+                    stateMachine.BuffersForChase.Add(coll);
                 }
             }
 
-            return closest;
+            stateMachine.debugBuffersForChase = stateMachine.BuffersForChase.ToList();
+            GameObject closestTarget = FindClosestTarget(targets.Count, stateMachine.BuffersForChase);
+            stateMachine.Player = closestTarget;
+            return closestTarget != null;
         }
 
+        // private GameObject FindClosestTargetForChase(List<GameObject> targets)
+        // {
+        //     Transform enemyTransform = stateMachine.transform;
+        //
+        //     float closestSqrDist = Mathf.Infinity;
+        //     GameObject closest = null;
+        //
+        //     for (int i = 0; i < targets.Count; i++)
+        //     {
+        //         var go = targets[i];
+        //         if (!go) continue;
+        //         if (!go.CompareTag("Player")) continue;
+        //
+        //         Vector3 diff = go.transform.position - enemyTransform.position;
+        //         float sqrDist = diff.sqrMagnitude;
+        //
+        //         if (sqrDist < closestSqrDist)
+        //         {
+        //             closestSqrDist = sqrDist;
+        //             closest = go;
+        //         }
+        //     }
+        //
+        //     return closest;
+        // }
 
-        private GameObject FindClosestTarget(int detectedCount, Collider[] colType)
+
+        private GameObject FindClosestTarget(int detectedCount, HashSet<Collider> colType)
         {
             Transform enemyTransform = stateMachine.transform;
             float closestDistance = Mathf.Infinity;
@@ -106,7 +102,7 @@ namespace _Project.Systems._Core.StateMachine.Enemy
 
             for (int i = 0; i < detectedCount; i++)
             {
-                Collider hit = colType[i];
+                Collider hit = colType.ElementAt(i); //[i];
                 if (hit == null) continue;
                 if (!hit.CompareTag("Player")) continue;
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using _Project.Systems._Core.StateMachine.Enemy;
+using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Player;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,6 +15,7 @@ namespace _Project.Systems.CombatSystem.Enemy
 
 
         public bool canBlockAttack = false;
+        public bool canParryAttack = false;
 
         private void Awake()
         {
@@ -53,15 +56,30 @@ namespace _Project.Systems.CombatSystem.Enemy
 
         private void DecideDefenceAction(AttackDataSo attackData)
         {
-            float blockScore = stateMachine.EnemyConfigSo.AIBrainData.blockAttackScore;
             float attackScore = attackData.attackScore;
+            EnemyAIBrainDataSo brainData = stateMachine.EnemyConfigSo.AIBrainData;
 
-            float blockChance = blockScore / (blockScore * attackScore);
+            // Block Calculation
+            float blockScore = brainData.blockAttackScore;
+
+            float blockChance = blockScore / (blockScore + attackScore);
             blockChance = Mathf.Clamp01(blockChance);
 
             canBlockAttack = Random.value < blockChance;
 
-            Debug.Log($"Block Chance: {blockChance} and Can block: => {canBlockAttack}");
+            // Debug.Log($"Block Chance: {blockChance} and Can block: => {canBlockAttack}");
+
+            //Parry Calculation
+            float parryScore = brainData.parryAttackScore;
+
+            float parryChance = parryScore / (parryScore + attackScore);
+            parryChance = Mathf.Clamp01(parryChance);
+
+            canParryAttack = Random.value < parryChance;
+
+            Debug.Log($"Parry Chance: {parryChance} and Can block: => {canParryAttack}");
+
+            SetEnemyState();
             //TODO Level Factor for the future
 
             // float levelFactor = enemyLevel / (float)playerLevel;
@@ -77,6 +95,17 @@ namespace _Project.Systems.CombatSystem.Enemy
 
             // float adjustedDefence = defenceScore * difficultyMultiplier;
             // float blockChance = adjustedDefence / (adjustedDefence + attackScore);
+        }
+
+        private void SetEnemyState()
+        {
+            if (stateMachine.CurrentState is EnemyDeadState or EnemyImpactState or EnemyAttackingState) 
+                return;
+
+            if (canParryAttack)
+            {
+                stateMachine.SwitchState(new EnemyParryState(stateMachine));
+            }
         }
 
         private void OnDisable()

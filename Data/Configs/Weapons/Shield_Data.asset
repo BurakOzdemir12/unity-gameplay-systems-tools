@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems._Core.Shield_Logic.ScriptableObjects.ShieldDataSo
   weaponImpactFeedbackProfile: {fileID: 11400000, guid: 7fda51a3909006a4784ba9e172d7558f, type: 2}
   shieldType: 0
-  shieldKnockbackForce: 2
-  shieldDamage: 10
+  shieldKnockbackForce: 322.5
+  shieldDamage: 1
   shieldStunPower: 2
   shieldStaminaCost: 2
-  shieldDurability: 3
+  shieldDurability: 47.64
   shieldBreakEffect: {fileID: 7065122998337236172, guid: 2f1d8d43f0cef1e468ad6d82c239bd19, type: 3}
   shieldBreakClips:
   - {fileID: 8300000, guid: 22be456444a164f9589011a44dafbd0a, type: 3}

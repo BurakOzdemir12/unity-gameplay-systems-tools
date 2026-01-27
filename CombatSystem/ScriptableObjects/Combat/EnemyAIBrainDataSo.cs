@@ -6,6 +6,7 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
     public class EnemyAIBrainDataSo : ScriptableObject
     {
         public float blockAttackScore;
+        public float parryAttackScore;
         public float rollAttackScore;
         public float dodgeAttackScore;
     }

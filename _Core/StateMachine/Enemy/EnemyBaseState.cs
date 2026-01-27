@@ -167,7 +167,7 @@ namespace _Project.Systems._Core.StateMachine.Enemy
 
         protected void HandleBlocking(float deltaTime, bool allowBlocking = true)
         {
-            if (stateMachine.CurrentState is EnemyDeadState or EnemyAttackingState)
+            if (stateMachine.CurrentState is EnemyDeadState or EnemyAttackingState or EnemyParryState)
             {
                 return;
             }

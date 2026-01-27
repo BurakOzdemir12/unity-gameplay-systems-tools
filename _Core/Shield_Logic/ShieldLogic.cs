@@ -31,8 +31,12 @@ namespace _Project.Systems._Core.Shield_Logic
         private float currentShieldStunPower;
 
         public event Action<BlockContext> OnBlocked;
+        public event Action<BlockContext> OnParried;
         public event Action OnShieldBreak;
         public bool IsBlocking { get; private set; }
+
+        public bool ParryWindowActive { get; private set; }
+        public void SetParryWindow(bool active) => ParryWindowActive = active;
 
         private void Awake()
         {
@@ -81,6 +85,8 @@ namespace _Project.Systems._Core.Shield_Logic
             hitColliders.Clear();
             gameObject.SetActive(false);
             IsBlocking = false;
+            ParryWindowActive = false;
+            
         }
 
         private void OnTriggerEnter(Collider other)
@@ -98,9 +104,14 @@ namespace _Project.Systems._Core.Shield_Logic
 
         public void ApplyBlock(BlockContext context)
         {
+            if (ParryWindowActive && IsBlocking && CanBlock(context.AttackerRoot))
+            {
+                OnParried?.Invoke(context);
+                return;
+            }
+
             OnBlocked?.Invoke(context);
             currentShieldDurability -= context.Damage;
-            Debug.Log("New shield durability: " + currentShieldDurability + "");
 
             if (currentShieldDurability <= 0)
             {
@@ -113,6 +124,7 @@ namespace _Project.Systems._Core.Shield_Logic
         {
             OnShieldBreak?.Invoke();
             IsBlocking = false;
+            ParryWindowActive = false;
         }
     }
 }

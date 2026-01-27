@@ -6,6 +6,7 @@ using _Project.Systems._Core.GroundCheck;
 using _Project.Systems._Core.Health;
 using _Project.Systems._Core.HitboxLogic;
 using _Project.Systems._Core.Pickup_Drop;
+using _Project.Systems._Core.Stun.Interfaces;
 using _Project.Systems._Core.Weapon_Tool_Handlers;
 using _Project.Systems.ClimbingSystem.LedgeClimbing;
 using _Project.Systems.ClimbingSystem.ScriptableObjects;
@@ -185,6 +186,7 @@ namespace _Project.Systems._Core.StateMachine.Player
         {
             Health.OnTakeDamage += HandleTakeDamage;
             Health.OnDeath += HandleDeath;
+            Health.OnStunned += HandleStunned;
             InputHandler.InventoryEvent += HandleInventoryToggle;
             InputHandler.InteractEvent += HandleInteract;
         }
@@ -259,11 +261,16 @@ namespace _Project.Systems._Core.StateMachine.Player
             return true;
         }
 
+        private void HandleStunned(float duration)
+        {
+            SwitchState(new PlayerStunnedState(this, duration));
+        }
 
         private void OnDisable()
         {
             Health.OnTakeDamage -= HandleTakeDamage;
             Health.OnDeath -= HandleDeath;
+            Health.OnStunned -= HandleStunned;
             InputHandler.InventoryEvent -= HandleInventoryToggle;
             InputHandler.InteractEvent -= HandleInteract;
         }

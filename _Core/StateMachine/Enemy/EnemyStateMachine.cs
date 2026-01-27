@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using _Project.Systems._Core.BaseScriptableObjects.Characters;
 using _Project.Systems._Core.Field_of_View;
@@ -56,6 +57,11 @@ namespace _Project.Systems._Core.StateMachine.Enemy
 
         //TODO Use animation override controller or create AnimationProfileSo for Hashes 
 
+        private void Awake()
+        {
+            BlockingLayerIndex = Animator.GetLayerIndex("Block Layer");
+        }
+
         private void OnEnable()
         {
             Health.OnTakeDamage += HandleTakeDamage;
@@ -72,7 +78,6 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             BuffersForChase = new HashSet<Collider>(bufferMax);
             BuffersForAttack = new HashSet<Collider>(bufferMax);
 
-            BlockingLayerIndex = Animator.GetLayerIndex("Block Layer");
 
             SwitchState(new EnemyIdleState(this));
         }

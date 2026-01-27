@@ -27,6 +27,8 @@ namespace _Project.Systems._Core.WeaponLogic
         [Header("Collider References (Set in Inspector")] [SerializeField]
         private Collider characterOwnCollider;
 
+        [SerializeField] private Transform characterOwnTransform;
+
         private readonly HashSet<Collider> hitColliders = new HashSet<Collider>();
 
         [Header("Impact Normal Improve (Optional)")] [SerializeField]
@@ -42,6 +44,13 @@ namespace _Project.Systems._Core.WeaponLogic
         private string currentAttackType;
         private Vector3 impactPointDebug;
 
+
+        private void Awake()
+        {
+            if (!characterOwnCollider) characterOwnCollider = GetComponentInParent<Collider>();
+            if (!characterOwnTransform) characterOwnTransform = characterOwnCollider.transform;
+        }
+
         private void OnEnable() => hitColliders.Clear();
 
         private void OnDisable()
@@ -50,7 +59,11 @@ namespace _Project.Systems._Core.WeaponLogic
             hitWindowActive = false;
         }
 
-        public void Initialize(Collider ownerCollider) => characterOwnCollider = ownerCollider;
+        public void Initialize(Collider ownerCollider)
+        {
+            characterOwnCollider = ownerCollider;
+            characterOwnTransform = ownerCollider.transform;
+        }
 
 
         public void SetupAttack(float finalDamage, float finalKnockbackForce,
@@ -82,7 +95,7 @@ namespace _Project.Systems._Core.WeaponLogic
             if (other == characterOwnCollider) return;
             if (!hitColliders.Add(other)) return;
             if (other.transform.root == transform.root) return;
-            
+
             Debug.Log("Hit collider " + other.name + ": Tag:" + other.tag);
 
             if (ProcessBlockerHit(other)) return;
@@ -94,11 +107,12 @@ namespace _Project.Systems._Core.WeaponLogic
 
         private bool ProcessBlockerHit(Collider other)
         {
-            var blocker = other.GetComponentInChildren<IBlocker>();
+            var blocker = other.GetComponent<IBlocker>();
+
             if (blocker != null && blocker.CanBlock(transform.root) && blocker.IsBlocking)
             {
                 blocker.ApplyBlock(new BlockContext(
-                    currentDamage, currentKnockbackForce, transform.root, currentAttackType
+                    currentDamage, currentKnockbackForce, characterOwnTransform, currentAttackType
                 ));
                 PublishImpactEvent(other);
                 return true;

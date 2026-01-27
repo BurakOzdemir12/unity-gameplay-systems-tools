@@ -172,6 +172,13 @@ namespace _Project.Systems._Core.StateMachine.Enemy
                 return;
             }
 
+            if (!stateMachine.ShieldHandler.CurrentShieldHitbox)
+            {
+                stateMachine.Animator.SetBool(stateMachine.EnemyConfigSo.CombatData.IsBlockingParamHash, false);
+                return;
+            }
+
+
             bool wantsBlock = allowBlocking && stateMachine.EnemyDefenceBrain.canBlockAttack;
 
             if (wantsBlock)

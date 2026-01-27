@@ -9,6 +9,8 @@ namespace _Project.Systems._Core.Effects.Audio
 {
     public class SoundManager : MonoBehaviour
     {
+        public static SoundManager Instance { get; private set; }
+
         private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
         private EventBinding<CharacterGatheringActionEvent> gatheringBinding;
@@ -18,6 +20,9 @@ namespace _Project.Systems._Core.Effects.Audio
 
         private void Awake()
         {
+            if (Instance != null && Instance != this) Destroy(this.gameObject);
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
             audioSource = GetComponent<AudioSource>();
         }
 
@@ -48,6 +53,8 @@ namespace _Project.Systems._Core.Effects.Audio
             EventBus<WeaponImpactActionEvent>.Unsubscribe(weaponImpactBinding);
             EventBus<ToolImpactActionEvent>.Unsubscribe(toolImpactBinding);
         }
+
+        #region Event Bus Handlers
 
         private void HandleTraversalEvent(CharacterTraversalEvent @evt)
         {
@@ -148,5 +155,16 @@ namespace _Project.Systems._Core.Effects.Audio
                 )) return;
             audioSource.PlayOneShot(clip, volume);
         }
+
+        #endregion
+
+        #region Singleton Function Calls
+
+        public void PlayShieldBreak(AudioClip clip, float volume)
+        {
+            audioSource.PlayOneShot(clip, volume);
+        }
+
+        #endregion
     }
 }

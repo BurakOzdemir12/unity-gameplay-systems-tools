@@ -81,22 +81,33 @@ namespace _Project.Systems._Core.WeaponLogic
 
             if (other == characterOwnCollider) return;
             if (!hitColliders.Add(other)) return;
-
+            if (other.transform.root == transform.root) return;
+            
             Debug.Log("Hit collider " + other.name + ": Tag:" + other.tag);
 
+            if (ProcessBlockerHit(other)) return;
+
+            ApplyDamageAndKnockback(other);
+        }
+
+        #region On Shield Impact
+
+        private bool ProcessBlockerHit(Collider other)
+        {
             var blocker = other.GetComponentInChildren<IBlocker>();
             if (blocker != null && blocker.CanBlock(transform.root) && blocker.IsBlocking)
             {
                 blocker.ApplyBlock(new BlockContext(
                     currentDamage, currentKnockbackForce, transform.root, currentAttackType
                 ));
-                return;
+                PublishImpactEvent(other);
+                return true;
             }
 
-            ApplyDamageAndKnockback(other);
-            PublishImpactEvent(other);
+            return false;
         }
 
+        #endregion
 
         #region Apply Damage And Knockback
 
@@ -114,6 +125,8 @@ namespace _Project.Systems._Core.WeaponLogic
                 dir.y = 0f;
                 knockable.ApplyKnockback(currentKnockbackForce, dir);
             }
+
+            PublishImpactEvent(other);
         }
 
         #endregion

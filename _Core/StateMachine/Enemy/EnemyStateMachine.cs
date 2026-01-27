@@ -3,6 +3,7 @@ using _Project.Systems._Core.BaseScriptableObjects.Characters;
 using _Project.Systems._Core.Field_of_View;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems._Core.Health;
+using _Project.Systems._Core.Shield_Logic.Structs;
 using _Project.Systems._Core.Weapon_Tool_Handlers;
 using _Project.Systems.CombatSystem.Enemy;
 using _Project.Systems.CombatSystem.Enemy.States;
@@ -45,7 +46,7 @@ namespace _Project.Systems._Core.StateMachine.Enemy
 
         public Vector3 firstSpawnPoint;
         public int BlockingLayerIndex { get; private set; }
-        
+
         // public readonly int AttackBlendTreeHash = Animator.StringToHash("CombatBlendTree");
         public readonly int CombatIdleHash = Animator.StringToHash("EnemyCombatIdle");
         public readonly int EnemyAttack1RHash = Animator.StringToHash("EnemyAttack1R");
@@ -59,7 +60,9 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         {
             Health.OnTakeDamage += HandleTakeDamage;
             Health.OnDeath += HandleDeath;
+            ShieldHandler.CurrentShieldLogic.OnBlocked += HandleShieldImpact;
         }
+
 
         private void Start()
         {
@@ -82,6 +85,13 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         private void HandleDeath()
         {
             SwitchState(new EnemyDeadState(this));
+        }
+
+        private void HandleShieldImpact(BlockContext ctx)
+        {
+            Animator.CrossFadeInFixedTime(EnemyConfigSo.CombatData.BlockImpactAnimHash,
+                EnemyConfigSo.CombatData.CrossFadeDurationCombat);
+            // SwitchState(new EnemyBlockParryState(this, ctx));
         }
 
         private void OnDrawGizmosSelected()
@@ -112,6 +122,7 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         {
             Health.OnTakeDamage -= HandleTakeDamage;
             Health.OnDeath -= HandleDeath;
+            ShieldHandler.CurrentShieldLogic.OnBlocked -= HandleShieldImpact;
         }
     }
 }

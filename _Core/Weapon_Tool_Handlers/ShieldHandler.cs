@@ -1,4 +1,6 @@
 ﻿using System;
+using _Project.Systems._Core.Effects.Audio;
+using _Project.Systems._Core.Effects.Vfx;
 using _Project.Systems._Core.Shield_Logic;
 using _Project.Systems._Core.Shield_Logic.ScriptableObjects;
 using UnityEngine;
@@ -11,6 +13,11 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
         private GameObject currentShieldRoot;
 
         public GameObject CurrentShieldRoot => currentShieldRoot;
+
+        [Header("Current Shield Model")] [SerializeField]
+        private GameObject currentShieldModel;
+
+        public GameObject CurrentShieldModel => currentShieldModel;
 
         [Header("Shield Hitbox")] [SerializeField]
         private GameObject currentShieldHitbox;
@@ -27,16 +34,25 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
 
         public ShieldLogic CurrentShieldLogic => currentShieldLogic;
 
-        private void Start()
+
+        private void Awake()
         {
+            if (currentShieldLogic) return;
             ShieldLogic shieldLogic = currentShieldRoot.GetComponentInChildren<ShieldLogic>(true);
             if (shieldLogic == null)
             {
                 Debug.LogError($"{name}: ShieldLogic couldn't find in the children!", this);
                 return;
             }
+
             currentShieldLogic = shieldLogic;
             currentShieldHitbox = shieldLogic.gameObject;
+            currentShieldModel = shieldLogic.transform.parent.gameObject;
+        }
+
+        private void OnEnable()
+        {
+            currentShieldLogic.OnShieldBreak += HandleShieldBreak;
         }
 
         public void EnableShield()
@@ -46,12 +62,30 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
                 currentShieldLogic.PerformBlock();
             }
         }
+
         public void DisableShield()
         {
             if (CurrentShieldHitbox != null)
             {
                 currentShieldLogic.EndBlock();
             }
+        }
+
+        private void HandleShieldBreak()
+        {
+            if (!currentShieldLogic.ShieldData.TryGetShieldActionFeedback(
+                    out var clip, out var vfx, out var volume
+                )) return;
+
+            SoundManager.Instance.PlayShieldBreak(clip, volume);
+            EffectManager.Instance.PlayShieldBreak(vfx, CurrentShieldHitbox.transform.position);
+
+            Destroy(currentShieldModel);
+        }
+
+        private void OnDisable()
+        {
+            currentShieldLogic.OnShieldBreak -= HandleShieldBreak;
         }
     }
 }

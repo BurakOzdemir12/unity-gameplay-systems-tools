@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80de21e10a374d2c93732823b6af4a03, type: 3}
   m_Name: AIBrainData
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.CombatSystem.ScriptableObjects.Combat.EnemyAIBrainDataSo
-  blockAttackScore: 15
+  blockAttackScore: 10
   rollAttackScore: 5
   dodgeAttackScore: 5

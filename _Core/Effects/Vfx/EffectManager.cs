@@ -9,6 +9,8 @@ namespace _Project.Systems._Core.Effects.Vfx
 {
     public class EffectManager : MonoBehaviour
     {
+        public static EffectManager Instance { get; private set; }
+
         private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
         private EventBinding<CharacterGatheringActionEvent> gatheringBinding;
@@ -19,6 +21,9 @@ namespace _Project.Systems._Core.Effects.Vfx
 
         private void Awake()
         {
+            if (Instance != null && Instance != this) Destroy(this.gameObject);
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
 
         private void OnEnable()
@@ -48,6 +53,8 @@ namespace _Project.Systems._Core.Effects.Vfx
             EventBus<WeaponImpactActionEvent>.Unsubscribe(weaponImpactBinding);
             EventBus<ToolImpactActionEvent>.Unsubscribe(toolImpactBinding);
         }
+
+        #region Event Bus Handlers
 
         private void HandleTraversalEvent(CharacterTraversalEvent @evt)
         {
@@ -131,6 +138,8 @@ namespace _Project.Systems._Core.Effects.Vfx
             SpawnVfx(vfx, evt.Position, Quaternion.identity);
         }
 
+        #endregion
+
 
         private void SpawnVfx(GameObject vfx, Vector3 position, Quaternion rotation = default)
         {
@@ -142,5 +151,14 @@ namespace _Project.Systems._Core.Effects.Vfx
             // if (vfxPrefab != null)
             Instantiate(vfx, position, rotation, vfxParent);
         }
+
+        #region Singleton Function Calls
+
+        public void PlayShieldBreak(GameObject vfx, Vector3 position, Quaternion rotation = default)
+        {
+            SpawnVfx(vfx, position, rotation);
+        }
+
+        #endregion
     }
 }

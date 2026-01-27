@@ -11,19 +11,18 @@ namespace _Project.Systems._Core.Shield_Logic
 {
     public class ShieldLogic : MonoBehaviour, IBlocker
     {
-        [Header("Weapon Data")] [SerializeField]
-        private GameObject shieldModel;
-
-        [Header("Weapon Data")] [SerializeField]
+        [Header("Shield Data")] [SerializeField]
         private ShieldDataSo shieldData;
 
         public ShieldDataSo ShieldData => shieldData;
 
-        [SerializeField] private Transform enemyRoot;
-        [SerializeField] private float frontDotThreshold = 0.2f;
+        [Header("Character References")] [SerializeField]
+        private Transform characterRoot;
 
         [Header("Collider References (Set in Inspector")] [SerializeField]
         private Collider characterOwnCollider;
+
+        [SerializeField] private float frontDotThreshold = 0.2f;
 
         private readonly HashSet<Collider> hitColliders = new HashSet<Collider>();
 
@@ -31,8 +30,22 @@ namespace _Project.Systems._Core.Shield_Logic
         private float currentShieldDurability;
         private float currentShieldStunPower;
 
-        public void Initialize(Collider ownerCollider) => characterOwnCollider = ownerCollider;
+        public event Action<BlockContext> OnBlocked;
+        public event Action OnShieldBreak;
         public bool IsBlocking { get; private set; }
+
+        private void Awake()
+        {
+            if (characterRoot == null)
+            {
+                characterRoot = this.transform.root;
+            }
+
+            if (characterOwnCollider == null)
+            {
+                characterOwnCollider = characterRoot.GetComponent<Collider>();
+            }
+        }
 
         private void OnEnable()
         {
@@ -44,8 +57,16 @@ namespace _Project.Systems._Core.Shield_Logic
             hitColliders.Clear();
         }
 
-        public void SetupDefence()
+        private void Start()
         {
+            SetupShieldProps();
+        }
+
+        private void SetupShieldProps()
+        {
+            currentShieldDamage = shieldData.shieldDamage;
+            currentShieldDurability = shieldData.shieldDurability;
+            currentShieldStunPower = shieldData.shieldStunPower;
         }
 
         public void PerformBlock()
@@ -66,20 +87,32 @@ namespace _Project.Systems._Core.Shield_Logic
         {
             if (other == characterOwnCollider) return;
             if (!hitColliders.Add(other)) return;
-
-            // ApplyStun(other);
         }
 
         public bool CanBlock(Transform attackerRoot)
         {
-            Vector3 toAttacker = (attackerRoot.position - enemyRoot.position).normalized;
-            float dot = Vector3.Dot(enemyRoot.forward, toAttacker);
+            Vector3 toAttacker = (attackerRoot.position - characterRoot.position).normalized;
+            float dot = Vector3.Dot(characterRoot.forward, toAttacker);
             return dot > frontDotThreshold;
         }
 
         public void ApplyBlock(BlockContext context)
         {
-            Debug.Log("Applying Block");
+            OnBlocked?.Invoke(context);
+            currentShieldDurability -= context.Damage;
+            Debug.Log("New shield durability: " + currentShieldDurability + "");
+
+            if (currentShieldDurability <= 0)
+            {
+                ShieldBreak();
+                return;
+            }
+        }
+
+        private void ShieldBreak()
+        {
+            OnShieldBreak?.Invoke();
+            IsBlocking = false;
         }
     }
 }

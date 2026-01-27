@@ -10,6 +10,7 @@
         Water,
         Flesh,
         Wood,
-        Stone
+        Stone,
+        Shield
     }
 }

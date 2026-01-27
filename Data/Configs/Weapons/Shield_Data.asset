@@ -15,7 +15,15 @@ MonoBehaviour:
   weaponImpactFeedbackProfile: {fileID: 11400000, guid: 7fda51a3909006a4784ba9e172d7558f, type: 2}
   shieldType: 0
   shieldKnockbackForce: 2
-  shieldDamage: 3
-  shieldStunPower: 4
-  shieldStaminaCost: 5
-  shieldDurability: 4
+  shieldDamage: 10
+  shieldStunPower: 2
+  shieldStaminaCost: 2
+  shieldDurability: 3
+  shieldBreakEffect: {fileID: 7065122998337236172, guid: 2f1d8d43f0cef1e468ad6d82c239bd19, type: 3}
+  shieldBreakClips:
+  - {fileID: 8300000, guid: 22be456444a164f9589011a44dafbd0a, type: 3}
+  - {fileID: 8300000, guid: 2371b756360b347a28878dd4dfe41af6, type: 3}
+  - {fileID: 8300000, guid: e5d645f7ee01045dca47a9d8b70ba63c, type: 3}
+  - {fileID: 8300000, guid: 8884068786f404e25b88f788b11a299c, type: 3}
+  - {fileID: 8300000, guid: de21993cc5afb492aae576718955d1ed, type: 3}
+  volume: 1.5

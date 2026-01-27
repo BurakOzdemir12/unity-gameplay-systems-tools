@@ -45,16 +45,19 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         private string combatIdleAnimName;
 
         public string CombatIdleAnimName => combatIdleAnimName;
-
+        [Space(10)]
+        [Header("Block Settings")]
         [Tooltip("Blocking Animation Name")] [SerializeField]
         private string blockAnimName;
 
-        public string BlockAnimName => blockAnimName;
+        [Tooltip("Block Impact Animation Name")] [SerializeField]
+        private string blockImpactAnimName;
+
+        [Tooltip("Block Pair Animation Name")] [SerializeField]
+        private string blockPairAnimName;
 
         [Tooltip("isBlocking boolean Parameter")] [SerializeField]
         private string isBlockingParamName;
-
-        public string IsBlockingParamName => isBlockingParamName;
 
         // ArmedLocomBlendTree
         [Header("Anim Hashes")] [SerializeField, HideInInspector]
@@ -63,11 +66,15 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         [SerializeField, HideInInspector] private int drawAnimHash;
         [SerializeField, HideInInspector] private int combatIdleAnimHash;
         [SerializeField, HideInInspector] private int blockAnimHash;
+        [SerializeField, HideInInspector] private int blockImpactAnimHash;
+        [SerializeField, HideInInspector] private int blockParryAnimHash;
         [SerializeField, HideInInspector] private int isBlockingParamHash;
         public int SheatAnimHash => sheatAnimHash;
         public int DrawAnimHash => drawAnimHash;
         public int CombatIdleAnimHash => combatIdleAnimHash;
         public int BlockAnimHash => blockAnimHash;
+        public int BlockImpactAnimHash => blockImpactAnimHash;
+        public int BlockParryAnimHash => blockParryAnimHash;
         public int IsBlockingParamHash => isBlockingParamHash;
 
         private void RebuildAnimHash()
@@ -87,6 +94,12 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
             blockAnimHash = string.IsNullOrWhiteSpace(blockAnimName)
                 ? 0
                 : Animator.StringToHash(blockAnimName);
+            blockImpactAnimHash = string.IsNullOrWhiteSpace(blockImpactAnimName)
+                ? 0
+                : Animator.StringToHash(blockImpactAnimName);
+            blockParryAnimHash = string.IsNullOrWhiteSpace(blockPairAnimName)
+                ? 0
+                : Animator.StringToHash(blockPairAnimName);
 
             isBlockingParamHash = string.IsNullOrWhiteSpace(isBlockingParamName)
                 ? 0

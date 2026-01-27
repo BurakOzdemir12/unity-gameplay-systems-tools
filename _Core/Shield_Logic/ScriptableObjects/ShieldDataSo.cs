@@ -15,5 +15,19 @@ namespace _Project.Systems._Core.Shield_Logic.ScriptableObjects
         public float shieldStunPower;
         public float shieldStaminaCost;
         public float shieldDurability;
+
+        [Header("Effects Prefabs")] public GameObject shieldBreakEffect;
+        public AudioClip[] shieldBreakClips;
+        public float volume;
+
+        public bool TryGetShieldActionFeedback(out AudioClip clip, out GameObject vfx, out float volume)
+        {
+            clip = (shieldBreakClips != null && shieldBreakClips.Length > 0)
+                ? shieldBreakClips[Random.Range(0, shieldBreakClips.Length)]
+                : null;
+            vfx = shieldBreakEffect;
+            volume = this.volume;
+            return clip != null && vfx != null;
+        }
     }
 }

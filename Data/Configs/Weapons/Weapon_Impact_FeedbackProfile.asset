@@ -46,3 +46,21 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 44d6ce5e5e611480984f4d11b42d27d6, type: 3}
     VFX: {fileID: 1000011190285628, guid: beb3acff7ab73944fb8f470f24d74ed3, type: 3}
     Volume: 0.5
+  - Name: Sword Impact to Shield
+    Surface: 9
+    impactActionType: 2
+    SpecificTag: 
+    Clips:
+    - {fileID: 8300000, guid: ffdc181ce5938431eb3be4cad2e0b156, type: 3}
+    - {fileID: 8300000, guid: 0abb14740cd1747da9493ffb11ad122d, type: 3}
+    - {fileID: 8300000, guid: e835bb2fe98974f4d8c332b71675e4c7, type: 3}
+    - {fileID: 8300000, guid: 25b5cdc05361649459aafb179a385f97, type: 3}
+    - {fileID: 8300000, guid: 0eac17265634b44aaa4155c146ff3271, type: 3}
+    - {fileID: 8300000, guid: a65a285554f9a4a4d821e2d512ab6e03, type: 3}
+    - {fileID: 8300000, guid: 4d2b99c5829874ad6920be8ada30d29b, type: 3}
+    - {fileID: 8300000, guid: 9070129482c214fcbbb526bdb9376a78, type: 3}
+    - {fileID: 8300000, guid: 626a90da9129642d280bdf1c206fce5c, type: 3}
+    - {fileID: 8300000, guid: be8c1047fe2a64be2a1f5b01b492bea4, type: 3}
+    - {fileID: 8300000, guid: 9e3060d6e780e4cbda1db37a6b9d8a48, type: 3}
+    VFX: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d, type: 3}
+    Volume: 1

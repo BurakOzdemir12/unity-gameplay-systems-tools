@@ -107,9 +107,18 @@ namespace _Project.Systems._Core.StateMachine.Player
                 return;
             }
 
+            if (!stateMachine.ShieldHandler.CurrentShieldLogic)
+            {
+                stateMachine.Animator.SetBool(stateMachine.PlayerConfigSo.CombatData.IsBlockingParamHash, false);
+                stateMachine.Animator.SetLayerWeight(stateMachine.BlockingLayerIndex,
+                    0f
+                );
+                return;
+            }
+
             // Or just use current ststae check know instead allow bool
             bool wantsBlock = allowBlocking && stateMachine.InputHandler.IsBlocking;
-            
+
             if (wantsBlock)
             {
                 stateMachine.ShieldHandler.EnableShield();

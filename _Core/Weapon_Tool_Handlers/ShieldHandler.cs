@@ -81,6 +81,7 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
             SoundManager.Instance.PlayShieldBreak(clip, volume);
             EffectManager.Instance.PlayShieldBreak(vfx, CurrentShieldHitbox.transform.position);
 
+            // currentShieldModel.SetActive(false);
             Destroy(currentShieldModel);
         }
 

@@ -121,6 +121,7 @@ namespace _Project.Systems._Core.WeaponLogic
                     currentDamage, currentKnockbackForce, characterOwnTransform, currentAttackType
                 ));
                 PublishImpactEvent(other);
+                EndAttack();
                 return true;
             }
 

@@ -172,9 +172,19 @@ namespace _Project.Systems._Core.StateMachine.Enemy
                 return;
             }
 
+
             if (!stateMachine.ShieldHandler.CurrentShieldHitbox)
             {
                 stateMachine.Animator.SetBool(stateMachine.EnemyConfigSo.CombatData.IsBlockingParamHash, false);
+                return;
+            }
+
+            if (!stateMachine.ShieldHandler.CurrentShieldLogic)
+            {
+                stateMachine.Animator.SetBool(stateMachine.EnemyConfigSo.CombatData.IsBlockingParamHash, false);
+                stateMachine.Animator.SetLayerWeight(stateMachine.BlockingLayerIndex,
+                    0f
+                );
                 return;
             }
 

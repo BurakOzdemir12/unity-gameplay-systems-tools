@@ -66,6 +66,7 @@ namespace _Project.Systems._Core.StateMachine.Enemy
         {
             Health.OnTakeDamage += HandleTakeDamage;
             Health.OnDeath += HandleDeath;
+            Health.OnStunned += HandleStunned;
             ShieldHandler.CurrentShieldLogic.OnBlocked += HandleShieldImpact;
         }
 
@@ -98,7 +99,17 @@ namespace _Project.Systems._Core.StateMachine.Enemy
                 EnemyConfigSo.CombatData.CrossFadeDurationCombat);
             // SwitchState(new EnemyBlockParryState(this, ctx));
         }
-
+        private void HandleStunned(float duration)
+        {
+            SwitchState(new EnemyStunnedState(this, duration));
+        }
+        private void OnDisable()
+        {
+            Health.OnTakeDamage -= HandleTakeDamage;
+            Health.OnDeath -= HandleDeath;
+            Health.OnStunned -= HandleStunned;
+            ShieldHandler.CurrentShieldLogic.OnBlocked -= HandleShieldImpact;
+        }
         private void OnDrawGizmosSelected()
         {
             // Gizmos.color = Color.yellow;
@@ -123,11 +134,6 @@ namespace _Project.Systems._Core.StateMachine.Enemy
             // }
         }
 
-        private void OnDisable()
-        {
-            Health.OnTakeDamage -= HandleTakeDamage;
-            Health.OnDeath -= HandleDeath;
-            ShieldHandler.CurrentShieldLogic.OnBlocked -= HandleShieldImpact;
-        }
+      
     }
 }

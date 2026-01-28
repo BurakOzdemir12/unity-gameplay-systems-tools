@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace _Project.Systems._Core.Ragdoll
 {
@@ -13,12 +14,14 @@ namespace _Project.Systems._Core.Ragdoll
         private CharacterJoint[] joints;
         private Collider[] colliders;
 
-
         private void Awake()
         {
-            colliders = GetComponentsInChildren<Collider>(true);
-            rigidbodies = GetComponentsInChildren<Rigidbody>(true);
-            joints = GetComponentsInChildren<CharacterJoint>(true);
+            colliders = GetComponentsInChildren<Collider>(true)
+                .Where(c => c.CompareTag("Ragdoll")).ToArray();
+            rigidbodies = GetComponentsInChildren<Rigidbody>(true)
+                .Where(rb => rb.CompareTag("Ragdoll")).ToArray();
+            joints = GetComponentsInChildren<CharacterJoint>(true)
+                .Where(j => j.CompareTag("Ragdoll")).ToArray();
         }
 
         private void Start()
@@ -37,16 +40,18 @@ namespace _Project.Systems._Core.Ragdoll
             animator.enabled = !isRagdoll;
             controller.enabled = !isRagdoll;
 
-            foreach (Collider collider in colliders)
+            foreach (Collider col in colliders)
             {
-                if (collider.gameObject.CompareTag("Ragdoll"))
+                if (!col) continue;
+                if (col.gameObject.CompareTag("Ragdoll"))
                 {
-                    collider.enabled = isRagdoll;
+                    col.enabled = isRagdoll;
                 }
             }
 
             foreach (Rigidbody rb in rigidbodies)
             {
+                if (!rb) continue;
                 if (rb.gameObject.CompareTag("Ragdoll"))
                 {
                     rb.isKinematic =
@@ -57,6 +62,7 @@ namespace _Project.Systems._Core.Ragdoll
 
             foreach (CharacterJoint joint in joints)
             {
+                if (!joint) continue;
                 if (joint.gameObject.CompareTag("Ragdoll"))
                 {
                     joint.enableCollision = isRagdoll;

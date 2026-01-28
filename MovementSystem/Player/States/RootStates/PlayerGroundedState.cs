@@ -195,6 +195,8 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
 
         private void OnParry()
         {
+            if (!stateMachine.ShieldHandler.CurrentShieldLogic) return;
+
             SetSubState(new PlayerParryState(stateMachine));
         }
     }

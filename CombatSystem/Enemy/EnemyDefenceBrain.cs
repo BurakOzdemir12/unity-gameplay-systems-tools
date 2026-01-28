@@ -55,6 +55,13 @@ namespace _Project.Systems.CombatSystem.Enemy
 
         private void DecideDefenceAction(AttackDataSo attackData)
         {
+            if (!stateMachine.ShieldHandler.CurrentShieldLogic)
+            {
+                canBlockAttack = false;
+                canParryAttack = false;
+                return;
+            }
+
             float attackScore = attackData.attackScore;
             EnemyAIBrainDataSo brainData = stateMachine.EnemyConfigSo.AIBrainData;
 
@@ -98,8 +105,14 @@ namespace _Project.Systems.CombatSystem.Enemy
 
         private void SetEnemyState()
         {
-            if (stateMachine.CurrentState is EnemyDeadState or EnemyImpactState or EnemyAttackingState) 
+            if (stateMachine.CurrentState is EnemyDeadState or EnemyImpactState or EnemyAttackingState)
                 return;
+
+            if (!stateMachine.ShieldHandler.CurrentShieldLogic)
+            {
+                canParryAttack = false;
+                return;
+            }
 
             if (canParryAttack)
             {

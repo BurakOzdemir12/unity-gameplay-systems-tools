@@ -17,9 +17,6 @@ namespace _Project.Systems._Core.WeaponLogic
     public class WeaponLogic : MonoBehaviour
     {
         [Header("Weapon Data")] [SerializeField]
-        private GameObject weaponModel;
-
-        [Header("Weapon Data")] [SerializeField]
         private WeaponDataSo weaponData;
 
         public WeaponDataSo WeaponData => weaponData;
@@ -37,6 +34,7 @@ namespace _Project.Systems._Core.WeaponLogic
         [SerializeField] private float normalRayDistance = 0.25f;
         [SerializeField] private LayerMask normalRayMask = ~0;
 
+
         private bool hitWindowActive;
         private float currentDamage;
         private float currentKnockbackForce;
@@ -44,6 +42,7 @@ namespace _Project.Systems._Core.WeaponLogic
         private string currentAttackType;
         private Vector3 impactPointDebug;
 
+        private bool attackWasBlocked;
 
         private void Awake()
         {
@@ -78,6 +77,7 @@ namespace _Project.Systems._Core.WeaponLogic
         {
             hitColliders.Clear();
             hitWindowActive = true;
+            attackWasBlocked = false;
             gameObject.SetActive(true);
         }
 
@@ -91,6 +91,11 @@ namespace _Project.Systems._Core.WeaponLogic
         private void OnTriggerEnter(Collider other)
         {
             if (!hitWindowActive) return;
+            if (attackWasBlocked)
+            {
+                EndAttack();
+                return;
+            }
 
             if (other == characterOwnCollider) return;
             if (!hitColliders.Add(other)) return;
@@ -111,6 +116,7 @@ namespace _Project.Systems._Core.WeaponLogic
 
             if (blocker != null && blocker.CanBlock(transform.root) && blocker.IsBlocking)
             {
+                attackWasBlocked = true;
                 blocker.ApplyBlock(new BlockContext(
                     currentDamage, currentKnockbackForce, characterOwnTransform, currentAttackType
                 ));

@@ -48,6 +48,7 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
             currentShieldLogic = shieldLogic;
             currentShieldHitbox = shieldLogic.gameObject;
             currentShieldModel = shieldLogic.transform.parent.gameObject;
+            currentShieldData = shieldLogic.ShieldData;
         }
 
         private void OnEnable()

@@ -1,28 +1,29 @@
-﻿using _Project.Systems._Core.BaseScriptableObjects.Characters;
-using _Project.Systems._Core.GravityForce.Interfaces;
+﻿using _Project.Systems._Core.GravityForce.Interfaces;
 using _Project.Systems._Core.Health.Interfaces;
 using _Project.Systems._Core.Shield_Logic.Structs;
-using _Project.Systems._Core.StateMachine.Enemy;
+using _Project.Systems._Core.StateMachine.Player;
 using _Project.Systems._Core.Stun.Interfaces;
-using _Project.Systems.MovementSystem.Enemy.States;
+using _Project.Systems.MovementSystem.Player.States;
+using _Project.Systems.MovementSystem.Player.States.RootStates;
 using UnityEngine;
 
-namespace _Project.Systems.CombatSystem.Enemy.States
+namespace _Project.Systems.CombatSystem.Player.States
 {
-    public class EnemyParryState : EnemyBaseState
+    public class PlayerParryState : PlayerBaseState
     {
-        public EnemyParryState(EnemyStateMachine stateMachine) : base(stateMachine)
+        private PlayerGroundedState GroundParent => GetSuperState() as PlayerGroundedState;
+        private int layer;
+        private const string PARRY_TAG = "Parry";
+
+        public PlayerParryState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }
 
-        private const string PARRY_TAG = "Parry";
-        private int layer;
-
         public override void Enter()
         {
-            stateMachine.ShieldHandler.CurrentShieldLogic.ShieldParried += HandleParry;
-
             layer = stateMachine.BlockingLayerIndex;
+
+            stateMachine.ShieldHandler.CurrentShieldLogic.ShieldParried += HandleParry;
 
             stateMachine.ShieldHandler.EnableShield();
             stateMachine.ShieldHandler.CurrentShieldLogic.SetParryWindow(true);
@@ -31,28 +32,26 @@ namespace _Project.Systems.CombatSystem.Enemy.States
                 1
             );
 
-            EnemyConfigSo data = stateMachine.EnemyConfigSo;
-            stateMachine.Animator.CrossFadeInFixedTime(data.CombatData.BlockParryAnimHash,
-                data.CombatData.CrossFadeDurationCombat, layer);
+            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.PlayerConfigSo.CombatData.BlockParryAnimHash,
+                stateMachine.CrossFadeDuration);
         }
-
 
         public override void Tick(float deltaTime)
         {
             float normalizedTime = GetNormalizedTime(stateMachine.Animator, layer, PARRY_TAG);
-
             if (normalizedTime >= 0.9f)
             {
-                stateMachine.SwitchState(new EnemyIdleState(stateMachine));
+                GroundParent?.SwitchSubState(new PlayerFreeLookState(stateMachine));
             }
         }
 
         public override void Exit()
         {
             stateMachine.ShieldHandler.CurrentShieldLogic.ShieldParried -= HandleParry;
-
+            
             stateMachine.ShieldHandler.CurrentShieldLogic.SetParryWindow(false);
             stateMachine.ShieldHandler.DisableShield();
+            
             stateMachine.Animator.SetLayerWeight(layer,
                 0
             );

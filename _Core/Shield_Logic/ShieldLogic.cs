@@ -31,7 +31,7 @@ namespace _Project.Systems._Core.Shield_Logic
         private float currentShieldStunPower;
 
         public event Action<BlockContext> OnBlocked;
-        public event Action<BlockContext> OnParried;
+        public event Action<BlockContext> ShieldParried;
         public event Action OnShieldBreak;
         public bool IsBlocking { get; private set; }
 
@@ -106,7 +106,7 @@ namespace _Project.Systems._Core.Shield_Logic
         {
             if (ParryWindowActive && IsBlocking && CanBlock(context.AttackerRoot))
             {
-                OnParried?.Invoke(context);
+                ShieldParried?.Invoke(context);
                 return;
             }
 

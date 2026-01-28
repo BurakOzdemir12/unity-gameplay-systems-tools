@@ -42,11 +42,9 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
 
             float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, ATTACK_TAG);
-            if (normalizedTime >= 1f)
+            if (normalizedTime >= 0.9f)
             {
-                stateMachine.SwitchState(IsInAttackRange()
-                    ? new EnemyAttackCooldownState(stateMachine)
-                    : new EnemyChaseState(stateMachine));
+                stateMachine.SwitchState(new EnemyAttackCooldownState(stateMachine));
             }
         }
 

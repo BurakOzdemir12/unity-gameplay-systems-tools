@@ -12,17 +12,28 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
 
         public GameObject CurrentWeaponRoot => currentWeaponRoot;
 
-        [Header("Weapon Logic ")] private GameObject currentWeaponHitbox;
+        [Header("Current Weapon Hitbox ")] [SerializeField]
+        private GameObject currentWeaponHitbox;
+
         public GameObject CurrentWeaponHitBox => currentWeaponHitbox;
 
+        [Header("Current Weapon Logic ")] [SerializeField]
         private WeaponLogic.WeaponLogic currentWeaponLogic;
+
         public WeaponLogic.WeaponLogic CurrentWeaponLogic => currentWeaponLogic;
 
-        [SerializeField] private WeaponDataSo currentWeaponData;
+        [Header("Current Weapon Model")] [SerializeField]
+        private GameObject currentWeaponModel;
+
+        public GameObject CurrentWeaponModel => currentWeaponModel;
+
+        [Header("Current Weapon Data ")] [SerializeField]
+        private WeaponDataSo currentWeaponData;
+
         public WeaponDataSo CurrentWeaponDataSo => currentWeaponData;
 
 
-        private void Start()
+        private void Awake()
         {
             WeaponLogic.WeaponLogic weaponLogic =
                 currentWeaponRoot.GetComponentInChildren<WeaponLogic.WeaponLogic>(true);
@@ -34,6 +45,8 @@ namespace _Project.Systems._Core.Weapon_Tool_Handlers
 
             currentWeaponLogic = weaponLogic;
             currentWeaponHitbox = weaponLogic.gameObject;
+            currentWeaponModel = weaponLogic.transform.parent.gameObject;
+            currentWeaponData = weaponLogic.WeaponData;
         }
 
         private void EnableWeapon()

@@ -33,7 +33,7 @@ namespace _Project.Systems.CombatSystem.Enemy.States
             coolDownTimer -= deltaTime;
             if (coolDownTimer <= 0f)
             {
-                stateMachine.SwitchState(new EnemyAttackingState(stateMachine));
+                stateMachine.SwitchState(new EnemyIdleState(stateMachine));
                 return;
             }
         }

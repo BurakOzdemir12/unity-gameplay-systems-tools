@@ -31,6 +31,7 @@ namespace _Project.Systems._Core.StateMachine.Player
         [field: SerializeField] public Targeter Targeter { get; private set; }
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
         [field: SerializeField] public WeaponHandler WeaponHandler { get; private set; }
+        [field: SerializeField] public ShieldHandler ShieldHandler { get; private set; }
 
         [field: SerializeField] public ToolLogic.ToolLogic ToolLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }

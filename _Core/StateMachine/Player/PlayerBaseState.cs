@@ -109,6 +109,15 @@ namespace _Project.Systems._Core.StateMachine.Player
 
             // Or just use current ststae check know instead allow bool
             bool wantsBlock = allowBlocking && stateMachine.InputHandler.IsBlocking;
+            
+            if (wantsBlock)
+            {
+                stateMachine.ShieldHandler.EnableShield();
+            }
+            else
+            {
+                stateMachine.ShieldHandler.DisableShield();
+            }
 
             stateMachine.Animator.SetBool(stateMachine.PlayerConfigSo.CombatData.IsBlockingParamHash, wantsBlock);
 
@@ -155,7 +164,7 @@ namespace _Project.Systems._Core.StateMachine.Player
             // Set Layer weight to 1 instantly to ensure visibility
             stateMachine.upperBodyLayerWeight = 1f;
             stateMachine.Animator.SetLayerWeight(stateMachine.UpperBodyLayerIndex, 1f);
-                var combatData = stateMachine.PlayerConfigSo.CombatData;
+            var combatData = stateMachine.PlayerConfigSo.CombatData;
             int hash = isWeaponInHand ? combatData.SheatAnimHash : combatData.DrawAnimHash;
 
             stateMachine.Animator.CrossFadeInFixedTime(hash, stateMachine.CrossFadeDuration,

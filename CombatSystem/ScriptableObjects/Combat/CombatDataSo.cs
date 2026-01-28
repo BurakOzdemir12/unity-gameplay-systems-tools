@@ -45,9 +45,11 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         private string combatIdleAnimName;
 
         public string CombatIdleAnimName => combatIdleAnimName;
-        [Space(10)]
-        [Header("Block Settings")]
-        [Tooltip("Blocking Animation Name")] [SerializeField]
+
+        [Tooltip("Stunned Animation Name")] [SerializeField]
+        private string stunnedAnimName;
+
+        [Space(10)] [Header("Block Settings")] [Tooltip("Blocking Animation Name")] [SerializeField]
         private string blockAnimName;
 
         [Tooltip("Block Impact Animation Name")] [SerializeField]
@@ -69,6 +71,7 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         [SerializeField, HideInInspector] private int blockImpactAnimHash;
         [SerializeField, HideInInspector] private int blockParryAnimHash;
         [SerializeField, HideInInspector] private int isBlockingParamHash;
+        [SerializeField, HideInInspector] private int stunnedAnimParamHash;
         public int SheatAnimHash => sheatAnimHash;
         public int DrawAnimHash => drawAnimHash;
         public int CombatIdleAnimHash => combatIdleAnimHash;
@@ -76,6 +79,7 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         public int BlockImpactAnimHash => blockImpactAnimHash;
         public int BlockParryAnimHash => blockParryAnimHash;
         public int IsBlockingParamHash => isBlockingParamHash;
+        public int StunnedAnimParamHash => stunnedAnimParamHash;
 
         private void RebuildAnimHash()
         {
@@ -104,6 +108,10 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
             isBlockingParamHash = string.IsNullOrWhiteSpace(isBlockingParamName)
                 ? 0
                 : Animator.StringToHash(isBlockingParamName);
+            
+            stunnedAnimParamHash = string.IsNullOrWhiteSpace(stunnedAnimName)
+                ? 0
+                : Animator.StringToHash(stunnedAnimName);
         }
 
         private void OnEnable() => RebuildAnimHash();

@@ -32,6 +32,7 @@ namespace _Project.Systems.InventorySystem
         private Slot draggedSlot = null;
         private Slot hovered;
 
+        public event Action<GameObject> ItemDropped;
 
         private void Awake()
         {
@@ -183,11 +184,13 @@ namespace _Project.Systems.InventorySystem
 
             if (Camera.main != null)
             {
-                GameObject droppedItem = Instantiate(prefab,
-                    Camera.main.transform.position + Camera.main.transform.forward,
-                    Quaternion.identity);
+                ItemDropped?.Invoke(prefab);
+                // GameObject droppedItem = Instantiate(prefab,
+                //     Camera.main.transform.position + Camera.main.transform.forward,
+                //     Quaternion.identity);
 
-                Item item = droppedItem.GetComponent<Item>();
+                // Item item = droppedItem.GetComponent<Item>();
+                Item item = prefab.GetComponent<Item>();
                 item.CurrentItemData = itemData;
                 item.CurrentItemAmount = slot.ItemAmount;
             }

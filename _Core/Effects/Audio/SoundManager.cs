@@ -3,6 +3,11 @@ using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems._Core.Feedback;
+using _Project.Systems.EnvironmentSystem.ScriptableObjects;
+using _Project.Systems.EnvironmentSystem.Time.Enums;
+using _Project.Systems.EnvironmentSystem.Time.Events;
+using _Project.Systems.EnvironmentSystem.Weather.Enums;
+using _Project.Systems.EnvironmentSystem.Weather.Events;
 using UnityEngine;
 
 namespace _Project.Systems._Core.Effects.Audio
@@ -11,12 +16,26 @@ namespace _Project.Systems._Core.Effects.Audio
     {
         public static SoundManager Instance { get; private set; }
 
+        #region Impact Events
+
         private EventBinding<CharacterTraversalEvent> interactionBinding;
         private EventBinding<CharacterCombatActionEvent> combatBinding;
         private EventBinding<CharacterGatheringActionEvent> gatheringBinding;
         private EventBinding<WeaponImpactActionEvent> weaponImpactBinding;
         private EventBinding<ToolImpactActionEvent> toolImpactBinding;
+
+        #endregion
+
+        #region Time Events
+
+        private EventBinding<TimeChangedEvent> timeChangedBinding;
+        private EventBinding<WeatherChangedEvent> weatherChangedBinding;
+
+        #endregion
+
         [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioSource ambientAudioSource;
+        [SerializeField] private EnvVisualDataSo visualData;
 
         private void Awake()
         {
@@ -26,8 +45,11 @@ namespace _Project.Systems._Core.Effects.Audio
             audioSource = GetComponent<AudioSource>();
         }
 
+
         private void OnEnable()
         {
+            #region Impact Events
+
             interactionBinding = new EventBinding<CharacterTraversalEvent>(HandleTraversalEvent);
             EventBus<CharacterTraversalEvent>.Subscribe(interactionBinding);
 
@@ -42,6 +64,18 @@ namespace _Project.Systems._Core.Effects.Audio
 
             toolImpactBinding = new EventBinding<ToolImpactActionEvent>(HandleToolImpactEvent);
             EventBus<ToolImpactActionEvent>.Subscribe(toolImpactBinding);
+
+            #endregion
+
+            #region Time Events
+
+            timeChangedBinding = new EventBinding<TimeChangedEvent>(HandleTimeChangedEvent);
+            EventBus<TimeChangedEvent>.Subscribe(timeChangedBinding);
+
+            weatherChangedBinding = new EventBinding<WeatherChangedEvent>(HandleWeatherChangedEvent);
+            EventBus<WeatherChangedEvent>.Subscribe(weatherChangedBinding);
+
+            #endregion
         }
 
 
@@ -52,6 +86,13 @@ namespace _Project.Systems._Core.Effects.Audio
             EventBus<CharacterGatheringActionEvent>.Unsubscribe(gatheringBinding);
             EventBus<WeaponImpactActionEvent>.Unsubscribe(weaponImpactBinding);
             EventBus<ToolImpactActionEvent>.Unsubscribe(toolImpactBinding);
+            EventBus<TimeChangedEvent>.Unsubscribe(timeChangedBinding);
+            EventBus<WeatherChangedEvent>.Unsubscribe(weatherChangedBinding);
+        }
+
+        private void Start()
+        {
+            PlayAmbientSound(visualData.daySound);
         }
 
         #region Event Bus Handlers
@@ -156,6 +197,46 @@ namespace _Project.Systems._Core.Effects.Audio
             audioSource.PlayOneShot(clip, volume);
         }
 
+        private void HandleTimeChangedEvent(TimeChangedEvent evt)
+        {
+            if (!evt.IsDivisionJustChanged) return;
+            AudioClip clipToPlay = null;
+            switch (evt.Division)
+            {
+                case DivisionsOfDay.Morning or DivisionsOfDay.Afternoon:
+                    clipToPlay = visualData.daySound;
+                    break;
+                case DivisionsOfDay.Evening or DivisionsOfDay.Night:
+                    clipToPlay = visualData.nightSound;
+                    break;
+                default:
+                    ambientAudioSource.loop = false;
+                    ambientAudioSource.Stop();
+                    break;
+            }
+
+            PlayAmbientSound(clipToPlay);
+        }
+
+        private void HandleWeatherChangedEvent(WeatherChangedEvent evt)
+        {
+            AudioClip clipToPlay = null;
+            switch (evt.CurrentWeatherType)
+            {
+                case WeatherType.Rainy:
+                    clipToPlay = visualData.rainSound;
+                    break;
+                case WeatherType.Snowy:
+                    clipToPlay = visualData.snowSound;
+                    break;
+                default:
+                    clipToPlay = visualData.daySound;
+                    break;
+            }
+
+            PlayAmbientSound(clipToPlay);
+        }
+
         #endregion
 
         #region Singleton Function Calls
@@ -166,5 +247,20 @@ namespace _Project.Systems._Core.Effects.Audio
         }
 
         #endregion
+
+        private void PlayAmbientSound(AudioClip clip)
+        {
+            if (ambientAudioSource.clip == clip) return;
+
+            ambientAudioSource.Stop();
+            ambientAudioSource.clip = clip;
+            ambientAudioSource.Play();
+
+            if (clip != null)
+            {
+                ambientAudioSource.loop = true;
+                ambientAudioSource.Play();
+            }
+        }
     }
 }

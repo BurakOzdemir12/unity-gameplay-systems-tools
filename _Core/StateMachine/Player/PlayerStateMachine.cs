@@ -266,7 +266,7 @@ namespace _Project.Systems._Core.StateMachine.Player
         {
             SwitchState(new PlayerStunnedState(this, duration));
         }
-
+        
         private void OnDisable()
         {
             Health.OnTakeDamage -= HandleTakeDamage;

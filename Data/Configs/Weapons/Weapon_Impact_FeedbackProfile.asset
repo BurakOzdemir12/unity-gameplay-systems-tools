@@ -62,5 +62,5 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 626a90da9129642d280bdf1c206fce5c, type: 3}
     - {fileID: 8300000, guid: be8c1047fe2a64be2a1f5b01b492bea4, type: 3}
     - {fileID: 8300000, guid: 9e3060d6e780e4cbda1db37a6b9d8a48, type: 3}
-    VFX: {fileID: 1000010355441670, guid: 02a509a7fa70ed740ba4197e20c5d32d, type: 3}
+    VFX: {fileID: 1000011190285628, guid: beb3acff7ab73944fb8f470f24d74ed3, type: 3}
     Volume: 1

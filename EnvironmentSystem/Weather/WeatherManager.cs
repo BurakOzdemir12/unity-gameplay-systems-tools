@@ -8,6 +8,7 @@ using _Project.Systems.EnvironmentSystem.Time.Events;
 using _Project.Systems.EnvironmentSystem.Weather.Enums;
 using _Project.Systems.EnvironmentSystem.Weather.Events;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace _Project.Systems.EnvironmentSystem.Weather
 {
@@ -24,7 +25,12 @@ namespace _Project.Systems.EnvironmentSystem.Weather
         private List<WeatherType> availableWeatherTypes = new List<WeatherType>();
 
         [SerializeField] private int maxRainDuration;
+        [SerializeField] private int maxWeatherDuration;
         private int currentWeatherDuration;
+
+        [SerializeField] private Button setSnowyButton;
+        [SerializeField] private Button setRainyButton;
+        [SerializeField] private Button setClearButton;
 
         private void Awake()
         {
@@ -48,6 +54,20 @@ namespace _Project.Systems.EnvironmentSystem.Weather
         {
             EventBus<SeasonChangedEvent>.Unsubscribe(seasonChangedBinding);
             EventBus<TimeChangedEvent>.Unsubscribe(timeChangedBinding);
+        }
+
+
+        private void Start()
+        {
+            //Testing
+            if (setRainyButton != null)
+                setRainyButton.onClick.AddListener(() =>
+                    SetWeather(WeatherType.Rainy));
+            if (setSnowyButton != null)
+                setSnowyButton.onClick.AddListener(() =>
+                    SetWeather(WeatherType.Snowy));
+            if (setClearButton != null)
+                setClearButton.onClick.AddListener(ForceClearWeather);
         }
 
         private void HandleSeasonChangedEvent(SeasonChangedEvent evt)
@@ -85,7 +105,8 @@ namespace _Project.Systems.EnvironmentSystem.Weather
                 ForceClearWeather();
                 return;
             }
-            if (UnityEngine.Random.value < 0.1f && currentWeatherDuration > 6) 
+
+            if (UnityEngine.Random.value < 0.1f && currentWeatherDuration > maxWeatherDuration)
             {
                 DecideWeather();
             }
@@ -128,6 +149,13 @@ namespace _Project.Systems.EnvironmentSystem.Weather
         private bool IsPrecipitation(WeatherType type)
         {
             return type == WeatherType.Rainy || type == WeatherType.Snowy; // || type == WeatherType.Stormy;
+        }
+
+        private void OnDestroy()
+        {
+            if (setRainyButton != null) setRainyButton.onClick.RemoveAllListeners();
+            if (setSnowyButton != null) setSnowyButton.onClick.RemoveAllListeners();
+            if (setClearButton != null) setClearButton.onClick.RemoveAllListeners();
         }
     }
 }

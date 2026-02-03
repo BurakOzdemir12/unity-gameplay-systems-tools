@@ -33,9 +33,17 @@ namespace _Project.Systems._Core.Effects.Audio
 
         #endregion
 
-        [SerializeField] private AudioSource audioSource;
+        [Header("Audio Sources")] [SerializeField]
+        private AudioSource audioSource;
+
         [SerializeField] private AudioSource ambientAudioSource;
-        [SerializeField] private EnvVisualDataSo visualData;
+        [SerializeField] private AudioSource musicAudioSource;
+
+        [Space(2)] [SerializeField] private EnvironmentalAudioProfile envAudioProfile;
+        [SerializeField] private GameMusicProfile musicAudioProfile;
+
+        [Header("Current State")] private DivisionsOfDay currentDivision = DivisionsOfDay.Morning;
+        private WeatherType currentWeather = WeatherType.Clear;
 
         private void Awake()
         {
@@ -92,7 +100,8 @@ namespace _Project.Systems._Core.Effects.Audio
 
         private void Start()
         {
-            PlayAmbientSound(visualData.daySound);
+            PlayAmbientSound(envAudioProfile.GetEnvAudio(currentDivision, currentWeather));
+            PlayMusicTrack(musicAudioProfile.GetMusicTrack(false, currentDivision));
         }
 
         #region Event Bus Handlers
@@ -200,39 +209,16 @@ namespace _Project.Systems._Core.Effects.Audio
         private void HandleTimeChangedEvent(TimeChangedEvent evt)
         {
             if (!evt.IsDivisionJustChanged) return;
-            AudioClip clipToPlay = null;
-            switch (evt.Division)
-            {
-                case DivisionsOfDay.Morning or DivisionsOfDay.Afternoon:
-                    clipToPlay = visualData.daySound;
-                    break;
-                case DivisionsOfDay.Evening or DivisionsOfDay.Night:
-                    clipToPlay = visualData.nightSound;
-                    break;
-                default:
-                    ambientAudioSource.loop = false;
-                    ambientAudioSource.Stop();
-                    break;
-            }
+            currentDivision = evt.Division;
+            AudioClip clipToPlay = envAudioProfile.GetEnvAudio(evt.Division, currentWeather);
 
             PlayAmbientSound(clipToPlay);
         }
 
         private void HandleWeatherChangedEvent(WeatherChangedEvent evt)
         {
-            AudioClip clipToPlay = null;
-            switch (evt.CurrentWeatherType)
-            {
-                case WeatherType.Rainy:
-                    clipToPlay = visualData.rainSound;
-                    break;
-                case WeatherType.Snowy:
-                    clipToPlay = visualData.snowSound;
-                    break;
-                default:
-                    clipToPlay = visualData.daySound;
-                    break;
-            }
+            currentWeather = evt.CurrentWeatherType;
+            AudioClip clipToPlay = envAudioProfile.GetEnvAudio(currentDivision, evt.CurrentWeatherType);
 
             PlayAmbientSound(clipToPlay);
         }
@@ -250,17 +236,20 @@ namespace _Project.Systems._Core.Effects.Audio
 
         private void PlayAmbientSound(AudioClip clip)
         {
-            if (ambientAudioSource.clip == clip) return;
+            if (clip == null) return;
 
             ambientAudioSource.Stop();
             ambientAudioSource.clip = clip;
+            ambientAudioSource.loop = true;
             ambientAudioSource.Play();
+        }
 
-            if (clip != null)
-            {
-                ambientAudioSource.loop = true;
-                ambientAudioSource.Play();
-            }
+        private void PlayMusicTrack(AudioClip clip)
+        {
+            musicAudioSource.Stop();
+            musicAudioSource.clip = clip;
+            musicAudioSource.loop = true;
+            musicAudioSource.Play();
         }
     }
 }

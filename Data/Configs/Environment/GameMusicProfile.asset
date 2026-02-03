@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d95f00c1155b482e9b4779c2444721bc, type: 3}
+  m_Name: GameMusicProfile
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.EnvironmentSystem.ScriptableObjects.GameMusicProfile
+  dayVillageTracks:
+  - {fileID: 8300000, guid: 2fb2b5c48f49da74eb9d076b874fc160, type: 3}
+  - {fileID: 8300000, guid: ac699d8cc40c8f644ab5330e41d96588, type: 3}
+  - {fileID: 8300000, guid: 91f820c11898b6e4882bd836c8c4e753, type: 3}
+  - {fileID: 8300000, guid: d227190cd67e95b4c9250cdf23dae34d, type: 3}
+  - {fileID: 8300000, guid: 2d6db0da4edfed74092f72177440b215, type: 3}
+  dayExplorationTracks:
+  - {fileID: 8300000, guid: 3aa8f1d7601a19d4c88dcaaa262c2e06, type: 3}
+  - {fileID: 8300000, guid: 40ac39dff6e2f354f81de00e760e72fd, type: 3}
+  - {fileID: 8300000, guid: c6c5cd0ee2d7db447be3ac0e13978c23, type: 3}
+  - {fileID: 8300000, guid: b82b0d87309722341a8926c780d9426d, type: 3}
+  - {fileID: 8300000, guid: c38584c2f7da9da44a2c277f1cb756d6, type: 3}
+  nightExplorationTracks:
+  - {fileID: 8300000, guid: fb273957e7edc6a4fb4bc7a4449bd241, type: 3}
+  - {fileID: 8300000, guid: f5014cb6bee765148896a2729ae8f91f, type: 3}
+  - {fileID: 8300000, guid: 211651790ff11c34591b916de308101a, type: 3}
+  - {fileID: 8300000, guid: 25003d8a689eefd41a89a886c4d9cc9a, type: 3}
+  - {fileID: 8300000, guid: ad1dff04ffad35d4392904012483407d, type: 3}
+  dangerTracks:
+  - {fileID: 8300000, guid: 5a1944aa7c9b294499f993b3c5b484f5, type: 3}
+  - {fileID: 8300000, guid: 3f9d2a49059160546818cd858b1adc43, type: 3}
+  - {fileID: 8300000, guid: 75809951836972743baf521ade23dca0, type: 3}
+  - {fileID: 8300000, guid: c7539e82f49a8554cae4b061c0ff1227, type: 3}
+  - {fileID: 8300000, guid: 826bb8ea4939f9340ba3d55e1120eb1f, type: 3}
+  bossTracks:
+  - {fileID: 8300000, guid: 5a1944aa7c9b294499f993b3c5b484f5, type: 3}
+  - {fileID: 8300000, guid: 3f9d2a49059160546818cd858b1adc43, type: 3}
+  - {fileID: 8300000, guid: 75809951836972743baf521ade23dca0, type: 3}
+  - {fileID: 8300000, guid: c7539e82f49a8554cae4b061c0ff1227, type: 3}
+  - {fileID: 8300000, guid: 826bb8ea4939f9340ba3d55e1120eb1f, type: 3}

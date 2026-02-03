@@ -17,6 +17,12 @@ namespace _Project.Systems._Core.Pickup_Drop
         // public event Action OnPickup;
         [SerializeField] private float pickUpRange;
         [SerializeField] private LayerMask pickupableLayer;
+        [SerializeField] private Vector3 dropOffset;
+
+        private void OnEnable()
+        {
+            InventoryManager.ItemDropped += HandleItemDropped;
+        }
 
 
         public void TryPickup()
@@ -50,6 +56,17 @@ namespace _Project.Systems._Core.Pickup_Drop
 
             InventoryManager.AddItem(pickable.Data, pickable.Amount);
             pickable.OnPickedUp();
+        }
+
+        private void HandleItemDropped(GameObject obj)
+        {
+            var dropPoint =  transform.TransformPoint(dropOffset);
+            GameObject droppedItem = Instantiate(obj, dropPoint, Quaternion.identity);
+        }
+
+        private void OnDisable()
+        {
+            InventoryManager.ItemDropped -= HandleItemDropped;
         }
 
         private void OnDrawGizmos()

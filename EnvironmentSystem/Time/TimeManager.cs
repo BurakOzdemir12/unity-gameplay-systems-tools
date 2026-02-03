@@ -29,6 +29,7 @@ namespace _Project.Systems.EnvironmentSystem.Time
             }
 
             Instance = this;
+            
             timeService = new TimeService(timeConfig);
         }
 

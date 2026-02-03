@@ -19,6 +19,7 @@ namespace _Project.Systems.EnvironmentSystem.Season
         {
             currentSeasonType = SeasonType.Spring;
             daysPassedInCurrentSeason = 0;
+            
         }
 
         private void OnEnable()

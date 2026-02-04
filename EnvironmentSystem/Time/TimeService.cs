@@ -34,7 +34,7 @@ namespace _Project.Systems.EnvironmentSystem.Time
         {
             this.timeData = timeData;
 
-            currentTime = DateTime.Now.Date + TimeSpan.FromHours(timeData.startHour);
+            currentTime = new DateTime(1,1,1) + TimeSpan.FromHours(timeData.startHour);
 
             sunriseTime = TimeSpan.FromHours(timeData.sunriseHour);
             sunsetTime = TimeSpan.FromHours(timeData.sunsetHour);

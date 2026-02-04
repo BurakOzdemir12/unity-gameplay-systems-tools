@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MainTimeConfig
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.EnvironmentSystem.Time.ScriptableObjects.TimeConfigSo
   defaultDivision: 0
-  startHour: 8
+  startHour: 6
   sunriseHour: 6
   sunsetHour: 18
   timeMultiplier: 8000

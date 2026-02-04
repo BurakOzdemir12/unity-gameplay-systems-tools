@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using _Project.Core.Scripts;
+using _Project.Systems._Core;
+using _Project.Systems._Core.InputHandler;
 using UnityEngine;
 
 namespace _Project.Systems.InventorySystem

@@ -1,7 +1,6 @@
 ﻿using System;
 using _Project.Systems.ClimbingSystem.Enums;
 using _Project.Systems.ClimbingSystem.ObstacleScripts;
-using FewClicksDev.Core;
 using UnityEngine;
 
 namespace _Project.Systems.ClimbingSystem.LedgeClimbing

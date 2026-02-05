@@ -47,7 +47,6 @@ namespace _Project.Systems.EnvironmentSystem.Time
                 timeConfig.timeMultiplier /= 2;
             }
 
-            Debug.Log("Day: " + timeService.CurrentTime.Day + " Time: ");
         }
 
         private void UpdateTimeOfDay()

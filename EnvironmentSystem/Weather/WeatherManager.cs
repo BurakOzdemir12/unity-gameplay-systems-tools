@@ -68,6 +68,9 @@ namespace _Project.Systems.EnvironmentSystem.Weather
                     SetWeather(WeatherType.Snowy));
             if (setClearButton != null)
                 setClearButton.onClick.AddListener(ForceClearWeather);
+
+            //first Weather Set
+            EventBus<WeatherChangedEvent>.Publish(new WeatherChangedEvent(WeatherType.Clear));
         }
 
         private void HandleSeasonChangedEvent(SeasonChangedEvent evt)

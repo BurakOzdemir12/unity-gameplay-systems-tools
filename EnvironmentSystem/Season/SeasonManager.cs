@@ -19,7 +19,6 @@ namespace _Project.Systems.EnvironmentSystem.Season
         {
             currentSeasonType = SeasonType.Spring;
             daysPassedInCurrentSeason = 0;
-            
         }
 
         private void OnEnable()
@@ -31,6 +30,11 @@ namespace _Project.Systems.EnvironmentSystem.Season
         private void OnDisable()
         {
             EventBus<DayChangedEvent>.Unsubscribe(dayChangedBinding);
+        }
+
+        private void Start()
+        {
+            EventBus<SeasonChangedEvent>.Publish(new SeasonChangedEvent(SeasonType.Spring));
         }
 
         private void HandleDayChangedEvent(DayChangedEvent evt)

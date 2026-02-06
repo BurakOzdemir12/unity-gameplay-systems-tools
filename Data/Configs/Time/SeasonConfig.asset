@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562ff7de9796417295d54b345454df12, type: 3}
   m_Name: SeasonConfig
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.EnvironmentSystem.Season.ScriptableObjects.SeasonConfigSo
-  daysPerSeason: 3
+  daysPerSeason: 1
   springWeathers: 01000000
   summerWeathers: 00000000
   autumnWeathers: 01000000

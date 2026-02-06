@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 491a177e8b464718b29780293b2ec556, type: 3}
   m_Name: WeatherDataSo
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.EnvironmentSystem.Weather.ScriptableObjects.WeathersConfigSo
-  rainParticlePrefab: {fileID: 0}
+  rainParticlePrefab: {fileID: 6882489250159578884, guid: 525a29358fcb14e488feaf7721252102, type: 3}
   snowParticlePrefab: {fileID: 446379492675456006, guid: 446c95c9c43991245b4a7f9b536ffac6, type: 3}
   skybox: {fileID: 0}

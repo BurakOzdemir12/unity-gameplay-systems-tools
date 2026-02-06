@@ -34,7 +34,7 @@ namespace _Project.Systems.EnvironmentSystem.Time
         {
             this.timeData = timeData;
 
-            currentTime = new DateTime(1,1,1) + TimeSpan.FromHours(timeData.startHour);
+            currentTime = new DateTime(1, 1, 1) + TimeSpan.FromHours(timeData.startHour);
 
             sunriseTime = TimeSpan.FromHours(timeData.sunriseHour);
             sunsetTime = TimeSpan.FromHours(timeData.sunsetHour);
@@ -86,7 +86,7 @@ namespace _Project.Systems.EnvironmentSystem.Time
             {
                 DivisionsOfDay currentDivision = CalculateCurrentDivision();
                 bool hasDivisionChanged = currentDivision != lastDivision;
-                
+
                 lastHour = currentHour;
                 var evt = new TimeChangedEvent(currentTime, currentDivision,
                     hasDivisionChanged);
@@ -98,24 +98,50 @@ namespace _Project.Systems.EnvironmentSystem.Time
 
         public bool IsDayTime() => currentTime.TimeOfDay > sunriseTime && currentTime.TimeOfDay < sunsetTime;
 
-        public float CalculateSunAngle()
+        private float GetTimeProgress(TimeSpan start, TimeSpan end)
         {
-            bool isDay = IsDayTime();
-            float startDegree = isDay ? 0 : 180;
-            TimeSpan start = isDay ? sunriseTime : sunsetTime;
-            TimeSpan end = isDay ? sunsetTime : sunriseTime;
-
             TimeSpan totalTime = CalculateDifference(start, end);
             TimeSpan elapsedTime = CalculateDifference(start, currentTime.TimeOfDay);
+           
+            return (float)(elapsedTime.TotalMinutes / totalTime.TotalMinutes);
+        }
 
-            double percentage = elapsedTime.TotalMinutes / totalTime.TotalMinutes;
-            return Mathf.Lerp(startDegree, startDegree + 180, (float)percentage);
+        public float GetSunRotation()
+        {
+            if (isDayTime)
+            {
+                float progress = GetTimeProgress(sunriseTime, sunsetTime);
+                return Mathf.Lerp(0, 180, progress);
+            }
+            else
+            {
+                float progress = GetTimeProgress(sunsetTime, sunriseTime);
+                return Mathf.Lerp(180, 360, progress);
+            }
+        }
+
+        public float GetMoonRotation()
+        {
+            if (!isDayTime)
+            {
+                float progress = GetTimeProgress(sunsetTime, sunriseTime);
+                Debug.Log(
+                    $"Gece Modu - Saat: {currentTime.TimeOfDay}, Progress: {progress}, Açı: {Mathf.Lerp(0, 180, progress)}");
+                return Mathf.Lerp(0, 180, progress);
+            }
+            else
+            {
+                float progress = GetTimeProgress(sunriseTime, sunsetTime);
+                Debug.Log($"Gündüz Modu (HATA?) - Saat: {currentTime.TimeOfDay}, Progress: {progress}");
+                return Mathf.Lerp(180, 360, progress);
+            }
         }
 
         TimeSpan CalculateDifference(TimeSpan from, TimeSpan to)
         {
             TimeSpan difference = to - from;
-            return difference.TotalHours < 0 ? difference + TimeSpan.FromDays(24) : difference;
+
+            return difference.TotalHours < 0 ? difference + TimeSpan.FromDays(1) : difference;
         }
 
         private DivisionsOfDay CalculateCurrentDivision()

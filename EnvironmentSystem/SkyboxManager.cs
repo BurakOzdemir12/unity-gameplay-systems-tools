@@ -15,7 +15,7 @@ namespace _Project.Systems.EnvironmentSystem
     public class SkyboxManager : MonoBehaviour
     {
         [Header("Lights")] [SerializeField] private Light sun;
-        [SerializeField] private Light moon;
+        [Header("Lights")] [SerializeField] private Light moon;
 
         [Header("Light Settings")] [SerializeField]
         private AnimationCurve lightIntensityCurve;
@@ -25,6 +25,14 @@ namespace _Project.Systems.EnvironmentSystem
 
         [SerializeField] private Color dayAmbientLight;
         [SerializeField] private Color nightAmbientLight;
+
+        [SerializeField] private Color sunColor;
+        [SerializeField] private Color mooncolor;
+
+        [SerializeField] private float dayShadowStrength;
+        [SerializeField] private float nightShadowStrength;
+
+
         [SerializeField] private Volume volume;
         [SerializeField] private ColorAdjustments colorAdjustments;
 
@@ -174,6 +182,7 @@ namespace _Project.Systems.EnvironmentSystem
 
         //Time Service
         private TimeService timeService;
+        private bool lastFrameWasDay = true;
 
         private void Start()
         {
@@ -182,7 +191,9 @@ namespace _Project.Systems.EnvironmentSystem
                 timeService = TimeManager.Instance.TimeService;
             }
 
+
             volume.profile.TryGet(out colorAdjustments);
+            RenderSettings.sun = sun;
 
             if (moonTexture != null)
             {
@@ -194,24 +205,56 @@ namespace _Project.Systems.EnvironmentSystem
 
         private void Update()
         {
-            RotateSunAndMoon();
+            UpdatePlanetPosition();
             UpdateLightSetting();
             HandleSkyBoxBlend();
         }
 
-        private void RotateSunAndMoon()
+        private void UpdatePlanetPosition()
         {
-            float rotation = timeService.CalculateSunAngle();
-            sun.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.right);
-            moon.transform.rotation = Quaternion.AngleAxis(rotation - 180f, Vector3.right);
+            float sunRotation = timeService.GetSunRotation();
+            float moonRotation = timeService.GetMoonRotation();
+            sun.transform.rotation = Quaternion.AngleAxis(sunRotation, Vector3.right);
+            moon.transform.rotation = Quaternion.AngleAxis(moonRotation, Vector3.right);
         }
 
         private void UpdateLightSetting()
         {
             float sunDot = Vector3.Dot(sun.transform.forward, Vector3.down);
             float moonDot = Vector3.Dot(moon.transform.forward, Vector3.down);
-            sun.intensity = Mathf.Lerp(0, maxSunIntensity, lightIntensityCurve.Evaluate(sunDot));
-            moon.intensity = Mathf.Lerp(0, maxMoonIntensity, lightIntensityCurve.Evaluate(moonDot));
+            bool isDay = timeService.IsDayTime();
+
+            if (sun)
+            {
+                if (isDay)
+                {
+                    sun.enabled = true;
+                    sun.intensity = Mathf.Lerp(0, maxSunIntensity, lightIntensityCurve.Evaluate(sunDot));
+                }
+                else
+                {
+                    sun.enabled = false;
+                }
+            }
+
+            if (moon)
+            {
+                if (!isDay)
+                {
+                    moon.enabled = true;
+                    moon.intensity = Mathf.Lerp(0, maxMoonIntensity, lightIntensityCurve.Evaluate(moonDot));
+                }
+                else
+                {
+                    moon.enabled = false;
+                }
+            }
+
+            if (lastFrameWasDay != isDay)
+            {
+                lastFrameWasDay = isDay;
+                RenderSettings.sun = isDay ? sun : moon;
+            }
 
             if (colorAdjustments == null) return;
             colorAdjustments.colorFilter.value = Color.Lerp(nightAmbientLight, dayAmbientLight,
@@ -238,13 +281,13 @@ namespace _Project.Systems.EnvironmentSystem
                 Mathf.Lerp(nightTimeAtmosphereThickness, dayTimeAtmosphereThickness, dayNightT);
             skyboxMaterial.SetFloat(ATMOSPHERE_THICKNESS_ID, targetAtmosphereThickness);
             // Sky Zenith Color
-            Color targetSkyZenithColor = skyColorGradient.Evaluate(dayNightT);
+            Color targetSkyZenithColor = skyColorGradient.Evaluate(timePercent);
             skyboxMaterial.SetColor(ZENITH_COLOR_ID, targetSkyZenithColor);
             // Sky Horizon Color
-            Color targetSkyHorizonColor = horizonColorGradient.Evaluate(dayNightT);
+            Color targetSkyHorizonColor = horizonColorGradient.Evaluate(timePercent);
             skyboxMaterial.SetColor(HORIZON_COLOR_ID, targetSkyHorizonColor);
             // Sky Ground Color
-            Color targetSkyGroundColor = groundColorGradient.Evaluate(dayNightT);
+            Color targetSkyGroundColor = groundColorGradient.Evaluate(timePercent);
             skyboxMaterial.SetColor(GROUND_COLOR_ID, targetSkyGroundColor);
             // Sky Exposure
             float targetSkyExposure = Mathf.Lerp(nightSkyExposure, daySkyExposure, dayNightT);
@@ -260,13 +303,13 @@ namespace _Project.Systems.EnvironmentSystem
             float targetHorizonSharpness = Mathf.Lerp(nightHorizonSharpness, dayHorizonSharpness, dayNightT);
             skyboxMaterial.SetFloat(HORIZON_SHARPNESS_ID, targetHorizonSharpness);
             // Moon Size
-            float targetMoonSize = Mathf.Lerp(0, moonSize, dayNightT);
+            float targetMoonSize = Mathf.Lerp(moonSize, 0, dayNightT);
             skyboxMaterial.SetFloat(MOON_SIZE_ID, targetMoonSize);
             // Enable Moon
             enableMoon = !timeService.IsDayTime();
             skyboxMaterial.SetFloat(ENABLE_MOON_ID, enableMoon ? 1 : 0);
             // Cloud Tint
-            Color targetCloudTint = cloudTintGradient.Evaluate(dayNightT);
+            Color targetCloudTint = cloudTintGradient.Evaluate(timePercent);
             skyboxMaterial.SetColor(CLOUD_TINT_ID, targetCloudTint);
         }
 

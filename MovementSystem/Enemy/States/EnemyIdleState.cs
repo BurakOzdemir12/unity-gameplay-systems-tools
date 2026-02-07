@@ -1,24 +1,24 @@
-﻿using _Project.Systems._Core.BaseScriptableObjects.Characters;
-using _Project.Systems._Core.StateMachine.Enemy;
-using _Project.Systems.CombatSystem.Enemy.States;
+﻿using _Project.Systems.CombatSystem.Enemy.States;
+using _Project.Systems.MovementSystem.ScriptableObjects;
+using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using UnityEngine;
 
 namespace _Project.Systems.MovementSystem.Enemy.States
 {
     public class EnemyIdleState : EnemyBaseState
     {
+        private float timer;
+        private EnemyMovementDataSo data;        
         public EnemyIdleState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
         }
-
-        private float timer;
-
         public override void Enter()
         {
+            data = stateMachine.EnemyConfigSo.MovementData;
             timer = 0f;
 
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LocomotionBlendTreeHash,
-                stateMachine.EnemyConfigSo.MovementData.CrossFadeDuration);
+            stateMachine.Animator.CrossFadeInFixedTime(data.LocomotionBlendTreeHash,
+                data.CrossFadeDuration);
         }
 
         public override void Tick(float deltaTime)
@@ -45,7 +45,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
                 stateMachine.SwitchState(new EnemyPatrolState(stateMachine));
             }
 
-            stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 0f,
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0f,
                 stateMachine.EnemyConfigSo.MovementData.LocomotionAnimatorDampTime,
                 deltaTime);
         }

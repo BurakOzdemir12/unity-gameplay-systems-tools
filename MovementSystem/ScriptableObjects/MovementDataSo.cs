@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Project.Systems.MovementSystem.ScriptableObjects
@@ -40,11 +41,65 @@ namespace _Project.Systems.MovementSystem.ScriptableObjects
 
         public float FreeSprintSpeed => freeSprintSpeed;
 
-        [Header("Targeting Settings")]
+        [Header("Targeting Movement Settings")]
         [Tooltip(" The speed at which the player moves when in targeting mode")]
         [SerializeField]
         private float targetingMovementSpeed;
 
         public float TargetingMovementSpeed => targetingMovementSpeed;
+
+        [Space(5)] [Header("Anim Names")] [Tooltip("Targeting blend tree Name")] [SerializeField]
+        private string targetingBlendTreeName;
+
+        [Tooltip("Targeting Forward Speed Param name")] [SerializeField]
+        private string targetingForwardSpeedParamName;
+
+        [Tooltip("Targeting Right Speed")] [SerializeField]
+        private string targetingRightSpeedParamName;
+
+
+        [Header("Movement Anims")] [Tooltip("Anim Blend Tree name or Anim Name")] [SerializeField]
+        private string blendTreeName;
+
+        [Tooltip(" Free Look Speed Param Name for Movement Animation Speed")] [SerializeField]
+        private string freelookSpeedParamName;
+
+        [Header("Anim Hashes")] [SerializeField, HideInInspector]
+        private int freeLookSpeedParamHash;
+
+        [SerializeField, HideInInspector] private int locomotionBlendTreeHash;
+        [SerializeField, HideInInspector] private int targetingBlendTreeHash;
+        [SerializeField, HideInInspector] private int targetingForwardSpeedHash;
+        [SerializeField, HideInInspector] private int targetingRightSpeedHash;
+
+        public int LocomotionBlendTreeHash => locomotionBlendTreeHash;
+        public int FreeLookSpeedParamHash => freeLookSpeedParamHash;
+        public int TargetingBlendTreeHash => targetingBlendTreeHash;
+        public int TargetingForwardSpeedHash => targetingForwardSpeedHash;
+        public int TargetingRightSpeedHash => targetingRightSpeedHash;
+
+        private void RebuildAnimHash()
+        {
+            locomotionBlendTreeHash = string.IsNullOrWhiteSpace(blendTreeName)
+                ? 0
+                : Animator.StringToHash(blendTreeName);
+            freeLookSpeedParamHash = string.IsNullOrWhiteSpace(freelookSpeedParamName)
+                ? 0
+                : Animator.StringToHash(freelookSpeedParamName);
+            targetingBlendTreeHash = string.IsNullOrWhiteSpace(targetingBlendTreeName)
+                ? 0
+                : Animator.StringToHash(targetingBlendTreeName);
+            targetingForwardSpeedHash = string.IsNullOrWhiteSpace(targetingForwardSpeedParamName)
+                ? 0
+                : Animator.StringToHash(targetingForwardSpeedParamName);
+            targetingRightSpeedHash = string.IsNullOrWhiteSpace(targetingRightSpeedParamName)
+                ? 0
+                : Animator.StringToHash(targetingRightSpeedParamName);
+        }
+
+        private void OnEnable() => RebuildAnimHash();
+#if UNITY_EDITOR
+        private void OnValidate() => RebuildAnimHash();
+#endif
     }
 }

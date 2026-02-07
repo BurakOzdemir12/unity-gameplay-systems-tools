@@ -19,6 +19,10 @@ MonoBehaviour:
   freeMovementSpeed: 5
   freeSprintSpeed: 0
   targetingMovementSpeed: 0
+  blendTreeName: LocomotionBlendTree
+  freelookSpeedParamName: FreeLookSpeed
+  freeLookSpeedParamHash: 0
+  blendTreeHash: -1865496121
   chaseDetectionRange: 6.21
   sightSensorRange: 0
   <ChaseDetectionLayers>k__BackingField:

@@ -1,5 +1,5 @@
-﻿using _Project.Systems._Core.StateMachine.Enemy;
-using _Project.Systems.MovementSystem.Enemy.States;
+﻿using _Project.Systems.MovementSystem.Enemy.States;
+using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 
 namespace _Project.Systems.CombatSystem.Enemy.States
 {

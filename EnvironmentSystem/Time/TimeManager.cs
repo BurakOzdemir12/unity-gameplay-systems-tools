@@ -1,11 +1,6 @@
-﻿using System;
-using System.Globalization;
-using _Project.Systems.EnvironmentSystem.Time.ScriptableObjects;
-using TMPro;
+﻿using _Project.Systems.EnvironmentSystem.Time.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 namespace _Project.Systems.EnvironmentSystem.Time
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using _Project.Systems._Core.EventBus;
-using _Project.Systems._Core.Observer;
 using _Project.Systems.EnvironmentSystem.Time.Enums;
 using _Project.Systems.EnvironmentSystem.Time.Events;
 using _Project.Systems.EnvironmentSystem.Time.ScriptableObjects;
@@ -125,14 +124,11 @@ namespace _Project.Systems.EnvironmentSystem.Time
             if (!isDayTime)
             {
                 float progress = GetTimeProgress(sunsetTime, sunriseTime);
-                Debug.Log(
-                    $"Gece Modu - Saat: {currentTime.TimeOfDay}, Progress: {progress}, Açı: {Mathf.Lerp(0, 180, progress)}");
                 return Mathf.Lerp(0, 180, progress);
             }
             else
             {
                 float progress = GetTimeProgress(sunriseTime, sunsetTime);
-                Debug.Log($"Gündüz Modu (HATA?) - Saat: {currentTime.TimeOfDay}, Progress: {progress}");
                 return Mathf.Lerp(180, 360, progress);
             }
         }

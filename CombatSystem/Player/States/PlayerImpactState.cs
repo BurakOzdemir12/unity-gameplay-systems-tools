@@ -1,5 +1,5 @@
-﻿using _Project.Systems._Core.StateMachine.Player;
-using _Project.Systems.MovementSystem.Player.States.RootStates;
+﻿using _Project.Systems.MovementSystem.Player.States.RootStates;
+using _Project.Systems.SharedGameplay.StateMachine.Player;
 
 namespace _Project.Systems.CombatSystem.Player.States
 {

@@ -31,20 +31,14 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
 
         public float RotationDampTimeWhileBlock => rotationDampTimeWhileBlock;
 
-        [Header("Anim Names")] [Tooltip("Draw Sword Anim name")] [SerializeField]
+        [Header("Anim Names")] [Space(5)] [Tooltip("Draw Sword Anim name")] [SerializeField]
         private string drawAnimName;
-
-        public string DrawAnimName => drawAnimName;
 
         [Tooltip("Sheat Sword Anim name")] [SerializeField]
         private string sheatAnimName;
 
-        public string SheatAnimName => sheatAnimName;
-
-        [Tooltip("Armed Locomotion blendTree")] [SerializeField]
+        [Tooltip("Combat idle Anim Name")] [SerializeField]
         private string combatIdleAnimName;
-
-        public string CombatIdleAnimName => combatIdleAnimName;
 
         [Tooltip("Stunned Animation Name")] [SerializeField]
         private string stunnedAnimName;
@@ -61,10 +55,10 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         [Tooltip("isBlocking boolean Parameter")] [SerializeField]
         private string isBlockingParamName;
 
-        // ArmedLocomBlendTree
         [Header("Anim Hashes")] [SerializeField, HideInInspector]
         private int sheatAnimHash;
 
+        
         [SerializeField, HideInInspector] private int drawAnimHash;
         [SerializeField, HideInInspector] private int combatIdleAnimHash;
         [SerializeField, HideInInspector] private int blockAnimHash;
@@ -72,6 +66,7 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         [SerializeField, HideInInspector] private int blockParryAnimHash;
         [SerializeField, HideInInspector] private int isBlockingParamHash;
         [SerializeField, HideInInspector] private int stunnedAnimParamHash;
+       
         public int SheatAnimHash => sheatAnimHash;
         public int DrawAnimHash => drawAnimHash;
         public int CombatIdleAnimHash => combatIdleAnimHash;
@@ -108,7 +103,7 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
             isBlockingParamHash = string.IsNullOrWhiteSpace(isBlockingParamName)
                 ? 0
                 : Animator.StringToHash(isBlockingParamName);
-            
+
             stunnedAnimParamHash = string.IsNullOrWhiteSpace(stunnedAnimName)
                 ? 0
                 : Animator.StringToHash(stunnedAnimName);

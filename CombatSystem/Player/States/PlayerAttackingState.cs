@@ -1,9 +1,9 @@
 using System;
-using _Project.Systems._Core.StateMachine.Player;
 using _Project.Systems.CombatSystem.ScriptableObjects;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
 using _Project.Systems.MovementSystem.Player.States;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
+using _Project.Systems.SharedGameplay.StateMachine.Player;
 
 namespace _Project.Systems.CombatSystem.Player.States
 {

@@ -1,7 +1,7 @@
-﻿using _Project.Systems._Core.StateMachine.Player;
-using _Project.Systems.CombatSystem.Player.States;
+﻿using _Project.Systems.CombatSystem.Player.States;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.MovementSystem.ScriptableObjects;
+using _Project.Systems.SharedGameplay.StateMachine.Player;
 using UnityEngine;
 
 namespace _Project.Systems.MovementSystem.Player.States
@@ -24,7 +24,7 @@ namespace _Project.Systems.MovementSystem.Player.States
 
             stateMachine.InputHandler.TargetEvent += OnTarget;
 
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeLookBlendTreeHash,
+            stateMachine.Animator.CrossFadeInFixedTime(data.LocomotionBlendTreeHash,
                 data.CrossFadeDurationBetweenBlendTrees);
         }
 
@@ -52,7 +52,7 @@ namespace _Project.Systems.MovementSystem.Player.States
 
             if (stateMachine.InputHandler.Move.sqrMagnitude < 0.0001f)
             {
-                stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, 0,
+                stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0,
                     data.LocomotionAnimatorDampTime, deltaTime);
                 return;
             }
@@ -60,7 +60,7 @@ namespace _Project.Systems.MovementSystem.Player.States
             targetSpeed = isSprinting ? 1f : .5f;
 
 
-            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, targetSpeed,
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, targetSpeed,
                 data.LocomotionAnimatorDampTime,
                 deltaTime);
 
@@ -71,7 +71,7 @@ namespace _Project.Systems.MovementSystem.Player.States
         public override void Exit()
         {
             stateMachine.InputHandler.TargetEvent -= OnTarget;
-            stateMachine.Animator.SetFloat(stateMachine.FreeLookSpeedParamHash, 0);
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0);
         }
 
         private void RotatePlayerTowardsMovement(Vector3 movement, float deltaTime)

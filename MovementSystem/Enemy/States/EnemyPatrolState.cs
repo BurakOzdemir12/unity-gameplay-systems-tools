@@ -1,4 +1,5 @@
-﻿using _Project.Systems._Core.StateMachine.Enemy;
+﻿using _Project.Systems.MovementSystem.ScriptableObjects;
+using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,26 +7,27 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 {
     public class EnemyPatrolState : EnemyBaseState
     {
+        private float timer;
+        private EnemyMovementDataSo data;
+
         public EnemyPatrolState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
         }
 
-
-        private float timer;
-
         public override void Enter()
         {
+            data = stateMachine.EnemyConfigSo.MovementData;
             timer = 0f;
             stateMachine.Agent.isStopped = false;
 
-            stateMachine.Agent.speed = stateMachine.EnemyConfigSo.MovementData.FreeMovementSpeed;
+            stateMachine.Agent.speed = data.FreeMovementSpeed;
             var roamingPos = stateMachine.firstSpawnPoint +
                              GetRandomDirection() *
-                             Random.Range(2f, stateMachine.EnemyConfigSo.MovementData.patrolRange);
+                             Random.Range(2f, data.patrolRange);
 
             stateMachine.Agent.SetDestination(roamingPos);
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LocomotionBlendTreeHash,
-                stateMachine.EnemyConfigSo.MovementData.LocomotionBlendTreeDuration);
+            stateMachine.Animator.CrossFadeInFixedTime(data.LocomotionBlendTreeHash,
+                data.LocomotionBlendTreeDuration);
         }
 
         public override void Tick(float deltaTime)
@@ -37,7 +39,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
                 return;
             }
 
-            if (timer >= stateMachine.EnemyConfigSo.MovementData.patrolDuration)
+            if (timer >= data.patrolDuration)
             {
                 stateMachine.SwitchState(new EnemyIdleState(stateMachine));
                 return;
@@ -45,7 +47,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
             Patrolling(deltaTime);
 
-            stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 1f,
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 1f,
                 stateMachine.EnemyConfigSo.MovementData.LocomotionAnimatorDampTime,
                 deltaTime);
         }
@@ -54,7 +56,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         {
             stateMachine.Agent.ResetPath();
             stateMachine.Agent.isStopped = true;
-            stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 0);
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0);
         }
 
         private void Patrolling(float deltaTime)

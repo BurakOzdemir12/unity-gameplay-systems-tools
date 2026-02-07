@@ -1,5 +1,6 @@
-﻿using _Project.Systems._Core.StateMachine.Enemy;
-using _Project.Systems.MovementSystem.Enemy.States;
+﻿using _Project.Systems.MovementSystem.Enemy.States;
+using _Project.Systems.MovementSystem.ScriptableObjects;
+using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 
 namespace _Project.Systems.CombatSystem.Enemy.States
 {
@@ -10,13 +11,14 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         }
 
         private const string ATTACK_TAG = "Attack";
+        private EnemyMovementDataSo data;
 
         public override void Enter()
         {
             // if you want to use a blend tree for attacks, use blend tree drawing arrow sword by for distance
             // stateMachine.Animator.CrossFadeInFixedTime(stateMachine.AttackBlendTreeHash,
             //     stateMachine.CrossFadeDurationCombat); 
-
+            data = stateMachine.EnemyConfigSo.MovementData;
             float finalDamage = stateMachine.EnemyConfigSo.CombatData.AttackDamage;
             float finalKnockbackForce = stateMachine.EnemyConfigSo.CombatData.AttackKnockBackForce;
 
@@ -25,7 +27,7 @@ namespace _Project.Systems.CombatSystem.Enemy.States
             // stateMachine.WeaponLogic.SetAttackAttributes(1f, stateMachine.AttackKnockBackForce,
             //     stateMachine.AttackDamage);
 
-            stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 0f);
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0f);
 
             stateMachine.Animator.CrossFadeInFixedTime(stateMachine.EnemyAttack1RHash,
                 stateMachine.EnemyConfigSo.CombatData.CrossFadeDurationCombat);
@@ -38,7 +40,6 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
 
             RotateToPlayer(deltaTime);
-            //TODO Create State Machine behaviour script (EnemyAttackStateBehaviour ) for changes between states.
 
 
             float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, ATTACK_TAG);

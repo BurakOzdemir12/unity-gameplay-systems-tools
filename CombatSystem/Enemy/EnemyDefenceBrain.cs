@@ -1,8 +1,8 @@
 ﻿using System;
-using _Project.Systems._Core.StateMachine.Enemy;
 using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Player;
 using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
+using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;

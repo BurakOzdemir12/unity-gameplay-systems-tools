@@ -1,10 +1,10 @@
-﻿using _Project.Systems._Core.BaseScriptableObjects.Characters;
-using _Project.Systems._Core.GravityForce.Interfaces;
-using _Project.Systems._Core.Health.Interfaces;
-using _Project.Systems._Core.Shield_Logic.Structs;
-using _Project.Systems._Core.StateMachine.Enemy;
-using _Project.Systems._Core.Stun.Interfaces;
+﻿using _Project.Systems._Core.GravityForce.Interfaces;
+using _Project.Systems.HealthSystem.Health.Interfaces;
+using _Project.Systems.HealthSystem.Stun.Interfaces;
 using _Project.Systems.MovementSystem.Enemy.States;
+using _Project.Systems.SharedGameplay.BaseScriptableObjects.Characters;
+using _Project.Systems.SharedGameplay.Shield_Logic.Structs;
+using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using UnityEngine;
 
 namespace _Project.Systems.CombatSystem.Enemy.States

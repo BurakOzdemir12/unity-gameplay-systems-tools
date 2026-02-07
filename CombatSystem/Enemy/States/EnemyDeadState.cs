@@ -1,4 +1,4 @@
-﻿using _Project.Systems._Core.StateMachine.Enemy;
+﻿using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using UnityEngine;
 
 namespace _Project.Systems.CombatSystem.Enemy.States

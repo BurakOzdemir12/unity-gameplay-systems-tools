@@ -1,22 +1,27 @@
-using _Project.Systems._Core.StateMachine.Enemy;
 using _Project.Systems.CombatSystem.Enemy.States;
+using _Project.Systems.MovementSystem.ScriptableObjects;
+using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using UnityEngine;
 
 namespace _Project.Systems.MovementSystem.Enemy.States
 {
     public class EnemyChaseState : EnemyBaseState
     {
+        private EnemyMovementDataSo data;
+        
         public EnemyChaseState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
         }
 
         public override void Enter()
         {
+            data = stateMachine.EnemyConfigSo.MovementData;
+            
             stateMachine.Agent.isStopped = false;
-            stateMachine.Agent.speed = stateMachine.EnemyConfigSo.MovementData.FreeMovementSpeed;
+            stateMachine.Agent.speed = data.FreeMovementSpeed;
 
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LocomotionBlendTreeHash,
-                stateMachine.EnemyConfigSo.MovementData.LocomotionBlendTreeDuration);
+            stateMachine.Animator.CrossFadeInFixedTime(data.LocomotionBlendTreeHash,
+                data.LocomotionBlendTreeDuration);
         }
 
         public override void Tick(float deltaTime)
@@ -34,8 +39,8 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             }
 
             MoveToPlayer(deltaTime);
-            stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 1f,
-                stateMachine.EnemyConfigSo.MovementData.LocomotionAnimatorDampTime,
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 1f,
+                data.LocomotionAnimatorDampTime,
                 deltaTime);
 
             HandleBlocking(deltaTime, true);
@@ -45,7 +50,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         {
             stateMachine.Agent.ResetPath();
             stateMachine.Agent.isStopped = true;
-            stateMachine.Animator.SetFloat(stateMachine.MoveSpeedParamHash, 0);
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0);
         }
 
         private void MoveToPlayer(float deltaTime)
@@ -64,7 +69,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
             Vector3 dir = to.sqrMagnitude > 0.001f ? to.normalized : Vector3.zero;
 
-            Move(dir * stateMachine.EnemyConfigSo.MovementData.FreeMovementSpeed, deltaTime);
+            Move(dir * data.FreeMovementSpeed, deltaTime);
 
             RotateToPlayer(deltaTime);
             // stateMachine.Agent.velocity = stateMachine.Controller.velocity;

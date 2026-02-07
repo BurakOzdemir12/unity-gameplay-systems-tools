@@ -19,3 +19,13 @@ MonoBehaviour:
   freeMovementSpeed: 4
   freeSprintSpeed: 6
   targetingMovementSpeed: 2.5
+  targetingBlendTreeName: TargetingBlendTree
+  targetingForwardSpeedParamName: TargetingForwardSpeed
+  targetingRightSpeedParamName: TargetingRightSpeed
+  blendTreeName: LocomotionBlendTree
+  freelookSpeedParamName: FreeLookSpeed
+  freeLookSpeedParamHash: 0
+  locomotionBlendTreeHash: -1865496121
+  targetingBlendTreeHash: 0
+  targetingForwardSpeedParamHash: 0
+  targetingRightSpeedParamHash: 0

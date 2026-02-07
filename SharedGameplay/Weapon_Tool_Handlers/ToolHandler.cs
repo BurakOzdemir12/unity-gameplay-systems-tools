@@ -1,0 +1,44 @@
+﻿using UnityEngine;
+
+namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
+{
+    public class ToolHandler : MonoBehaviour
+    {
+        [Header("Assign ToolRoot here (not Hitbox)")] [SerializeField]
+        private GameObject currentToolRoot;
+        public GameObject CurrentToolRoot => currentToolRoot;
+
+        [Header("ToolLogic ")] private GameObject currentToolHitbox;
+        public GameObject CurrentToolHitBox => currentToolHitbox;
+
+        private SharedGameplay.ToolLogic.ToolLogic currentToolLogic;
+
+        public SharedGameplay.ToolLogic.ToolLogic CurrentToolLogic => currentToolLogic;
+
+        private void Start()
+        {
+            SharedGameplay.ToolLogic.ToolLogic toolLogic = currentToolRoot.GetComponentInChildren<SharedGameplay.ToolLogic.ToolLogic>(true);
+            if (toolLogic == null)
+            {
+                Debug.LogError($"{name}: ToolLogic couldn't find in the children!", this);
+                return;
+            }
+
+            currentToolLogic = toolLogic;
+            currentToolHitbox = toolLogic.gameObject;
+            currentToolHitbox.SetActive(false);
+        }
+
+        private void EnableTool()
+        {
+            if (currentToolHitbox != null)
+                currentToolLogic.PerformLootAction();
+        }
+
+        private void DisableTool()
+        {
+            if (currentToolHitbox != null)
+                currentToolLogic.EndLootAction();
+        }
+    }
+}

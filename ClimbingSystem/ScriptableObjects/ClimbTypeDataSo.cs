@@ -73,17 +73,14 @@ namespace _Project.Systems.ClimbingSystem.ScriptableObjects
                 : ParkourDecision.Invalid;
         }
 
-        private void OnEnable()
+        private void RebuildAnimHash()
         {
-            // Build Protection
-            if (animHash == 0 && !string.IsNullOrWhiteSpace(animName))
-                animHash = Animator.StringToHash(animName);
+            animHash = string.IsNullOrWhiteSpace(animName) ? 0 : Animator.StringToHash(animName);
         }
+
+        private void OnEnable() => RebuildAnimHash();
 #if UNITY_EDITOR
-        private void OnValidate()
-        {
-            animHash = Animator.StringToHash(animName);
-        }
+        private void OnValidate() => RebuildAnimHash();
 #endif
     }
 }

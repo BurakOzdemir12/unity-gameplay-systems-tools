@@ -1,7 +1,7 @@
-﻿using _Project.Systems._Core.StateMachine.Player;
-using _Project.Systems.ClimbingSystem.ScriptableObjects;
+﻿using _Project.Systems.ClimbingSystem.ScriptableObjects;
 using _Project.Systems.ClimbingSystem.Structs;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
+using _Project.Systems.SharedGameplay.StateMachine.Player;
 using UnityEngine;
 
 namespace _Project.Systems.ClimbingSystem.States

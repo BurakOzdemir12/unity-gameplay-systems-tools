@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections;
-using _Project.Systems._Core.EventBus;
 using _Project.Systems.EnvironmentSystem.Time;
-using _Project.Systems.EnvironmentSystem.Weather.Enums;
-using _Project.Systems.EnvironmentSystem.Weather.Events;
-using _Project.Systems.EnvironmentSystem.Weather.ScriptableObjects;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -298,7 +292,6 @@ namespace _Project.Systems.EnvironmentSystem
             // Horizon Height
             float targetHorizonHeight = Mathf.Lerp(nightHorizonHeight, dayHorizonHeight, dayNightT);
             skyboxMaterial.SetFloat(HORIZON_HEIGHT_ID, targetHorizonHeight);
-
             // Horizon Sharpness
             float targetHorizonSharpness = Mathf.Lerp(nightHorizonSharpness, dayHorizonSharpness, dayNightT);
             skyboxMaterial.SetFloat(HORIZON_SHARPNESS_ID, targetHorizonSharpness);

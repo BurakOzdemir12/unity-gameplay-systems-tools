@@ -27,10 +27,14 @@ namespace _Project.Systems._Core.GroundCheck
         public bool IsGrounded => isGrounded;
         public float DistanceToGround => distanceToGround;
         public Vector3 GroundNormal => groundNormal;
+        public bool IsOverridden { get; set; }
 
         private void Update()
         {
-            CheckGround();
+            if (!IsOverridden)
+            {
+                CheckGround();
+            }
         }
 
         [SerializeField] private float maxSlopeAngle = 45f;
@@ -110,6 +114,7 @@ namespace _Project.Systems._Core.GroundCheck
             p1 = center + Vector3.up * distanceToPoints;
             p2 = center - Vector3.up * distanceToPoints;
         }
+
 
         private void OnDrawGizmosSelected()
         {

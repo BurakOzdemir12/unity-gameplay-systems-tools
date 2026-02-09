@@ -45,22 +45,6 @@ namespace _Project.Systems.MovementSystem.Player.States.RootStates
                 return;
             }
 
-            // // Vector3 rayOrigin = stateMachine.transform.position + Vector3.up * 0.1f;
-            // float probeDistance = stateMachine.AirborneHeightThreshold;
-            // bool isGroundBelow = Physics.Raycast(
-            //     rayOrigin,
-            //     Vector3.down,
-            //     out RaycastHit hit,
-            //     probeDistance,
-            //     Physics.DefaultRaycastLayers,
-            //     QueryTriggerInteraction.Ignore
-            // );
-            // ungroundedTime += deltaTime;
-            // if (ungroundedTime >= stateMachine.GroundedGrace)
-            //     SwitchRootState(new PlayerAirborneState(stateMachine));
-            //
-            //
-
             if (stateMachine.GroundChecker != null &&
                 stateMachine.GroundChecker.DistanceToGround <= stateMachine.GroundedSnapDistance)
             {

@@ -1,4 +1,5 @@
-﻿using _Project.Systems.MovementSystem.Player.States.RootStates;
+﻿using _Project.Systems.ClimbingSystem.ScriptableObjects;
+using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.SharedGameplay.StateMachine.Player;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace _Project.Systems.ClimbingSystem.States
         private Vector3 groundPoint;
         private Vector3 finalStandPos;
 
+        private ClimbTypeDataSo data;
 
         public PlayerClimbUpState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
@@ -20,15 +22,15 @@ namespace _Project.Systems.ClimbingSystem.States
         //     FreeHangClimbHash
         public override void Enter()
         {
-
+            data = stateMachine.PlayerConfigSo.ClimbTypeDataSet[0];
             if (stateMachine.IsFreeFlowClimb)
             {
-                stateMachine.Animator.CrossFadeInFixedTime(stateMachine.BracedHangToCrouchClimbHash,
+                stateMachine.Animator.CrossFadeInFixedTime(data.ClimbUpAnimHash,
                     stateMachine.CrossFadeDuration);
                 return;
             }
 
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.FreeHangClimbHash, stateMachine.CrossFadeDuration);
+            stateMachine.Animator.CrossFadeInFixedTime(data.FreeHangClimbHash, stateMachine.CrossFadeDuration);
         }
 
         public override void Tick(float deltaTime)

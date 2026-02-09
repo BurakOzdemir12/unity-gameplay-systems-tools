@@ -1,4 +1,5 @@
-﻿using _Project.Systems.MovementSystem.Player.States;
+﻿using _Project.Systems.CombatSystem.ScriptableObjects.Combat.Dodge_Roll;
+using _Project.Systems.MovementSystem.Player.States;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.SharedGameplay.StateMachine.Player;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace _Project.Systems.CombatSystem.Player.States
         private float normalizedTime;
         private bool isTargeting;
         private bool useRootMotion;
+        private DodgeDataSo data;
         private PlayerGroundedState GroundedParent => GetSuperState() as PlayerGroundedState;
 
         public override void Enter()
@@ -24,6 +26,8 @@ namespace _Project.Systems.CombatSystem.Player.States
 
             //TODO Get attack direction of enemy and, Dodge accordingly prevent get damage While enemy attack
             //TODO with different enemy types, some will damage
+
+            data = stateMachine.PlayerConfigSo.DodgeData;
 
             // isTargeting = stateMachine.PreviousState is PlayerTargetingState;
             isTargeting = stateMachine.PreviousLeafState is PlayerTargetingState;
@@ -63,9 +67,9 @@ namespace _Project.Systems.CombatSystem.Player.States
             if (!IsDodgeMoveWindowActive()) return;
 
             Vector3 dodgeDirection = direction.normalized;
-            Vector3 movement = dodgeDirection * stateMachine.PlayerConfigSo.DodgeData.DodgeSpeed;
+            Vector3 movement = dodgeDirection * data.DodgeSpeed;
 
-            float dodgeDamptime = stateMachine.PlayerConfigSo.DodgeData.RotationDampTimeWhileDodge;
+            float dodgeDamptime = data.RotationDampTimeWhileDodge;
 
             RotateFaceToLook(deltaTime, dodgeDamptime);
             if (direction.sqrMagnitude < 0.0001f)
@@ -74,7 +78,7 @@ namespace _Project.Systems.CombatSystem.Player.States
                 backward.y = 0f;
                 backward.Normalize();
 
-                Move(backward * stateMachine.PlayerConfigSo.DodgeData.DodgeSpeed, deltaTime);
+                Move(backward * data.DodgeSpeed, deltaTime);
             }
             else
             {
@@ -89,26 +93,26 @@ namespace _Project.Systems.CombatSystem.Player.States
 
         private bool IsDodgeMoveWindowActive()
         {
-            return normalizedTime >= stateMachine.PlayerConfigSo.DodgeData.DodgeAnimStartTime &&
-                   normalizedTime <= stateMachine.PlayerConfigSo.DodgeData.DodgeAnimEndTime;
+            return normalizedTime >= data.DodgeAnimStartTime &&
+                   normalizedTime <= data.DodgeAnimEndTime;
         }
 
         private int GetDodgeHash(Vector2 input, bool targeting, bool rootMotion)
         {
             if (input.sqrMagnitude < 0.0001f)
             {
-                return stateMachine.DodgeBackwardHash;
+                return data.DodgeBackwardHash;
             }
 
             if (targeting)
             {
                 if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-                    return input.x > 0f ? stateMachine.DodgeRightHash : stateMachine.DodgeLeftHash;
+                    return input.x > 0f ? data.DodgeRightHash : data.DodgeLeftHash;
 
-                return input.y > 0f ? stateMachine.DodgeForwardHash : stateMachine.DodgeBackwardHash;
+                return input.y > 0f ? data.DodgeForwardHash : data.DodgeBackwardHash;
             }
 
-            return stateMachine.DodgeForwardHash;
+            return data.DodgeForwardHash;
         }
     }
 }

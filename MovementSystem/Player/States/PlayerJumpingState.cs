@@ -1,5 +1,6 @@
 ﻿using _Project.Systems.MovementSystem.Player.Enums;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
+using _Project.Systems.MovementSystem.ScriptableObjects;
 using _Project.Systems.SharedGameplay.StateMachine.Player;
 using UnityEngine;
 
@@ -16,21 +17,25 @@ namespace _Project.Systems.MovementSystem.Player.States
         private const string CLIMB_JUMP_TAG = "JumpClimb";
         private float normalisedTime;
 
+        private JumpDataSo data;
+        private FallLandDataSo fallLandData;
+
         public PlayerJumpingState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }
 
-
         public override void Enter()
         {
             // jumpType = JumpVariant.Normal;
+            data = stateMachine.PlayerConfigSo.JumpData;
+            fallLandData = stateMachine.PlayerConfigSo.FallLandData;
 
-            stateMachine.ForceReceiver.ApplyJumpForce(stateMachine.PlayerConfigSo.JumpData.JumpForce);
+            stateMachine.ForceReceiver.ApplyJumpForce(data.JumpForce);
             momentum = stateMachine.Controller.velocity;
             momentum.y = 0;
 
             stateMachine.Animator.CrossFadeInFixedTime(
-                stateMachine.IdleToJumpHash, stateMachine.CrossFadeDuration);
+                data.JumpAnimHash, stateMachine.CrossFadeDuration);
         }
 
         public override void Tick(float deltaTime)
@@ -38,7 +43,8 @@ namespace _Project.Systems.MovementSystem.Player.States
             Move(momentum, deltaTime);
 
             float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, JUMP_TAG);
-            if (stateMachine.GroundChecker.DistanceToGround >= stateMachine.PlayerConfigSo.FallLandData.FallingHeightThreshold &&
+            if (stateMachine.GroundChecker.DistanceToGround >=
+                fallLandData.FallingHeightThreshold &&
                 normalizedTime >= 0.4f)
             {
                 AirborneParent?.SwitchSubState(new PlayerFallingState(stateMachine));

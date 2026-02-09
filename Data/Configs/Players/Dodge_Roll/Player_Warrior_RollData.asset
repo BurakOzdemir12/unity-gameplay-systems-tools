@@ -17,3 +17,11 @@ MonoBehaviour:
   rollCooldownTime: 2
   rollAnimStartTime: 0.085
   rollAnimEndTime: 0.771
+  rollBackwardAnimName: Roll Backward
+  rollForwardAnimName: Roll Forward
+  rollRightAnimName: Roll Right
+  rollLeftAnimName: Roll Left
+  rollBackwardHash: -514823411
+  rollForwardHash: 1426283902
+  rollRightHash: -1570354392
+  rollLeftHash: -1164534089

@@ -92,37 +92,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
         [Header("Interact Allowance Time")] private float nextInteractAllowedTime = 0.5f;
 
         public float NextInteractAllowedTime => nextInteractAllowedTime;
-
-
-        //TODO Use animation override controller or create AnimationProfileSo for Hashes 
-        
-        // public readonly int FreeLookSpeedParamHash = Animator.StringToHash("FreeLookSpeed");
-        // public readonly int FreeLookBlendTreeHash = Animator.StringToHash("FreeLookBlendTree");
-        // public readonly int TargetingBlendTreeHash = Animator.StringToHash("TargetingBlendTree");
-        // public readonly int TargetingForwardSpeedHash = Animator.StringToHash("TargetingForwardSpeed");
-        // public readonly int TargetingRightSpeedHash = Animator.StringToHash("TargetingRightSpeed");
-        public readonly int LightImpactHash = Animator.StringToHash("ImpactSlight");
-        public readonly int DodgeBackwardHash = Animator.StringToHash("Dodge Backward");
-        public readonly int DodgeForwardHash = Animator.StringToHash("Dodge Forward");
-        public readonly int DodgeRightHash = Animator.StringToHash("Dodge Right");
-        public readonly int DodgeLeftHash = Animator.StringToHash("Dodge Left");
-        public readonly int RollForwardHash = Animator.StringToHash("Roll Forward");
-        public readonly int RollBackwardHash = Animator.StringToHash("Roll Backward");
-        public readonly int RollRightHash = Animator.StringToHash("Roll Right");
-        public readonly int RollLeftHash = Animator.StringToHash("Roll Left");
-        public readonly int IdleToJumpHash = Animator.StringToHash("Idle Jump");
-        public readonly int FallingLoopHash = Animator.StringToHash("Falling Loop");
-        public readonly int LandingHash = Animator.StringToHash("Falling To Landing");
-        public readonly int LandingHeavyHash = Animator.StringToHash("Falling To Landing Heavy");
-        public readonly int IdleToBracedHangingHash = Animator.StringToHash("Idle To Braced Hang");
-        public readonly int BracedHangingHash = Animator.StringToHash("Braced Hanging Idle");
-        public readonly int BracedHangToCrouchClimbHash = Animator.StringToHash("Braced Hang To Crouch");
-        public readonly int JumpToFreeHandHangingHash = Animator.StringToHash("Jump To Freehang");
-        public readonly int FreeHangingIdleHash = Animator.StringToHash("Free Hanging Idle");
-        public readonly int FreeHangClimbHash = Animator.StringToHash("FreeHang Climb");
         public readonly int Mirror = Animator.StringToHash("Mirror");
-        public readonly int IsArmedBoolHash = Animator.StringToHash("isArmed");
-
 
         public int BlockingLayerIndex { get; private set; }
         public int UpperBodyLayerIndex { get; private set; }

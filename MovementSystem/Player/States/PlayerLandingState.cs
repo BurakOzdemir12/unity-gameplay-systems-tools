@@ -1,5 +1,6 @@
 ﻿using _Project.Systems.MovementSystem.Player.Enums;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
+using _Project.Systems.MovementSystem.ScriptableObjects;
 using _Project.Systems.SharedGameplay.StateMachine.Player;
 
 namespace _Project.Systems.MovementSystem.Player.States
@@ -9,6 +10,7 @@ namespace _Project.Systems.MovementSystem.Player.States
         private const string LANDING_TAG = "Landing";
         private float normalisedTime;
         private readonly LandingType landingType;
+        private FallLandDataSo data;
 
         public PlayerLandingState(PlayerStateMachine stateMachine, LandingType landingType) : base(stateMachine)
         {
@@ -17,7 +19,8 @@ namespace _Project.Systems.MovementSystem.Player.States
 
         public override void Enter()
         {
-            int hash = landingType == LandingType.Light ? stateMachine.LandingHash : stateMachine.LandingHeavyHash;
+            data = stateMachine.PlayerConfigSo.FallLandData;
+            int hash = landingType == LandingType.Light ? data.LandingHash : data.LandingHeavyHash;
             stateMachine.Animator.CrossFadeInFixedTime(hash,
                 stateMachine.CrossFadeDuration);
         }
@@ -27,7 +30,7 @@ namespace _Project.Systems.MovementSystem.Player.States
             normalisedTime = GetNormalizedTime(stateMachine.Animator, 0, LANDING_TAG);
 
 
-            if (normalisedTime >= stateMachine.PlayerConfigSo.FallLandData.LandingStateExitTime)
+            if (normalisedTime >= data.LandingStateExitTime)
             {
                 SwitchRootState(new PlayerGroundedState(stateMachine));
             }

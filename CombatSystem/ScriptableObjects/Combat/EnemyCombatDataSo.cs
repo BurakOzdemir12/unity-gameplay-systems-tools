@@ -40,6 +40,23 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
 
         public float CrossFadeDurationCombat => crossFadeDurationCombat;
 
-       
+        [Header("Anim Names just for Enemy")] [Tooltip("Enemy Attack One Hand => Right  ")] [SerializeField]
+        private string enemyAttack1RAnimName;
+
+        public int EnemyAttack1RHash { get; private set; }
+
+        private void RebuildAnimHash()
+        {
+            EnemyAttack1RHash = string.IsNullOrWhiteSpace(enemyAttack1RAnimName)
+                ? 0
+                : Animator.StringToHash(enemyAttack1RAnimName);
+        }
+
+        private void OnEnable() => RebuildAnimHash();
+
+#if UNITY_EDITOR
+        private void OnValidate() => RebuildAnimHash();
+
+#endif
     }
 }

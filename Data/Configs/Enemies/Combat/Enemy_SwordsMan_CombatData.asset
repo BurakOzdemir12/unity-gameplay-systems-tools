@@ -19,20 +19,14 @@ MonoBehaviour:
   rotationDampTimeWhileBlock: 2
   drawAnimName: 
   sheatAnimName: 
-  combatIdleAnimName: 
+  combatIdleAnimName: EnemyCombatIdle
   stunnedAnimName: Stunned
+  impactSlightAnimName: ImpactSlight
+  isArmedParamName: 
   blockAnimName: ShieldIdle
   blockImpactAnimName: ShieldImpact
   blockPairAnimName: ShieldParry
   isBlockingParamName: isBlocking
-  sheatAnimHash: 0
-  drawAnimHash: 0
-  combatIdleAnimHash: 0
-  blockAnimHash: 250508744
-  blockImpactAnimHash: 1811639087
-  blockParryAnimHash: 662670799
-  isBlockingParamHash: -2076059216
-  stunnedAnimParamHash: -449490811
   attackPositionOffset: {x: 0, y: 0, z: 0}
   attackRange: 1.75
   attackDetectionLayers:
@@ -42,3 +36,4 @@ MonoBehaviour:
   attackKnockBackForce: 2
   forceTime: 0
   crossFadeDurationCombat: 0.1
+  enemyAttack1RAnimName: EnemyAttack1R

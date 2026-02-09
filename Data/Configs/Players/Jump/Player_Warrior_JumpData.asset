@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5207f47c489446fa4b625924ce7924a, type: 3}
   m_Name: Player_Warrior_JumpData
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.MovementSystem.ScriptableObjects.JumpDataSo
+  jumpAnimName: Idle Jump
   jumpForce: 4
   jumpCooldownTime: 0.5

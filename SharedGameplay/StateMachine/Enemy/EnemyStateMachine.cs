@@ -48,15 +48,6 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
         public Vector3 firstSpawnPoint;
         public int BlockingLayerIndex { get; private set; }
 
-        // public readonly int AttackBlendTreeHash = Animator.StringToHash("CombatBlendTree");
-        public readonly int CombatIdleHash = Animator.StringToHash("EnemyCombatIdle");
-        public readonly int EnemyAttack1RHash = Animator.StringToHash("EnemyAttack1R");
-        // public readonly int MoveSpeedParamHash = Animator.StringToHash("MoveSpeed");
-        // public readonly int LocomotionBlendTreeHash = Animator.StringToHash("Locomotion");
-        public readonly int LightImpactHash = Animator.StringToHash("ImpactSlight");
-
-        //TODO Use animation override controller or create AnimationProfileSo for Hashes 
-
         private void Awake()
         {
             BlockingLayerIndex = Animator.GetLayerIndex("Block Layer");

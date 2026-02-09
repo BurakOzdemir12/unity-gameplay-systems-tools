@@ -1,4 +1,5 @@
-﻿using _Project.Systems.MovementSystem.Enemy.States;
+﻿using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
+using _Project.Systems.MovementSystem.Enemy.States;
 using _Project.Systems.MovementSystem.ScriptableObjects;
 using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 
@@ -11,26 +12,23 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         }
 
         private const string ATTACK_TAG = "Attack";
-        private EnemyMovementDataSo data;
+        private EnemyMovementDataSo movementData;
+        private EnemyCombatDataSo combatData;
 
         public override void Enter()
         {
-            // if you want to use a blend tree for attacks, use blend tree drawing arrow sword by for distance
-            // stateMachine.Animator.CrossFadeInFixedTime(stateMachine.AttackBlendTreeHash,
-            //     stateMachine.CrossFadeDurationCombat); 
-            data = stateMachine.EnemyConfigSo.MovementData;
-            float finalDamage = stateMachine.EnemyConfigSo.CombatData.AttackDamage;
-            float finalKnockbackForce = stateMachine.EnemyConfigSo.CombatData.AttackKnockBackForce;
+            movementData = stateMachine.EnemyConfigSo.MovementData;
+            combatData = stateMachine.EnemyConfigSo.CombatData;
+            
+            float finalDamage = combatData.AttackDamage;
+            float finalKnockbackForce = combatData.AttackKnockBackForce;
 
             stateMachine.WeaponHandler.CurrentWeaponLogic.SetupAttack(finalDamage, finalKnockbackForce, "normal");
 
-            // stateMachine.WeaponLogic.SetAttackAttributes(1f, stateMachine.AttackKnockBackForce,
-            //     stateMachine.AttackDamage);
+            stateMachine.Animator.SetFloat(movementData.FreeLookSpeedParamHash, 0f);
 
-            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0f);
-
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.EnemyAttack1RHash,
-                stateMachine.EnemyConfigSo.CombatData.CrossFadeDurationCombat);
+            stateMachine.Animator.CrossFadeInFixedTime(combatData.EnemyAttack1RHash,
+                combatData.CrossFadeDurationCombat);
         }
 
 

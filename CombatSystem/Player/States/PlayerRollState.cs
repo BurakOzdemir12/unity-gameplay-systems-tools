@@ -1,4 +1,5 @@
-﻿using _Project.Systems.MovementSystem.Player.States;
+﻿using _Project.Systems.CombatSystem.ScriptableObjects.Combat.Dodge_Roll;
+using _Project.Systems.MovementSystem.Player.States;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.SharedGameplay.StateMachine.Player;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace _Project.Systems.CombatSystem.Player.States
 
         private bool isTargeting;
         private bool useRootMotion;
+        private RollDataSo data;
         private PlayerGroundedState GroundedParent => GetSuperState() as PlayerGroundedState;
 
         public override void Enter()
@@ -26,6 +28,8 @@ namespace _Project.Systems.CombatSystem.Player.States
 
             //TODO Get attack direction of enemy and, Roll accordingly prevent get damage While enemy attack
             //TODO with different enemy types, some will damage
+
+            data = stateMachine.PlayerConfigSo.RollData;
 
             // isTargeting = stateMachine.PreviousState is PlayerTargetingState;
             isTargeting = stateMachine.PreviousLeafState is PlayerTargetingState;
@@ -44,7 +48,8 @@ namespace _Project.Systems.CombatSystem.Player.States
         public override void Tick(float deltaTime)
         {
             normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, ROLL_TAG);
-
+            stateMachine.GroundChecker.IsOverridden = true;
+            
             if (normalizedTime >= 1f)
             {
                 if (stateMachine.Targeter.SelectedTarget != null)
@@ -66,9 +71,9 @@ namespace _Project.Systems.CombatSystem.Player.States
             if (!IsRollMoveWindowActive()) return;
 
             Vector3 rollDir = direction.normalized;
-            Vector3 movement = rollDir * stateMachine.PlayerConfigSo.RollData.RollSpeed;
+            Vector3 movement = rollDir * data.RollSpeed;
 
-            float rollDampTime = stateMachine.PlayerConfigSo.RollData.RotationDampTimeWhileRoll;
+            float rollDampTime = data.RotationDampTimeWhileRoll;
 
             if (movement.sqrMagnitude < 0.0001f)
             {
@@ -76,7 +81,7 @@ namespace _Project.Systems.CombatSystem.Player.States
                 backward.y = 0f;
                 backward.Normalize();
 
-                Move(backward * stateMachine.PlayerConfigSo.RollData.RollSpeed, deltaTime);
+                Move(backward * data.RollSpeed, deltaTime);
             }
             else
             {
@@ -88,28 +93,29 @@ namespace _Project.Systems.CombatSystem.Player.States
         public override void Exit()
         {
             stateMachine.Animator.applyRootMotion = false;
+            stateMachine.GroundChecker.IsOverridden = false;
         }
 
         private bool IsRollMoveWindowActive()
         {
-            return normalizedTime >= stateMachine.PlayerConfigSo.RollData.RollAnimStartTime &&
-                   normalizedTime <= stateMachine.PlayerConfigSo.RollData.RollAnimEndTime;
+            return normalizedTime >= data.RollAnimStartTime &&
+                   normalizedTime <= data.RollAnimEndTime;
         }
 
         private int GetRollHash(Vector2 input, bool targeting, bool rootMotion)
         {
             if (input.sqrMagnitude < 0.0001f)
-                return stateMachine.RollBackwardHash;
+                return data.RollBackwardHash;
 
             if (targeting)
             {
                 if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-                    return input.x > 0f ? stateMachine.RollRightHash : stateMachine.RollLeftHash;
+                    return input.x > 0f ? data.RollRightHash : data.RollLeftHash;
 
-                return input.y > 0f ? stateMachine.RollForwardHash : stateMachine.RollBackwardHash;
+                return input.y > 0f ? data.RollForwardHash : data.RollBackwardHash;
             }
 
-            return stateMachine.RollForwardHash;
+            return data.RollForwardHash;
         }
     }
 }

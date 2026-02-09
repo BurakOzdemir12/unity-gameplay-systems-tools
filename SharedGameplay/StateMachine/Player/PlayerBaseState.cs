@@ -150,7 +150,8 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
             float targetWeight = shouldBeActive ? 1f : 0f;
 
             // Set Animator Bool for transitions if needed
-            stateMachine.Animator.SetBool(stateMachine.IsArmedBoolHash, stateMachine.isWeaponEquipped);
+            stateMachine.Animator.SetBool(stateMachine.PlayerConfigSo.CombatData.IsArmedParamHash,
+                stateMachine.isWeaponEquipped);
 
             stateMachine.armedLayerWeight = Mathf.MoveTowards(
                 stateMachine.armedLayerWeight,

@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc19a63febe54faba7b120e14cf492ef, type: 3}
   m_Name: FallingLandingDataSo
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.MovementSystem.ScriptableObjects.FallLandDataSo
+  fallingAnimName: Falling Loop
+  landingAnimName: Falling To Landing
+  landingHeavyAnimName: Falling To Landing Heavy
   fallingHeightThreshold: 2
   landingHeightThreshold: 1.5
   landingHardHeightThreshold: 3

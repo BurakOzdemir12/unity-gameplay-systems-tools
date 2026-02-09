@@ -23,14 +23,16 @@ namespace _Project.Systems.ClimbingSystem.ScriptableObjects
         [Header("Animation Settings")] [SerializeField]
         private string animName;
 
-        [SerializeField, HideInInspector] private int animHash;
-        public int AnimHash => animHash;
-
         [SerializeField] private string animTag;
         public string AnimTag => animTag;
 
+        [Space(5)] [Tooltip("Climbing Up Hanging to top of the object")] [SerializeField]
+        private string climbUpAnimName;
 
-        [Header("Obstacle Rules")] [SerializeField]
+        [Tooltip("Free Hang Climbing Animation Name")] [SerializeField]
+        private string freeHandClimbAnimName;
+
+        [Space(5)] [Header("Obstacle Rules")] [SerializeField]
         private float minObstacleHeight;
 
         [SerializeField] private float maxObstacleHeight;
@@ -73,14 +75,30 @@ namespace _Project.Systems.ClimbingSystem.ScriptableObjects
                 : ParkourDecision.Invalid;
         }
 
+        #region Hash Convertion
+
+        public int AnimHash { get; private set; }
+        public int ClimbUpAnimHash { get; private set; }
+        public int FreeHangClimbHash { get; private set; }
+
         private void RebuildAnimHash()
         {
-            animHash = string.IsNullOrWhiteSpace(animName) ? 0 : Animator.StringToHash(animName);
+            AnimHash = string.IsNullOrWhiteSpace(animName)
+                ? 0
+                : Animator.StringToHash(animName);
+            ClimbUpAnimHash = string.IsNullOrWhiteSpace(climbUpAnimName)
+                ? 0
+                : Animator.StringToHash(climbUpAnimName);
+            FreeHangClimbHash = string.IsNullOrWhiteSpace(freeHandClimbAnimName)
+                ? 0
+                : Animator.StringToHash(freeHandClimbAnimName);
         }
 
         private void OnEnable() => RebuildAnimHash();
 #if UNITY_EDITOR
         private void OnValidate() => RebuildAnimHash();
 #endif
+
+        #endregion
     }
 }

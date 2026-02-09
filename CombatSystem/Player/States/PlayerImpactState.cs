@@ -1,4 +1,5 @@
-﻿using _Project.Systems.MovementSystem.Player.States.RootStates;
+﻿using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
+using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.SharedGameplay.StateMachine.Player;
 
 namespace _Project.Systems.CombatSystem.Player.States
@@ -6,7 +7,7 @@ namespace _Project.Systems.CombatSystem.Player.States
     public class PlayerImpactState : PlayerBaseState
     {
         private PlayerGroundedState GroundParent => GetSuperState() as PlayerGroundedState;
-        
+        private CombatDataSo data;
         public PlayerImpactState(PlayerStateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -15,9 +16,10 @@ namespace _Project.Systems.CombatSystem.Player.States
 
         public override void Enter()
         {
+            data = stateMachine.PlayerConfigSo.CombatData;
             remainingImpactTime = stateMachine.PlayerConfigSo.CombatData.ImpactDuration;
 
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.LightImpactHash,
+            stateMachine.Animator.CrossFadeInFixedTime(data.ImpactSlightAnimHash,
                 stateMachine.CrossFadeDuration);
         }
 

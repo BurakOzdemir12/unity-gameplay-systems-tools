@@ -63,36 +63,29 @@ namespace _Project.Systems.MovementSystem.ScriptableObjects
 
         [Tooltip(" Free Look Speed Param Name for Movement Animation Speed")] [SerializeField]
         private string freelookSpeedParamName;
+        [Header("Anim Hashes")] 
+        public int LocomotionBlendTreeHash { get; private set; }
+        public int FreeLookSpeedParamHash{ get; private set; }
+        public int TargetingBlendTreeHash { get; private set; }
+        public int TargetingForwardSpeedHash { get; private set; }
+        public int TargetingRightSpeedHash { get; private set; }
 
-        [Header("Anim Hashes")] [SerializeField, HideInInspector]
-        private int freeLookSpeedParamHash;
-
-        [SerializeField, HideInInspector] private int locomotionBlendTreeHash;
-        [SerializeField, HideInInspector] private int targetingBlendTreeHash;
-        [SerializeField, HideInInspector] private int targetingForwardSpeedHash;
-        [SerializeField, HideInInspector] private int targetingRightSpeedHash;
-
-        public int LocomotionBlendTreeHash => locomotionBlendTreeHash;
-        public int FreeLookSpeedParamHash => freeLookSpeedParamHash;
-        public int TargetingBlendTreeHash => targetingBlendTreeHash;
-        public int TargetingForwardSpeedHash => targetingForwardSpeedHash;
-        public int TargetingRightSpeedHash => targetingRightSpeedHash;
-
+        
         private void RebuildAnimHash()
         {
-            locomotionBlendTreeHash = string.IsNullOrWhiteSpace(blendTreeName)
+            LocomotionBlendTreeHash = string.IsNullOrWhiteSpace(blendTreeName)
                 ? 0
                 : Animator.StringToHash(blendTreeName);
-            freeLookSpeedParamHash = string.IsNullOrWhiteSpace(freelookSpeedParamName)
+            FreeLookSpeedParamHash = string.IsNullOrWhiteSpace(freelookSpeedParamName)
                 ? 0
                 : Animator.StringToHash(freelookSpeedParamName);
-            targetingBlendTreeHash = string.IsNullOrWhiteSpace(targetingBlendTreeName)
+            TargetingBlendTreeHash = string.IsNullOrWhiteSpace(targetingBlendTreeName)
                 ? 0
                 : Animator.StringToHash(targetingBlendTreeName);
-            targetingForwardSpeedHash = string.IsNullOrWhiteSpace(targetingForwardSpeedParamName)
+            TargetingForwardSpeedHash = string.IsNullOrWhiteSpace(targetingForwardSpeedParamName)
                 ? 0
                 : Animator.StringToHash(targetingForwardSpeedParamName);
-            targetingRightSpeedHash = string.IsNullOrWhiteSpace(targetingRightSpeedParamName)
+            TargetingRightSpeedHash = string.IsNullOrWhiteSpace(targetingRightSpeedParamName)
                 ? 0
                 : Animator.StringToHash(targetingRightSpeedParamName);
         }

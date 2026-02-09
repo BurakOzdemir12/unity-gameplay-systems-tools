@@ -17,3 +17,11 @@ MonoBehaviour:
   dodgeCooldownTime: 2
   dodgeAnimStartTime: 0.126
   dodgeAnimEndTime: 0.617
+  dodgeBackwardAnimName: Dodge Backward
+  dodgeForwardAnimName: Dodge Forward
+  dodgeRightAnimName: Dodge Right
+  dodgeLeftAnimName: Dodge Left
+  dodgeBackwardHash: -1988515469
+  dodgeForwardHash: -1586308180
+  dodgeRightHash: -1689242097
+  dodgeLeftHash: -1890026668

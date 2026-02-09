@@ -1,4 +1,5 @@
-﻿using _Project.Systems.MovementSystem.Enemy.States;
+﻿using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
+using _Project.Systems.MovementSystem.Enemy.States;
 using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 
 namespace _Project.Systems.CombatSystem.Enemy.States
@@ -6,6 +7,7 @@ namespace _Project.Systems.CombatSystem.Enemy.States
     public class EnemyAttackCooldownState : EnemyBaseState
     {
         private float coolDownTimer = 0f;
+        private EnemyCombatDataSo combatData;
 
         public EnemyAttackCooldownState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
@@ -13,15 +15,17 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
         public override void Enter()
         {
-            stateMachine.Animator.CrossFadeInFixedTime(stateMachine.CombatIdleHash,
-                stateMachine.EnemyConfigSo.CombatData.CrossFadeDurationCombat);
-            coolDownTimer = stateMachine.EnemyConfigSo.CombatData.AttackCoolDown;
+            combatData = stateMachine.EnemyConfigSo.CombatData;
+            
+            stateMachine.Animator.CrossFadeInFixedTime(combatData.CombatIdleAnimHash,
+                combatData.CrossFadeDurationCombat);
+            coolDownTimer = combatData.AttackCoolDown;
         }
 
         public override void Tick(float deltaTime)
         {
             HandleBlocking(deltaTime, true);
-            
+
             if (!IsInAttackRange())
             {
                 stateMachine.SwitchState(new EnemyIdleState(stateMachine));

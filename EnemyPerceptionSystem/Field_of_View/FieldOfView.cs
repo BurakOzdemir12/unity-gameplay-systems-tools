@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace _Project.Systems._Core.Field_of_View
+namespace _Project.Systems.EnemyPerceptionSystem.Field_of_View
 {
     [ExecuteInEditMode]
     public class FieldOfView : MonoBehaviour

@@ -29,14 +29,15 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             Move(deltaTime);
 
             HandleBlocking(deltaTime, true);
-
-            if ( IsInChaseRange() && !IsInAttackRange())
+            var isInChaseRange = stateMachine.EnemyPerceptionController.CurrentTarget;
+            var isInAttackRange = stateMachine.EnemyPerceptionController.IsTargetInAttackRange;
+            if ( isInChaseRange && !isInAttackRange)
             {
                 stateMachine.SwitchState(new EnemyChaseState(stateMachine));
                 return;
             }
 
-            if (IsInAttackRange())
+            if (isInAttackRange)
             {
                 stateMachine.SwitchState(new EnemyAttackingState(stateMachine));
                 return;

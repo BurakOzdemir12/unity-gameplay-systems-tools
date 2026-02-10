@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using _Project.Systems._Core.Field_of_View;
+using System.Runtime.Serialization;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems.CombatSystem.Enemy;
 using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Targeting;
+using _Project.Systems.EnemyPerceptionSystem;
+using _Project.Systems.EnemyPerceptionSystem.Field_of_View;
 using _Project.Systems.HealthSystem.Health;
 using _Project.Systems.HealthSystem.Ragdoll;
 using _Project.Systems.HealthSystem.Structs;
@@ -31,6 +33,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
         [field: SerializeField] public EnemyConfigSo EnemyConfigSo { get; private set; }
         [field: SerializeField] public FieldOfView FieldOfView { get; private set; }
         [field: SerializeField] public EnemyDefenceBrain EnemyDefenceBrain { get; private set; }
+        [field: SerializeField] public EnemyPerceptionController EnemyPerceptionController { get; private set; }
 
         [Tooltip("Chase and Attack detect buffer length")] [SerializeField]
         private int bufferMax = 4;
@@ -40,14 +43,6 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
         [Header("Blocking Settings")] [field: SerializeField]
         public float blockLayerWeight = 0;
 
-        public GameObject Player { get; set; }
-
-        public HashSet<Collider> BuffersForChase;
-        public HashSet<Collider> BuffersForAttack;
-        public HashSet<Collider> BuffersLockTarget;
-        public List<Collider> debugBuffersForChase;
-        public List<Collider> debugBuffersForAttack;
-        public List<Collider> debugBuffersForLockTarget;
 
         public Vector3 firstSpawnPoint;
         public int BlockingLayerIndex { get; private set; }
@@ -65,16 +60,17 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
             ShieldHandler.CurrentShieldLogic.OnBlocked += HandleShieldImpact;
         }
 
-
         private void Start()
         {
             firstSpawnPoint = transform.position;
             Controller = GetComponent<CharacterController>();
+            //EnemyPerception Init
+            if (EnemyPerceptionController == null)
+            {
+                EnemyPerceptionController = GetComponent<EnemyPerceptionController>();
+            }
 
-            BuffersForChase = new HashSet<Collider>(bufferMax);
-            BuffersForAttack = new HashSet<Collider>(bufferMax);
-            BuffersLockTarget = new HashSet<Collider>(bufferMax);
-
+            EnemyPerceptionController.Initialize(gameObject, EnemyConfigSo, FieldOfView);
 
             SwitchState(new EnemyIdleState(this));
         }
@@ -82,24 +78,15 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
         private void HandleTakeDamage(DamageInfo damageInfo)
         {
             SwitchState(new EnemyImpactState(this));
-
-            if (damageInfo.SourceObject != null &&
-                damageInfo.SourceObject.TryGetComponent<Collider>(out var attackerCollider))
+            if (damageInfo.SourceObject != null)
             {
-                BuffersLockTarget.Add(attackerCollider);
-#if UNITY_EDITOR
-                debugBuffersForLockTarget = BuffersLockTarget.ToList();
-#endif
+                EnemyPerceptionController.OnDamageTaken(damageInfo.SourceObject);
             }
         }
 
         private void HandleDeath()
         {
-            BuffersForChase.Clear();
-            BuffersForAttack.Clear();
-            BuffersLockTarget.Clear();
-            Player = null;
-
+            EnemyPerceptionController.OnDeath();
             SwitchState(new EnemyDeadState(this));
         }
 
@@ -121,30 +108,6 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
             Health.OnDeath -= HandleDeath;
             Health.OnStunned -= HandleStunned;
             ShieldHandler.CurrentShieldLogic.OnBlocked -= HandleShieldImpact;
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            // Gizmos.color = Color.yellow;
-            // Gizmos.DrawWireSphere(transform.position, EnemyConfigSo.MovementData.ChaseDetectionRange);
-
-            Gizmos.color = Color.darkRed;
-            Gizmos.DrawWireSphere(transform.TransformPoint(EnemyConfigSo.CombatData.AttackPositionOffset),
-                EnemyConfigSo.CombatData.AttackRange);
-
-            // Gizmos.color = Color.black;
-            // for (int i = 0; i < waypoints.Length; i++)
-            // {
-            //     Gizmos.DrawWireSphere(waypoints[i], 0.35f);
-            //     if (i + 1 < waypoints.Length)
-            //     {
-            //         Gizmos.DrawLine(waypoints[i], waypoints[i + 1]);
-            //     }
-            //     else
-            //     {
-            //         Gizmos.DrawLine(waypoints[i], waypoints[0]);
-            //     }
-            // }
         }
     }
 }

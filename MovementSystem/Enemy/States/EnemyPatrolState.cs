@@ -33,7 +33,8 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         public override void Tick(float deltaTime)
         {
             timer += deltaTime;
-            if (IsInChaseRange() || stateMachine.Agent.remainingDistance <= stateMachine.Agent.stoppingDistance)
+            var isInChaseRange = stateMachine.EnemyPerceptionController.CurrentTarget;
+            if (isInChaseRange || stateMachine.Agent.remainingDistance <= stateMachine.Agent.stoppingDistance)
             {
                 stateMachine.SwitchState(new EnemyChaseState(stateMachine));
                 return;

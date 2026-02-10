@@ -8,7 +8,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
     public class EnemyChaseState : EnemyBaseState
     {
         private EnemyMovementDataSo data;
-        
+
         public EnemyChaseState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -16,7 +16,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         public override void Enter()
         {
             data = stateMachine.EnemyConfigSo.MovementData;
-            
+
             stateMachine.Agent.isStopped = false;
             stateMachine.Agent.speed = data.FreeMovementSpeed;
 
@@ -26,13 +26,13 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         public override void Tick(float deltaTime)
         {
-            if (!IsInChaseRange() )
+            if (!stateMachine.EnemyPerceptionController.CurrentTarget)
             {
                 stateMachine.SwitchState(new EnemyIdleState(stateMachine));
                 return;
             }
 
-            if (IsInAttackRange())
+            if (stateMachine.EnemyPerceptionController.IsTargetInAttackRange)
             {
                 stateMachine.SwitchState(new EnemyAttackingState(stateMachine));
                 return;
@@ -55,11 +55,12 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         private void MoveToPlayer(float deltaTime)
         {
-            if (stateMachine.Player == null) return;
+            GameObject currentTarget = stateMachine.EnemyPerceptionController.CurrentTarget;
+            if (currentTarget == null) return;
             // bool isArrived = stateMachine.Agent.remainingDistance <= stateMachine.Agent.stoppingDistance;
             if (stateMachine.Agent.isOnNavMesh) //!isArrived &&
             {
-                Vector3 detectedPlayerPos = stateMachine.Player.transform.position;
+                Vector3 detectedPlayerPos = currentTarget.transform.position;
                 stateMachine.Agent.SetDestination(detectedPlayerPos);
             }
 
@@ -74,7 +75,6 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             RotateToPlayer(deltaTime);
             // stateMachine.Agent.velocity = stateMachine.Controller.velocity;
             stateMachine.Agent.nextPosition = stateMachine.transform.position;
-
         }
     }
 }

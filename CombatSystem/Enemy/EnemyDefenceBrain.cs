@@ -34,22 +34,24 @@ namespace _Project.Systems.CombatSystem.Enemy
         )
         {
             if (!attacker) return;
-            Collider attackerCollider = attacker.GetComponent<Collider>();
-            Transform attackerRoot = attacker.transform.root;
-            bool attackerInBuffer = false;
-
-            foreach (var col in stateMachine.BuffersForChase)
-            {
-                if (!col) continue;
-
-                if (col.transform.root == attackerRoot)
-                {
-                    attackerInBuffer = true;
-                    break;
-                }
-            }
-
-            if (!attackerInBuffer) return;
+            // Collider attackerCollider = attacker.GetComponent<Collider>();
+            // Transform attackerRoot = attacker.transform.root;
+            // bool attackerInBuffer = false;
+            
+            // foreach (var col in stateMachine.EnemyPerceptionController.BufferSetForChase)
+            // {
+            //     if (!col) continue;
+            //
+            //     if (col.transform.root == attackerRoot)
+            //     {
+            //         attackerInBuffer = true;
+            //         break;
+            //     }
+            // }
+            bool isPerceived = stateMachine.EnemyPerceptionController.IsPerceivingTarget(attacker);
+            
+            if (!isPerceived) return;
+            // if (!attackerInBuffer) return;
             DecideDefenceAction(attackData);
         }
 

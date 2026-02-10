@@ -32,7 +32,7 @@ MonoBehaviour:
   attackDetectionLayers:
     serializedVersion: 2
     m_Bits: 65536
-  attackCoolDown: 3
+  attackCoolDown: 1
   attackKnockBackForce: 2
   forceTime: 0
   crossFadeDurationCombat: 0.1

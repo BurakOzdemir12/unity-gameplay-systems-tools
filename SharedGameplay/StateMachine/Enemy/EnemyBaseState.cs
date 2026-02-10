@@ -9,6 +9,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
     public abstract class EnemyBaseState : State
     {
         protected readonly EnemyStateMachine stateMachine;
+        private readonly Collider[] attackBuffer = new Collider[10];
 
         protected EnemyBaseState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
@@ -17,57 +18,88 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
 
         protected bool IsInAttackRange()
         {
-            Collider[] debugBuffer = new Collider[10];
+            Vector3 attackPos =
+                stateMachine.transform.TransformPoint(stateMachine.EnemyConfigSo.CombatData.AttackPositionOffset);
             int detected = Physics.OverlapSphereNonAlloc(
-                stateMachine.transform.position + stateMachine.EnemyConfigSo.CombatData.AttackPositionOffset,
+                attackPos,
                 stateMachine.EnemyConfigSo.CombatData.AttackRange,
-                debugBuffer,
+                attackBuffer,
                 stateMachine.EnemyConfigSo.CombatData.AttackDetectionLayers,
                 QueryTriggerInteraction.Ignore);
+            
+            stateMachine.BuffersForAttack.Clear();
             if (detected == 0)
-
             {
                 stateMachine.BuffersForAttack.Clear();
+#if UNITY_EDITOR
                 stateMachine.debugBuffersForAttack.Clear();
-
+#endif
                 return false;
             }
 
             for (int i = 0; i < detected; i++)
             {
-                if (debugBuffer[i].TryGetComponent<Collider>(out var coll))
+                if (attackBuffer[i] != null)
                 {
-                    stateMachine.BuffersForAttack.Add(coll);
+                    stateMachine.BuffersForAttack.Add(attackBuffer[i]);
                 }
             }
-
+#if UNITY_EDITOR
             stateMachine.debugBuffersForAttack = stateMachine.BuffersForAttack.ToList();
-            GameObject closestTarget = FindClosestTarget(detected, stateMachine.BuffersForAttack);
+
+#endif
+            GameObject closestTarget = FindClosestTarget(stateMachine.BuffersForAttack);
 
             return closestTarget != null;
         }
 
         protected bool IsInChaseRange()
         {
+            stateMachine.BuffersForChase.Clear();
+            // Locked On Target Check -> if get hit enemy chase that target
+            if (stateMachine.BuffersLockTarget.Count > 0)
+            {
+                // İf Target is dead remove it from lock target list
+                stateMachine.BuffersLockTarget.RemoveWhere(col => col == null || !col.enabled);
+#if UNITY_EDITOR
+                stateMachine.debugBuffersForLockTarget.Clear();
+                stateMachine.debugBuffersForLockTarget = stateMachine.BuffersLockTarget.ToList();
+#endif
+                // İf Target is alive then add it to chase Buffer Hashset
+                if (stateMachine.BuffersLockTarget.Count > 0)
+                {
+                    stateMachine.BuffersForChase.UnionWith(stateMachine.BuffersLockTarget);
+
+                    GameObject closestLockedTarget = FindClosestTarget(stateMachine.BuffersLockTarget);
+                    stateMachine.Player = closestLockedTarget;
+                    if (stateMachine.Player != null) return true;
+                }
+            }
+
+            //Field Of View Check (FOV) -< If no locked target, checks FOV
             var targets = stateMachine.FieldOfView.Targets;
             if (targets == null || targets.Count == 0)
             {
                 stateMachine.Player = null;
                 stateMachine.BuffersForChase.Clear();
+#if UNITY_EDITOR
                 stateMachine.debugBuffersForChase.Clear();
+#endif
                 return false;
             }
 
-            for (int i = 0; i < targets.Count; i++)
+            foreach (var target in targets)
             {
-                if (targets[i].TryGetComponent<Collider>(out var coll))
+                if (target.TryGetComponent<Collider>(out var coll))
                 {
                     stateMachine.BuffersForChase.Add(coll);
                 }
             }
-
+#if UNITY_EDITOR
             stateMachine.debugBuffersForChase = stateMachine.BuffersForChase.ToList();
-            GameObject closestTarget = FindClosestTarget(targets.Count, stateMachine.BuffersForChase);
+#endif
+
+            GameObject closestTarget = FindClosestTarget(stateMachine.BuffersForChase);
             stateMachine.Player = closestTarget;
             return closestTarget != null;
         }
@@ -99,15 +131,16 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
         // }
 
 
-        private GameObject FindClosestTarget(int detectedCount, HashSet<Collider> colType)
+        private GameObject FindClosestTarget(HashSet<Collider> targets)
         {
+            if (targets.Count == 0) return null;
+
             Transform enemyTransform = stateMachine.transform;
             float closestDistance = Mathf.Infinity;
             GameObject closestTarget = null;
 
-            for (int i = 0; i < detectedCount; i++)
+            foreach (var hit in targets)
             {
-                Collider hit = colType.ElementAt(i); //[i];
                 if (hit == null) continue;
                 if (!hit.CompareTag("Player")) continue;
 

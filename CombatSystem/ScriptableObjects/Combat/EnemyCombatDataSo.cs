@@ -45,18 +45,13 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
 
         public int EnemyAttack1RHash { get; private set; }
 
-        private void RebuildAnimHash()
+        protected override void RebuildAnimHash()
         {
+            base.RebuildAnimHash();
+
             EnemyAttack1RHash = string.IsNullOrWhiteSpace(enemyAttack1RAnimName)
                 ? 0
                 : Animator.StringToHash(enemyAttack1RAnimName);
         }
-
-        private void OnEnable() => RebuildAnimHash();
-
-#if UNITY_EDITOR
-        private void OnValidate() => RebuildAnimHash();
-
-#endif
     }
 }

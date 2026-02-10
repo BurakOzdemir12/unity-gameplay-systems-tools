@@ -9,6 +9,7 @@ using _Project.Systems.CombatSystem.Targeting;
 using _Project.Systems.GatheringSystem.Detector_Controller;
 using _Project.Systems.HealthSystem.Health;
 using _Project.Systems.HealthSystem.Ragdoll;
+using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.InventorySystem;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.SharedGameplay.BaseScriptableObjects.Characters;
@@ -180,7 +181,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
             InventoryManager.ToggleInventoryVisibility();
         }
 
-        private void HandleTakeDamage()
+        private void HandleTakeDamage(DamageInfo damageInfo)
         {
             //Override States dont use switchSubstate
 
@@ -229,7 +230,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
 
         private void HandleStunned(float duration)
         {
-            SwitchState(new PlayerStunnedState(this, duration));
+            SwitchState(new PlayerStunnedState(this, 2f));
         }
         
         private void OnDisable()

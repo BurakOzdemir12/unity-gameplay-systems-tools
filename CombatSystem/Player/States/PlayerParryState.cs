@@ -1,5 +1,6 @@
 ﻿using _Project.Systems._Core.GravityForce.Interfaces;
 using _Project.Systems.HealthSystem.Health.Interfaces;
+using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.HealthSystem.Stun.Interfaces;
 using _Project.Systems.MovementSystem.Player.States;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
@@ -48,10 +49,10 @@ namespace _Project.Systems.CombatSystem.Player.States
         public override void Exit()
         {
             stateMachine.ShieldHandler.CurrentShieldLogic.ShieldParried -= HandleParry;
-            
+
             stateMachine.ShieldHandler.CurrentShieldLogic.SetParryWindow(false);
             stateMachine.ShieldHandler.DisableShield();
-            
+
             stateMachine.Animator.SetLayerWeight(layer,
                 0
             );
@@ -61,8 +62,14 @@ namespace _Project.Systems.CombatSystem.Player.States
         {
             GameObject attackerGo = ctx.AttackerRoot.gameObject;
 
+            DamageInfo damageInfo = new DamageInfo
+            {
+                Damage = stateMachine.ShieldHandler.CurrentShieldData.shieldDamage,
+                TargetRoot = attackerGo,
+                SourceObject = stateMachine.gameObject
+            };
             var damageable = attackerGo.GetComponentInChildren<IDamageable>();
-            damageable?.ApplyDamage(stateMachine.ShieldHandler.CurrentShieldData.shieldDamage);
+            damageable?.ApplyDamage(damageInfo);
 
             if (attackerGo.TryGetComponent<IKnockable>(out var knock))
             {
@@ -71,7 +78,8 @@ namespace _Project.Systems.CombatSystem.Player.States
                 knock.ApplyKnockback(stateMachine.ShieldHandler.CurrentShieldData.shieldKnockbackForce, dir.normalized);
             }
 
-            var stunnable = attackerGo.GetComponentInChildren<IStunnable>(true);
+            var stunnable = attackerGo.GetComponent<IStunnable>()
+                            ?? attackerGo.GetComponentInChildren<IStunnable>();
             stunnable?.ApplyStun(stateMachine.ShieldHandler.CurrentShieldData.shieldStunPower);
         }
     }

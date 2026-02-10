@@ -5,6 +5,7 @@ using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems._Core.GravityForce.Interfaces;
 using _Project.Systems.HealthSystem.Health.Interfaces;
+using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.SharedGameplay.Shield_Logic.Interfaces;
 using _Project.Systems.SharedGameplay.Shield_Logic.Structs;
 using _Project.Systems.SharedGameplay.WeaponLogic.ScriptableObjects;
@@ -135,7 +136,15 @@ namespace _Project.Systems.SharedGameplay.WeaponLogic
             var damageable = other.GetComponentInChildren<IDamageable>();
             if (damageable != null)
             {
-                damageable.ApplyDamage(currentDamage);
+                DamageInfo damageInfo = new DamageInfo
+                {
+                    Damage = currentDamage,
+                    TargetRoot = other.gameObject,
+                    SourceObject = characterOwnTransform.root.gameObject,
+                };
+
+                damageable.ApplyDamage(damageInfo);
+                // damageable.ApplyDamage(currentDamage);
             }
 
             if (other.TryGetComponent<IKnockable>(out var knockable) && knockable != null)

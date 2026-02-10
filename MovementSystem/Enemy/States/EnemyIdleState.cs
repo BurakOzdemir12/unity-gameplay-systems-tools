@@ -8,10 +8,12 @@ namespace _Project.Systems.MovementSystem.Enemy.States
     public class EnemyIdleState : EnemyBaseState
     {
         private float timer;
-        private EnemyMovementDataSo data;        
+        private EnemyMovementDataSo data;
+
         public EnemyIdleState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
         }
+
         public override void Enter()
         {
             data = stateMachine.EnemyConfigSo.MovementData;
@@ -27,8 +29,8 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             Move(deltaTime);
 
             HandleBlocking(deltaTime, true);
-            
-            if (IsInChaseRange() && !IsInAttackRange())
+
+            if ( IsInChaseRange() && !IsInAttackRange())
             {
                 stateMachine.SwitchState(new EnemyChaseState(stateMachine));
                 return;

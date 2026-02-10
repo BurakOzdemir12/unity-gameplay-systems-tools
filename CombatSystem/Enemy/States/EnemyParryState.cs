@@ -1,5 +1,6 @@
 ﻿using _Project.Systems._Core.GravityForce.Interfaces;
 using _Project.Systems.HealthSystem.Health.Interfaces;
+using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.HealthSystem.Stun.Interfaces;
 using _Project.Systems.MovementSystem.Enemy.States;
 using _Project.Systems.SharedGameplay.BaseScriptableObjects.Characters;
@@ -62,8 +63,15 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         {
             GameObject attackerGo = ctx.AttackerRoot.gameObject;
 
+            DamageInfo damageInfo = new DamageInfo
+            {
+                Damage = stateMachine.ShieldHandler.CurrentShieldData.shieldDamage,
+                TargetRoot = attackerGo,
+                SourceObject = stateMachine.gameObject
+            };
+
             var damageable = attackerGo.GetComponentInChildren<IDamageable>();
-            damageable?.ApplyDamage(stateMachine.ShieldHandler.CurrentShieldData.shieldDamage);
+            damageable?.ApplyDamage(damageInfo);
 
             if (attackerGo.TryGetComponent<IKnockable>(out var knock))
             {
@@ -72,7 +80,8 @@ namespace _Project.Systems.CombatSystem.Enemy.States
                 knock.ApplyKnockback(stateMachine.ShieldHandler.CurrentShieldData.shieldKnockbackForce, dir.normalized);
             }
 
-            var stunnable = attackerGo.GetComponentInChildren<IStunnable>(true);
+            var stunnable = attackerGo.GetComponent<IStunnable>() 
+                            ?? attackerGo.GetComponentInChildren<IStunnable>();
             stunnable?.ApplyStun(stateMachine.ShieldHandler.CurrentShieldData.shieldStunPower);
         }
     }

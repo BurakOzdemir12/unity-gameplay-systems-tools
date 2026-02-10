@@ -18,7 +18,7 @@ MonoBehaviour:
   shieldDamage: 5
   shieldStunPower: 1
   shieldStaminaCost: 2
-  shieldDurability: 5
+  shieldDurability: 10
   shieldBreakEffect: {fileID: 7065122998337236172, guid: 2f1d8d43f0cef1e468ad6d82c239bd19, type: 3}
   shieldBreakClips:
   - {fileID: 8300000, guid: 22be456444a164f9589011a44dafbd0a, type: 3}

@@ -1,12 +1,12 @@
 ﻿using _Project.Systems.HealthSystem.Health;
 using _Project.Systems.HealthSystem.Health.Interfaces;
+using _Project.Systems.HealthSystem.Structs;
 using UnityEngine;
 
 namespace _Project.Systems.HealthSystem.HurtboxLogic
 {
     public abstract class HurtboxBase : MonoBehaviour, IDamageable
     {
-
         protected HealthBase OwnerHealth;
 
         protected virtual void Awake()
@@ -15,10 +15,11 @@ namespace _Project.Systems.HealthSystem.HurtboxLogic
                 OwnerHealth = GetComponentInParent<HealthBase>();
         }
 
-        public virtual void ApplyDamage(float damage)
+        public virtual void ApplyDamage(DamageInfo damageInfo)
         {
-            OwnerHealth.ApplyDamage(damage);
+            OwnerHealth.ApplyDamage(damageInfo);
         }
+
         protected abstract void OnHitApplied(float finalDamage);
     }
 }

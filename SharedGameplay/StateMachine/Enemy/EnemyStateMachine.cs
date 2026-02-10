@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using _Project.Systems._Core.Field_of_View;
 using _Project.Systems._Core.GravityForce;
 using _Project.Systems.CombatSystem.Enemy;
@@ -6,6 +7,7 @@ using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Targeting;
 using _Project.Systems.HealthSystem.Health;
 using _Project.Systems.HealthSystem.Ragdoll;
+using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.MovementSystem.Enemy.States;
 using _Project.Systems.SharedGameplay.BaseScriptableObjects.Characters;
 using _Project.Systems.SharedGameplay.Shield_Logic.Structs;
@@ -42,8 +44,10 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
 
         public HashSet<Collider> BuffersForChase;
         public HashSet<Collider> BuffersForAttack;
+        public HashSet<Collider> BuffersLockTarget;
         public List<Collider> debugBuffersForChase;
         public List<Collider> debugBuffersForAttack;
+        public List<Collider> debugBuffersForLockTarget;
 
         public Vector3 firstSpawnPoint;
         public int BlockingLayerIndex { get; private set; }
@@ -69,18 +73,33 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
 
             BuffersForChase = new HashSet<Collider>(bufferMax);
             BuffersForAttack = new HashSet<Collider>(bufferMax);
+            BuffersLockTarget = new HashSet<Collider>(bufferMax);
 
 
             SwitchState(new EnemyIdleState(this));
         }
 
-        private void HandleTakeDamage()
+        private void HandleTakeDamage(DamageInfo damageInfo)
         {
             SwitchState(new EnemyImpactState(this));
+
+            if (damageInfo.SourceObject != null &&
+                damageInfo.SourceObject.TryGetComponent<Collider>(out var attackerCollider))
+            {
+                BuffersLockTarget.Add(attackerCollider);
+#if UNITY_EDITOR
+                debugBuffersForLockTarget = BuffersLockTarget.ToList();
+#endif
+            }
         }
 
         private void HandleDeath()
         {
+            BuffersForChase.Clear();
+            BuffersForAttack.Clear();
+            BuffersLockTarget.Clear();
+            Player = null;
+
             SwitchState(new EnemyDeadState(this));
         }
 
@@ -90,10 +109,12 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
                 EnemyConfigSo.CombatData.CrossFadeDurationCombat);
             // SwitchState(new EnemyBlockParryState(this, ctx));
         }
+
         private void HandleStunned(float duration)
         {
             SwitchState(new EnemyStunnedState(this, duration));
         }
+
         private void OnDisable()
         {
             Health.OnTakeDamage -= HandleTakeDamage;
@@ -101,13 +122,14 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
             Health.OnStunned -= HandleStunned;
             ShieldHandler.CurrentShieldLogic.OnBlocked -= HandleShieldImpact;
         }
+
         private void OnDrawGizmosSelected()
         {
             // Gizmos.color = Color.yellow;
             // Gizmos.DrawWireSphere(transform.position, EnemyConfigSo.MovementData.ChaseDetectionRange);
 
             Gizmos.color = Color.darkRed;
-            Gizmos.DrawWireSphere(transform.position + EnemyConfigSo.CombatData.AttackPositionOffset,
+            Gizmos.DrawWireSphere(transform.TransformPoint(EnemyConfigSo.CombatData.AttackPositionOffset),
                 EnemyConfigSo.CombatData.AttackRange);
 
             // Gizmos.color = Color.black;
@@ -124,7 +146,5 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
             //     }
             // }
         }
-
-      
     }
 }

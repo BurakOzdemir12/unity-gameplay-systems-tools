@@ -26,19 +26,12 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         {
             HandleBlocking(deltaTime, true);
 
-            if (!IsInAttackRange())
-            {
-                stateMachine.SwitchState(new EnemyIdleState(stateMachine));
-                return;
-            }
-
             RotateToPlayer(deltaTime);
 
             coolDownTimer -= deltaTime;
             if (coolDownTimer <= 0f)
             {
                 stateMachine.SwitchState(new EnemyIdleState(stateMachine));
-                return;
             }
         }
 

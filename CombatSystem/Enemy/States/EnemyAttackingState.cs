@@ -35,16 +35,14 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         public override void Tick(float deltaTime)
         {
             Move(deltaTime);
-
-
             RotateToPlayer(deltaTime);
-
 
             float normalizedTime = GetNormalizedTime(stateMachine.Animator, 0, ATTACK_TAG);
             if (normalizedTime >= 0.9f)
             {
                 stateMachine.SwitchState(new EnemyAttackCooldownState(stateMachine));
             }
+            
         }
 
         public override void Exit()

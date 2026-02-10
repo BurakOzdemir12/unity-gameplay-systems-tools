@@ -1,6 +1,7 @@
 ﻿using _Project.Systems.CombatSystem.ScriptableObjects.Combat;
 using _Project.Systems.MovementSystem.Enemy.States;
 using _Project.Systems.SharedGameplay.StateMachine.Enemy;
+using UnityEngine;
 
 namespace _Project.Systems.CombatSystem.Enemy.States
 {
@@ -17,7 +18,7 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         public override void Enter()
         {
             combatData = stateMachine.EnemyConfigSo.CombatData;
-            
+
             remainingImpactTime = combatData.ImpactDuration;
 
             stateMachine.Animator.CrossFadeInFixedTime(combatData.ImpactSlightAnimHash,
@@ -26,25 +27,20 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
         public override void Tick(float deltaTime)
         {
+            
             Move(deltaTime);
 
             remainingImpactTime -= deltaTime;
 
             if (remainingImpactTime <= 0)
             {
-                if (IsInAttackRange())
-                {
-                    stateMachine.SwitchState(new EnemyAttackingState(stateMachine));
-                }
-                else
-                {
-                    stateMachine.SwitchState(new EnemyIdleState(stateMachine));
-                }
+                stateMachine.SwitchState(new EnemyIdleState(stateMachine));
             }
         }
 
         public override void Exit()
         {
+            
         }
     }
 }

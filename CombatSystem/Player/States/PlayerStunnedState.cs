@@ -26,7 +26,8 @@ namespace _Project.Systems.CombatSystem.Player.States
             stunTime -= deltaTime;
             if (stunTime <= 0)
             {
-                GroundParent?.SwitchSubState(new PlayerFreeLookState(stateMachine));
+                stateMachine.SwitchState(new PlayerGroundedState(stateMachine));
+                // GroundParent?.SwitchSubState(new PlayerFreeLookState(stateMachine));
             }
         }
 

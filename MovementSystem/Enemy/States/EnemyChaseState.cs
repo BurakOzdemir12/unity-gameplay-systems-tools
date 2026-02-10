@@ -26,7 +26,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         public override void Tick(float deltaTime)
         {
-            if (!IsInChaseRange())
+            if (!IsInChaseRange() )
             {
                 stateMachine.SwitchState(new EnemyIdleState(stateMachine));
                 return;

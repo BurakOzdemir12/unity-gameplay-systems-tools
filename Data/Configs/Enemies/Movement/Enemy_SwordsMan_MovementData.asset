@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.MovementSystem.ScriptableObjects.EnemyMovementDataSo
   crossFadeDurationBetweenBlendTrees: 0.1
   locomotionAnimatorDampTime: 0.1
-  targetingAnimatorDampTime: 0
+  targetingAnimatorDampTime: 0.1
   rotationDampTime: 4
   freeMovementSpeed: 5
   freeSprintSpeed: 0
   targetingMovementSpeed: 0
+  targetingBlendTreeName: 
+  targetingForwardSpeedParamName: 
+  targetingRightSpeedParamName: 
   blendTreeName: LocomotionBlendTree
   freelookSpeedParamName: FreeLookSpeed
-  freeLookSpeedParamHash: 0
-  blendTreeHash: -1865496121
   chaseDetectionRange: 6.21
   sightSensorRange: 0
   <ChaseDetectionLayers>k__BackingField:

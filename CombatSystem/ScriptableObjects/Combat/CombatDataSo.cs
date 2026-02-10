@@ -73,7 +73,7 @@ namespace _Project.Systems.CombatSystem.ScriptableObjects.Combat
         public int ImpactSlightAnimHash { get; private set; }
         public int IsArmedParamHash { get; private set; }
 
-        private void RebuildAnimHash()
+        protected virtual void RebuildAnimHash()
         {
             DrawAnimHash = string.IsNullOrWhiteSpace(drawAnimName)
                 ? 0

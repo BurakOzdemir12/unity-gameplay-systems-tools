@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c7a6565b9494151847d967f0bee13de, type: 3}
   m_Name: Enemy_SwordsMan_CombatData
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.CombatSystem.ScriptableObjects.Combat.EnemyCombatDataSo
-  attackDamage: 50
+  attackDamage: 10
   rotationDampTimeWhileAttack: 0.1
   impactDuration: 0.75
   blockingLayerChangeSpeed: 0.1
@@ -27,12 +27,12 @@ MonoBehaviour:
   blockImpactAnimName: ShieldImpact
   blockPairAnimName: ShieldParry
   isBlockingParamName: isBlocking
-  attackPositionOffset: {x: 0, y: 0, z: 0}
-  attackRange: 1.75
+  attackPositionOffset: {x: 0, y: 0.94, z: 0.81}
+  attackRange: 1.15
   attackDetectionLayers:
     serializedVersion: 2
     m_Bits: 65536
-  attackCoolDown: 2
+  attackCoolDown: 3
   attackKnockBackForce: 2
   forceTime: 0
   crossFadeDurationCombat: 0.1

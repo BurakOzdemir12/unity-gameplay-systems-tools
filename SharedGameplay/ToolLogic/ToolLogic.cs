@@ -5,6 +5,7 @@ using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems._Core.GravityForce.Interfaces;
 using _Project.Systems.HealthSystem.Health.Interfaces;
+using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.SharedGameplay.ToolLogic.ScriptableObjects;
 using UnityEngine;
 
@@ -83,16 +84,23 @@ namespace _Project.Systems.SharedGameplay.ToolLogic
 
         private void ApplyDamageAndKnockback(Collider other)
         {
-            if (other.TryGetComponent<IDamageable>(out var damageable) && damageable != null)
+            var damageable = other.GetComponentInChildren<IDamageable>();
+            if (damageable != null)
             {
-                damageable.ApplyDamage(currentDamage);
-            }
+                DamageInfo damageInfo = new DamageInfo
+                {
+                    Damage = currentDamage,
+                    TargetRoot = other.gameObject
+                };
 
-            if (other.TryGetComponent<IKnockable>(out var knockable) && knockable != null)
-            {
-                Vector3 dir = (other.transform.position - transform.root.position);
-                dir.y = 0f;
-                knockable.ApplyKnockback(currentKnockbackForce, dir);
+                damageable.ApplyDamage(damageInfo);
+
+                if (other.TryGetComponent<IKnockable>(out var knockable) && knockable != null)
+                {
+                    Vector3 dir = (other.transform.position - transform.root.position);
+                    dir.y = 0f;
+                    knockable.ApplyKnockback(currentKnockbackForce, dir);
+                }
             }
         }
 

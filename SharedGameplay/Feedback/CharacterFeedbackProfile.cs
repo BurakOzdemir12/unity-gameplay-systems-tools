@@ -51,6 +51,7 @@ namespace _Project.Systems.SharedGameplay.Feedback
         [SerializeField] private List<GatherActionFeedbackEntry> gatherActionFeedbackList;
 
         // ---------------- SURFACE ----------------
+        //TODO Disable action tag for traversal, its not necessary 
         public bool TryGetTraversalFeedback(
             SurfaceType surface,
             TraversalType traversal,

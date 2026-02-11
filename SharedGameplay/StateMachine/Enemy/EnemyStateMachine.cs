@@ -5,12 +5,13 @@ using _Project.Systems._Core.GravityForce;
 using _Project.Systems.CombatSystem.Enemy;
 using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.CombatSystem.Targeting;
-using _Project.Systems.EnemyPerceptionSystem;
-using _Project.Systems.EnemyPerceptionSystem.Field_of_View;
 using _Project.Systems.HealthSystem.Health;
 using _Project.Systems.HealthSystem.Ragdoll;
 using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.MovementSystem.Enemy.States;
+using _Project.Systems.PerceptionSystem;
+using _Project.Systems.PerceptionSystem.Field_of_View;
+using _Project.Systems.PerceptionSystem.Noise_Sensor;
 using _Project.Systems.SharedGameplay.BaseScriptableObjects.Characters;
 using _Project.Systems.SharedGameplay.Shield_Logic.Structs;
 using _Project.Systems.SharedGameplay.Weapon_Tool_Handlers;
@@ -34,6 +35,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
         [field: SerializeField] public FieldOfView FieldOfView { get; private set; }
         [field: SerializeField] public EnemyDefenceBrain EnemyDefenceBrain { get; private set; }
         [field: SerializeField] public EnemyPerceptionController EnemyPerceptionController { get; private set; }
+        [field: SerializeField] public NoiseSensor NoiseSensor { get; private set; }
 
         [Tooltip("Chase and Attack detect buffer length")] [SerializeField]
         private int bufferMax = 4;
@@ -70,7 +72,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Enemy
                 EnemyPerceptionController = GetComponent<EnemyPerceptionController>();
             }
 
-            EnemyPerceptionController.Initialize(gameObject, EnemyConfigSo, FieldOfView);
+            EnemyPerceptionController.Initialize(gameObject, EnemyConfigSo, FieldOfView, NoiseSensor);
 
             SwitchState(new EnemyIdleState(this));
         }

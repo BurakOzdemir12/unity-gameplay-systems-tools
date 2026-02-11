@@ -2,7 +2,7 @@
 using _Project.Systems._Core.EventBus.Interfaces;
 using UnityEngine;
 
-namespace _Project.Systems._Core.EventBus.Events
+namespace _Project.Systems.CombatSystem.Events
 {
     public struct CharacterCombatActionEvent : IEvent
     {

@@ -1,6 +1,8 @@
 ﻿using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
+using _Project.Systems.CombatSystem.Events;
+using _Project.Systems.MovementSystem.Events;
 using _Project.Systems.SharedGameplay.Feedback;
 using UnityEngine;
 

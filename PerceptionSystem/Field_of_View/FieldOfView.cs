@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Project.Systems.EnemyPerceptionSystem.Field_of_View
+namespace _Project.Systems.PerceptionSystem.Field_of_View
 {
     [ExecuteInEditMode]
     public class FieldOfView : MonoBehaviour

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
+using _Project.Systems.CombatSystem.Events;
 using UnityEngine;
 
 namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers

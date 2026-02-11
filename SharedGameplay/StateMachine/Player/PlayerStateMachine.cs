@@ -12,6 +12,7 @@ using _Project.Systems.HealthSystem.Ragdoll;
 using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.InventorySystem;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
+using _Project.Systems.PerceptionSystem;
 using _Project.Systems.SharedGameplay.BaseScriptableObjects.Characters;
 using _Project.Systems.SharedGameplay.Pickup_Drop;
 using _Project.Systems.SharedGameplay.Weapon_Tool_Handlers;
@@ -28,7 +29,6 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
         [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
         [field: SerializeField] public WeaponHandler WeaponHandler { get; private set; }
         [field: SerializeField] public ShieldHandler ShieldHandler { get; private set; }
-
         [field: SerializeField] public ToolLogic.ToolLogic ToolLogic { get; private set; }
         [field: SerializeField] public PlayerHealth Health { get; private set; }
         [field: SerializeField] public Ragdoll Ragdoll { get; private set; }
@@ -39,6 +39,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
         [field: SerializeField] public InventoryManager InventoryManager { get; private set; }
         [field: SerializeField] public PickupController PickupController { get; private set; }
         [field: SerializeField] public PlayerAttackSignal PlayerAttackSignal { get; private set; }
+        [field: SerializeField] public NoiseEmitter NoiseEmitter { get; private set; }
 
         // [Header("Weapon Transforms")] [Tooltip("Sword Holder Transform")] [field: SerializeField]
         // public Transform swordHolderR;
@@ -232,7 +233,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
         {
             SwitchState(new PlayerStunnedState(this, 2f));
         }
-        
+
         private void OnDisable()
         {
             Health.OnTakeDamage -= HandleTakeDamage;

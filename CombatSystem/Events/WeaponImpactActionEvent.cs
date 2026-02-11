@@ -3,7 +3,7 @@ using _Project.Systems._Core.EventBus.Interfaces;
 using _Project.Systems.SharedGameplay.WeaponLogic.ScriptableObjects;
 using UnityEngine;
 
-namespace _Project.Systems._Core.EventBus.Events
+namespace _Project.Systems.CombatSystem.Events
 {
     public struct WeaponImpactActionEvent : IEvent
     {

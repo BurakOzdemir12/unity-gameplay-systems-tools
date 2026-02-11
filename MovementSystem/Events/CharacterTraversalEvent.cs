@@ -2,7 +2,7 @@ using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus.Interfaces;
 using UnityEngine;
 
-namespace _Project.Systems._Core.EventBus.Events
+namespace _Project.Systems.MovementSystem.Events
 {
     public struct CharacterTraversalEvent : IEvent
     {

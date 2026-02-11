@@ -4,6 +4,7 @@ using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems._Core.GravityForce.Interfaces;
+using _Project.Systems.CombatSystem.Events;
 using _Project.Systems.HealthSystem.Health.Interfaces;
 using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.SharedGameplay.Shield_Logic.Interfaces;

@@ -2,6 +2,8 @@ using _Project.Systems._Core.Components;
 using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
+using _Project.Systems.CombatSystem.Events;
+using _Project.Systems.MovementSystem.Events;
 using _Project.Systems.SharedGameplay.Weapon_Tool_Handlers;
 using UnityEngine;
 

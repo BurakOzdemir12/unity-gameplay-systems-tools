@@ -1,5 +1,6 @@
 ﻿using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
+using _Project.Systems.CombatSystem.Events;
 using Unity.Cinemachine;
 using UnityEngine;
 

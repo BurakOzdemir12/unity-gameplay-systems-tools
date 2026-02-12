@@ -15,8 +15,8 @@ MonoBehaviour:
   surfaceFeedbackList:
   - Name: Running on Dirt
     Surface: 0
-    traversal: 0
-    SpecificTag: Run
+    traversal: 1
+    SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: 9e68ea1ebd76aa44c8cfa5beb9850830, type: 3}
     - {fileID: 8300000, guid: 1deb201b8bf8f89479323a74e421150b, type: 3}
@@ -32,8 +32,8 @@ MonoBehaviour:
     Volume: 0.5
   - Name: Running on Grass
     Surface: 1
-    traversal: 0
-    SpecificTag: Run
+    traversal: 1
+    SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: 9a30499e47789df48aa9bdb1ec7b0982, type: 3}
     - {fileID: 8300000, guid: 1d7e7e6569aab5a45a837f470eaddc8b, type: 3}
@@ -54,8 +54,8 @@ MonoBehaviour:
     Volume: 0.5
   - Name: Running on Snow
     Surface: 4
-    traversal: 0
-    SpecificTag: Run
+    traversal: 1
+    SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: ba6dc99376c85b4468a50ff05f135162, type: 3}
     - {fileID: 8300000, guid: 4c784f2380314b24a822b2dd4fe062ab, type: 3}
@@ -71,8 +71,8 @@ MonoBehaviour:
     Volume: 0.5
   - Name: Running on Water
     Surface: 5
-    traversal: 0
-    SpecificTag: Run
+    traversal: 1
+    SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: 518cdd508d673124da33c3a5cdd93f05, type: 3}
     - {fileID: 8300000, guid: 0fb11b2e4f3de6746ba2c3f528d9b01a, type: 3}
@@ -83,8 +83,8 @@ MonoBehaviour:
     Volume: 0.5
   - Name: Running on Metal
     Surface: 3
-    traversal: 0
-    SpecificTag: Run
+    traversal: 1
+    SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: b25225c72201cd740b16b95b86d57940, type: 3}
     - {fileID: 8300000, guid: 5e8e6e435e65fe146b588b8a9d2df461, type: 3}
@@ -105,8 +105,8 @@ MonoBehaviour:
     Volume: 0.5
   - Name: Sprint on Dirt
     Surface: 0
-    traversal: 0
-    SpecificTag: Sprint
+    traversal: 2
+    SpecificTag: 
     Clips:
     - {fileID: 8300000, guid: 9e68ea1ebd76aa44c8cfa5beb9850830, type: 3}
     - {fileID: 8300000, guid: 1deb201b8bf8f89479323a74e421150b, type: 3}
@@ -120,6 +120,16 @@ MonoBehaviour:
     - {fileID: 8300000, guid: f26cf9ded47cf0140957490a16f85acc, type: 3}
     VFX: {fileID: 5222117830268790141, guid: 3bf0e130d015dc7458c0a9f5528c6345, type: 3}
     Volume: 1.97
+  - Name: Heavy Landing on Dirt
+    Surface: 0
+    traversal: 6
+    SpecificTag: 
+    Clips:
+    - {fileID: 8300000, guid: 7131d701ae015a54aa3d856feccd513f, type: 3}
+    - {fileID: 8300000, guid: 942019cf9ecd5854ebeb343b12b7f779, type: 3}
+    - {fileID: 8300000, guid: 1a88f429c4a7b734f9c4254f0c654cea, type: 3}
+    VFX: {fileID: 5222117830268790141, guid: 3bf0e130d015dc7458c0a9f5528c6345, type: 3}
+    Volume: 4
   actionFeedbackList:
   - Name: Sword Attack Male Voice
     Surface: 0

@@ -2,8 +2,15 @@ namespace _Project.Systems._Core.Enums
 {
     public enum TraversalType
     {
-        Footstep,
+        Walk,
+        Run,
+        Sprint,
+        Crouch,
+        Crawl,
+        Swim,
         Land,
         Jump,
+        Climb,
+        Slide
     }
 }

@@ -255,7 +255,8 @@ namespace _Project.Systems.PerceptionSystem
 
         private void HandleNoiseHeard(NoiseData noiseData)
         {
-            if (noiseData.Source == null || isDeaf) return;
+            if (isDeaf) return;
+            if (noiseData.Source == null) return;
 
             Debug.Log($"Noise heard from {noiseData.Source.name}");
             noiseData.Source.TryGetComponent<Collider>(out var col);

@@ -47,11 +47,14 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
         {
             #region With Mesh
 
-            scanTimer -= Time.deltaTime;
-            if (scanTimer < 0)
+            if (Application.isPlaying)
             {
-                scanTimer += scanInterval;
-                Scan();
+                scanTimer -= Time.deltaTime;
+                if (scanTimer < 0)
+                {
+                    scanTimer += scanInterval;
+                    Scan();
+                }
             }
 
             #endregion
@@ -67,10 +70,13 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
             targets.Clear();
             for (int i = 0; i < count; ++i)
             {
-                GameObject targetObj = detectedColliders[i].gameObject;
-                if (IsInSight(targetObj))
+                if (detectedColliders[i] != null)
                 {
-                    targets.Add(targetObj);
+                    GameObject targetObj = detectedColliders[i].gameObject;
+                    if (IsInSight(targetObj))
+                    {
+                        targets.Add(targetObj);
+                    }
                 }
             }
         }
@@ -105,7 +111,8 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
         Mesh CreateWedgeMesh()
         {
             Mesh wedgeMesh = new Mesh();
-
+            wedgeMesh.name = "FOV_Mesh";
+            
             int segments = 10;
             int numTriangles = (segments * 4) + 2 + 2;
             int numVertices = numTriangles * 3;
@@ -183,7 +190,14 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
 
         private void OnValidate()
         {
+            if (scanFrequency <= 0) scanFrequency = 0.1f;
             scanInterval = 1f / scanFrequency;
+
+            if (mesh != null)
+            {
+                if (Application.isPlaying) Destroy(mesh);
+                else DestroyImmediate(mesh);
+            }
 
             mesh = CreateWedgeMesh();
         }
@@ -197,15 +211,20 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
             }
 
             Gizmos.DrawWireSphere(transform.position, distance);
-            for (int i = 0; i < count; ++i)
+            if (detectedColliders != null)
             {
-                Gizmos.DrawSphere(detectedColliders[i].transform.position, 0.2f);
+                for (int i = 0; i < count; ++i)
+                {
+                    if (detectedColliders[i] != null) ;
+                    Gizmos.DrawSphere(detectedColliders[i].transform.position, 0.2f);
+                }
             }
 
             Gizmos.color = Color.green;
             foreach (var target in Targets)
             {
-                Gizmos.DrawSphere(target.transform.position, 0.2f);
+                if (target != null)
+                    Gizmos.DrawSphere(target.transform.position, 0.2f);
             }
         }
 

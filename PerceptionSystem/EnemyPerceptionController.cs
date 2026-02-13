@@ -25,6 +25,7 @@ namespace _Project.Systems.PerceptionSystem
         [Tooltip("Is enemy blind")] [SerializeField]
         private bool isBlind = false;
 
+
         [Header("Collider Buffers For detection")]
 #if UNITY_EDITOR
         public List<Collider> debugBuffersForChase;
@@ -43,6 +44,19 @@ namespace _Project.Systems.PerceptionSystem
 
         //Dynamic collider array
         private readonly Collider[] attackBuffer = new Collider[10];
+
+        //Persistence Settings
+        [Header("Persistence Time Settings")] [SerializeField]
+        private float targetPersistenceMemory = 8f;
+
+        [Tooltip("Noise will not listen to target if heard within this time")] [SerializeField]
+        private float noiseHearingDelay = 2f;
+
+        private float targetPersistenceTimer;
+        private float lastNoiseHeardTime;
+#if UNITY_EDITOR
+        [SerializeField] private float debugTimer;
+#endif
 
         private void OnEnable()
         {
@@ -65,6 +79,7 @@ namespace _Project.Systems.PerceptionSystem
             }
 
             CheckAttackRange();
+            ManageTargetVisibility();
         }
 
         public void Initialize(GameObject owner, EnemyConfigSo configData, FieldOfView fov, NoiseSensor noiseSensor)
@@ -242,6 +257,81 @@ namespace _Project.Systems.PerceptionSystem
 
         public void OnDeath()
         {
+            ResetPerception();
+        }
+
+
+        private void HandleNoiseHeard(NoiseData noiseData)
+        {
+            if (isDeaf) return;
+            if (noiseData.Source == null) return;
+
+            lastNoiseHeardTime = Time.time;
+            // Debug.Log($"Noise heard from {noiseData.Source.name}");
+            noiseData.Source.TryGetComponent<Collider>(out var col);
+            bufferSetForLockTarget.Add(col);
+#if UNITY_EDITOR
+            if (!debugBuffersForLockTarget.Contains(col))
+            {
+                debugBuffersForLockTarget.Add(col);
+            }
+#endif
+        }
+
+        private void ManageTargetVisibility()
+        {
+            if (bufferSetForLockTarget.Count == 0)
+            {
+                targetPersistenceTimer = 0f;
+#if UNITY_EDITOR
+                debugTimer = 0f;
+#endif
+                return;
+            }
+
+            GameObject lockedTarget = null;
+            foreach (var col in bufferSetForLockTarget)
+            {
+                if (col != null) lockedTarget = col.gameObject;
+                break;
+            }
+
+            if (lockedTarget == null) return;
+
+            // Fov check
+            bool canSeeTarget = false;
+            List<GameObject> targets = fieldOfView.Targets;
+            foreach (var target in targets)
+            {
+                if (lockedTarget == target)
+                {
+                    canSeeTarget = true;
+                    break;
+                }
+            }
+
+            bool heardRecently = (Time.time - lastNoiseHeardTime) < noiseHearingDelay;
+            //? If a target can be seen or heard recently, don't reset persistence
+            if (canSeeTarget || heardRecently)
+            {
+                targetPersistenceTimer = 0f;
+#if UNITY_EDITOR
+                debugTimer = 0f;
+#endif
+            }
+            //? Enemy will forget the target after a certain (memoryTime) time 
+            else
+            {
+                targetPersistenceTimer += Time.deltaTime;
+#if UNITY_EDITOR
+                debugTimer = targetPersistenceTimer;
+#endif
+                if (targetPersistenceTimer >= targetPersistenceMemory) ResetPerception();
+            }
+        }
+
+        private void ResetPerception()
+        {
             bufferSetForChase.Clear();
             bufferSetForAttack.Clear();
             bufferSetForLockTarget.Clear();
@@ -251,19 +341,6 @@ namespace _Project.Systems.PerceptionSystem
             debugBuffersForAttack.Clear();
             debugBuffersForChase.Clear();
             debugBuffersForLockTarget.Clear();
-        }
-
-        private void HandleNoiseHeard(NoiseData noiseData)
-        {
-            if (isDeaf) return;
-            if (noiseData.Source == null) return;
-
-            Debug.Log($"Noise heard from {noiseData.Source.name}");
-            noiseData.Source.TryGetComponent<Collider>(out var col);
-            bufferSetForLockTarget.Add(col);
-#if UNITY_EDITOR
-            debugBuffersForLockTarget.Add(col);
-#endif
         }
 
         private void OnDrawGizmosSelected()

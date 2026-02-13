@@ -65,21 +65,30 @@ namespace _Project.Systems.PerceptionSystem.Noise_Sensor
                     //? if defaultOcclusionDamping = .4f => 60% reduction
                     dampingFactor = defaultOcclusionDamping;
                 }
+            }
 
-                float newEffectiveRadius = noiseData.Range * dampingFactor;
-                //debug
-                debugDistance = distanceToSource;
-                debugEffectiveRadius = newEffectiveRadius;
-                if (distanceToSource <= newEffectiveRadius)
+            float newEffectiveRadius = noiseData.Range * dampingFactor;
+            //debug
+            debugDistance = distanceToSource;
+            debugEffectiveRadius = newEffectiveRadius;
+            
+            //? If distance to source is less than effective radius, noise is heard
+            if (distanceToSource <= newEffectiveRadius)
+            {
+                OnNoiseHeard?.Invoke(noiseData);
+#if UNITY_EDITOR
+                // Debug.Log($"Enemy heard noise! Dist: {distanceToSource:F1}, EffRadius: {newEffectiveRadius:F1}");
+#endif
+            }
+            else
+            {
+#if UNITY_EDITOR
+                if (isHit && distanceToSource <= noiseData.Range)
                 {
-                    Debug.Log($"Enemy heard noise! Dist: {distanceToSource:F1}, EffRadius: {newEffectiveRadius:F1}");
-                    OnNoiseHeard?.Invoke(noiseData);
+                    // Debug.Log(
+                    //     $"Noise blocked by wall. Dist: {distanceToSource:F1} > EffRadius: {newEffectiveRadius:F1}");
                 }
-                else
-                {
-                    Debug.Log(
-                        $"Noise blocked by wall. Dist: {distanceToSource:F1} > EffRadius: {newEffectiveRadius:F1}");
-                }
+#endif
             }
         }
 

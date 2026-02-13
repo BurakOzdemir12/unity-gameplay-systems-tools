@@ -15,7 +15,7 @@ MonoBehaviour:
   attackDamage: 10
   rotationDampTimeWhileAttack: 0.1
   impactDuration: 0.75
-  blockingLayerChangeSpeed: 0.1
+  blockingLayerChangeSpeed: 5
   rotationDampTimeWhileBlock: 2
   drawAnimName: 
   sheatAnimName: 

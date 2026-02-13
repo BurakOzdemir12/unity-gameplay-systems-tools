@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Project.Systems.PerceptionSystem.Field_of_View
 {
-    [ExecuteInEditMode]
+    // [ExecuteInEditMode]
     public class FieldOfView : MonoBehaviour
     {
         #region With Mesh => Attributes
@@ -221,10 +221,13 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
             }
 
             Gizmos.color = Color.green;
-            foreach (var target in Targets)
+            if (targets != null)
             {
-                if (target != null)
-                    Gizmos.DrawSphere(target.transform.position, 0.2f);
+                foreach (var target in targets)
+                {
+                    if (target != null)
+                        Gizmos.DrawSphere(target.transform.position, 0.2f);
+                }
             }
         }
 

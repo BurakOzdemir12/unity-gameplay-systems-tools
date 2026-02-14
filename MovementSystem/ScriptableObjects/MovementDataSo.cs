@@ -63,15 +63,15 @@ namespace _Project.Systems.MovementSystem.ScriptableObjects
 
         [Tooltip(" Free Look Speed Param Name for Movement Animation Speed")] [SerializeField]
         private string freelookSpeedParamName;
-        [Header("Anim Hashes")] 
-        public int LocomotionBlendTreeHash { get; private set; }
-        public int FreeLookSpeedParamHash{ get; private set; }
+
+        [Header("Anim Hashes")] public int LocomotionBlendTreeHash { get; private set; }
+        public int FreeLookSpeedParamHash { get; private set; }
         public int TargetingBlendTreeHash { get; private set; }
         public int TargetingForwardSpeedHash { get; private set; }
         public int TargetingRightSpeedHash { get; private set; }
 
-        
-        private void RebuildAnimHash()
+
+        protected virtual void RebuildAnimHash()
         {
             LocomotionBlendTreeHash = string.IsNullOrWhiteSpace(blendTreeName)
                 ? 0

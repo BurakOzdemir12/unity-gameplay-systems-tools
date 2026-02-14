@@ -23,7 +23,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             stateMachine.Agent.speed = data.FreeMovementSpeed;
             var roamingPos = stateMachine.firstSpawnPoint +
                              GetRandomDirection() *
-                             Random.Range(2f, data.patrolRange);
+                             Random.Range(2f, data.PatrolRange);
 
             stateMachine.Agent.SetDestination(roamingPos);
             stateMachine.Animator.CrossFadeInFixedTime(data.LocomotionBlendTreeHash,
@@ -34,13 +34,14 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         {
             timer += deltaTime;
             var isInChaseRange = stateMachine.EnemyPerceptionController.CurrentTarget;
-            if (isInChaseRange || stateMachine.Agent.remainingDistance <= stateMachine.Agent.stoppingDistance)
+            if (isInChaseRange)
             {
                 stateMachine.SwitchState(new EnemyChaseState(stateMachine));
                 return;
             }
 
-            if (timer >= data.patrolDuration)
+            if (timer >= data.PatrolDuration ||
+                stateMachine.Agent.remainingDistance <= stateMachine.Agent.stoppingDistance)
             {
                 stateMachine.SwitchState(new EnemyIdleState(stateMachine));
                 return;

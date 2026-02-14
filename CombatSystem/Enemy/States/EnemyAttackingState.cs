@@ -19,7 +19,9 @@ namespace _Project.Systems.CombatSystem.Enemy.States
         {
             movementData = stateMachine.EnemyConfigSo.MovementData;
             combatData = stateMachine.EnemyConfigSo.CombatData;
-            
+
+            stateMachine.EnemyPerceptionController.IsAggressive = true;
+
             float finalDamage = combatData.AttackDamage;
             float finalKnockbackForce = combatData.AttackKnockBackForce;
 
@@ -42,7 +44,6 @@ namespace _Project.Systems.CombatSystem.Enemy.States
             {
                 stateMachine.SwitchState(new EnemyAttackCooldownState(stateMachine));
             }
-            
         }
 
         public override void Exit()

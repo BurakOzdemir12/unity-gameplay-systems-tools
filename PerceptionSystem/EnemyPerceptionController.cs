@@ -33,9 +33,12 @@ namespace _Project.Systems.PerceptionSystem
         public List<Collider> debugBuffersForAttack;
         public List<Collider> debugBuffersForLockTarget;
 #endif
-        public GameObject CurrentTarget { get; set; }
+        public GameObject CurrentTarget { get; private set; }
+        public Vector3 LastKnownTargetPos { get; private set; }
         public bool IsTargetInAttackRange { get; private set; }
         public bool IsTargetInChaseRange { get; private set; }
+        public bool HasSuspiciousTarget => bufferSetForLockTarget.Count > 0;
+        [field: SerializeField] public bool IsAggressive { get; set; }
 
         //Collider Buffers
         private HashSet<Collider> bufferSetForChase;
@@ -160,6 +163,11 @@ namespace _Project.Systems.PerceptionSystem
 
             GameObject closestTarget = FindClosestTarget(bufferSetForChase);
             CurrentTarget = closestTarget;
+            if (CurrentTarget != null)
+            {
+                LastKnownTargetPos = CurrentTarget.transform.position;
+            }
+
             IsTargetInChaseRange = CurrentTarget != null;
 
 #if UNITY_EDITOR
@@ -187,6 +195,11 @@ namespace _Project.Systems.PerceptionSystem
 
                     GameObject closestLockedTarget = FindClosestTarget(bufferSetForLockTarget);
                     CurrentTarget = closestLockedTarget;
+                    if (CurrentTarget != null)
+                    {
+                        LastKnownTargetPos = CurrentTarget.transform.position;
+                    }
+
                     IsTargetInChaseRange = closestLockedTarget != null;
                     return true;
                 }
@@ -267,6 +280,8 @@ namespace _Project.Systems.PerceptionSystem
             if (noiseData.Source == null) return;
 
             lastNoiseHeardTime = Time.time;
+            LastKnownTargetPos = noiseData.Position;
+
             // Debug.Log($"Noise heard from {noiseData.Source.name}");
             noiseData.Source.TryGetComponent<Collider>(out var col);
             bufferSetForLockTarget.Add(col);
@@ -338,6 +353,7 @@ namespace _Project.Systems.PerceptionSystem
             CurrentTarget = null;
             IsTargetInChaseRange = false;
             IsTargetInChaseRange = false;
+            IsAggressive = false;
             debugBuffersForAttack.Clear();
             debugBuffersForChase.Clear();
             debugBuffersForLockTarget.Clear();

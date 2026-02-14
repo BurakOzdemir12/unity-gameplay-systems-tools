@@ -8,6 +8,8 @@ namespace _Project.Systems.MovementSystem.Enemy.States
     public class EnemyChaseState : EnemyBaseState
     {
         private EnemyMovementDataSo data;
+        private float stoppingDistance;
+        private float timeWithoutVisuals;
 
         public EnemyChaseState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
@@ -15,10 +17,14 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         public override void Enter()
         {
+            timeWithoutVisuals = 0f;
             data = stateMachine.EnemyConfigSo.MovementData;
-
+            
+            stateMachine.EnemyPerceptionController.IsAggressive = true;
+            
             stateMachine.Agent.isStopped = false;
             stateMachine.Agent.speed = data.FreeMovementSpeed;
+            stoppingDistance = stateMachine.Agent.stoppingDistance;
 
             stateMachine.Animator.CrossFadeInFixedTime(data.LocomotionBlendTreeHash,
                 data.LocomotionBlendTreeDuration);
@@ -26,19 +32,42 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         public override void Tick(float deltaTime)
         {
-            if (!stateMachine.EnemyPerceptionController.CurrentTarget)
-            {
-                stateMachine.SwitchState(new EnemyIdleState(stateMachine));
-                return;
-            }
+            var perception = stateMachine.EnemyPerceptionController;
 
-            if (stateMachine.EnemyPerceptionController.IsTargetInAttackRange)
+            if (perception.IsTargetInAttackRange)
             {
                 stateMachine.SwitchState(new EnemyAttackingState(stateMachine));
                 return;
             }
 
-            MoveToPlayer(deltaTime);
+            Vector3 destination = perception.LastKnownTargetPos;
+            float distanceToTarget = Vector3.Distance(stateMachine.transform.position, destination);
+
+            if (perception.CurrentTarget == null)
+            {
+                timeWithoutVisuals += deltaTime;
+
+                if (distanceToTarget <= Mathf.Max(stoppingDistance, 1.2f))
+                {
+                    stateMachine.SwitchState(new EnemyIdleState(stateMachine));
+                    return;
+                }
+
+                
+                if (timeWithoutVisuals > 5.0f)
+                {
+                    Debug.Log("Chase Timeout: Stuck or lost path.");
+                    stateMachine.SwitchState(new EnemyIdleState(stateMachine));
+                    return;
+                }
+            }
+            else
+            {
+                timeWithoutVisuals = 0f; 
+            }
+
+            MoveToPlayer(destination, deltaTime);
+            
             stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 1f,
                 data.LocomotionAnimatorDampTime,
                 deltaTime);
@@ -53,27 +82,20 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0);
         }
 
-        private void MoveToPlayer(float deltaTime)
+        private void MoveToPlayer(Vector3 destination, float deltaTime)
         {
-            GameObject currentTarget = stateMachine.EnemyPerceptionController.CurrentTarget;
-            if (currentTarget == null) return;
-            // bool isArrived = stateMachine.Agent.remainingDistance <= stateMachine.Agent.stoppingDistance;
-            if (stateMachine.Agent.isOnNavMesh) //!isArrived &&
+            if (stateMachine.Agent.isOnNavMesh) 
             {
-                Vector3 detectedPlayerPos = currentTarget.transform.position;
-                stateMachine.Agent.SetDestination(detectedPlayerPos);
+                stateMachine.Agent.SetDestination(destination);
             }
 
             Transform enemyT = stateMachine.transform;
             Vector3 to = stateMachine.Agent.steeringTarget - enemyT.position;
             to.y = 0f;
-
             Vector3 dir = to.sqrMagnitude > 0.001f ? to.normalized : Vector3.zero;
 
             Move(dir * data.FreeMovementSpeed, deltaTime);
-
             RotateToPlayer(deltaTime);
-            // stateMachine.Agent.velocity = stateMachine.Controller.velocity;
             stateMachine.Agent.nextPosition = stateMachine.transform.position;
         }
     }

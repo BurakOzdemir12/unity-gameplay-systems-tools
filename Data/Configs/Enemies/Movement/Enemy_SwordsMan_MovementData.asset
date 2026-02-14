@@ -24,13 +24,15 @@ MonoBehaviour:
   targetingRightSpeedParamName: 
   blendTreeName: LocomotionBlendTree
   freelookSpeedParamName: FreeLookSpeed
-  chaseDetectionRange: 6.21
-  sightSensorRange: 0
+  suspiciousWalkSpeed: 3
+  recognitionTime: 2
   <ChaseDetectionLayers>k__BackingField:
     serializedVersion: 2
     m_Bits: 65536
+  instantChaseDistance: 4
   locomotionBlendTreeDuration: 0.1
   crossFadeDuration: 0.1
   patrolRange: 41.2
   patrolDuration: 10
   patrolCooldown: 10
+  suspiciousBlendTreeName: SuspiciousBlendTree

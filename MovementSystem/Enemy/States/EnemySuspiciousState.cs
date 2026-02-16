@@ -1,4 +1,5 @@
-﻿using _Project.Systems.MovementSystem.ScriptableObjects;
+﻿using _Project.Systems.MovementSystem.Enemy.States;
+using _Project.Systems.MovementSystem.ScriptableObjects;
 using _Project.Systems.PerceptionSystem;
 using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using UnityEngine;
@@ -21,11 +22,11 @@ namespace _Project.Systems.MovementSystem.Enemy.States
         public override void Enter()
         {
             recognitionTimer = 0f;
-            data = stateMachine.EnemyConfigSo.MovementData;
 
+            data = stateMachine.EnemyConfigSo.MovementData;
             perception = stateMachine.EnemyPerceptionController;
 
-            stateMachine.Agent.isStopped = false;
+            stateMachine.Agent.isStopped = true;
             stateMachine.Agent.speed = data.SuspiciousWalkSpeed;
 
             stateMachine.Animator.CrossFadeInFixedTime(data.SuspiciousBlendTreeHash, data.CrossFadeDuration);
@@ -33,44 +34,39 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         public override void Tick(float deltaTime)
         {
-            if (perception.CurrentTarget != null)
+            recognitionTimer += deltaTime;
+
+            RotateToPlayer(deltaTime);
+
+            //? time for shock time animation
+            if (recognitionTimer <= 2f)
             {
                 stateMachine.Agent.isStopped = true;
-                stateMachine.Agent.velocity = Vector3.zero;
-
-                RotateToPlayer(deltaTime);
-
-                Vector3 targetPosition = perception.CurrentTarget.transform.position;
-                float distanceToTarget = Vector3.Distance(stateMachine.transform.position, targetPosition);
-
-                recognitionTimer += deltaTime;
-
-                stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0f, data.LocomotionAnimatorDampTime,
-                    deltaTime);
-
-                if (recognitionTimer >= data.RecognitionTime || distanceToTarget <= data.InstantChaseDistance)
-                {
-                    stateMachine.SwitchState(new EnemyChaseState(stateMachine));
-                    return;
-                }
+                stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0f,
+                    data.LocomotionAnimatorDampTime, deltaTime);
+                return;
             }
-            else
+
+            //? Two Seconds later starts slowly walk to the alert position
+            stateMachine.Agent.isStopped = false;
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 1f,
+                data.LocomotionAnimatorDampTime, deltaTime);
+
+            MoveToDestination(alertPosition, deltaTime);
+
+            //? If distance to alert position is less than stopping distance, switch to Idle state
+            float distanceToAlertPos = Vector3.Distance(stateMachine.transform.position, alertPosition);
+            if (distanceToAlertPos <= stateMachine.Agent.stoppingDistance)
             {
-                recognitionTimer = 0f;
+                stateMachine.SwitchState(new EnemyIdleState(stateMachine));
+                return;
+            }
 
-                stateMachine.Agent.isStopped = false;
-
-                MoveToDestination(destination: alertPosition, deltaTime);
-
-                stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 1f, data.LocomotionAnimatorDampTime,
-                    deltaTime);
-
-                float distanceToSuspicious = Vector3.Distance(stateMachine.transform.position, alertPosition);
-                if (distanceToSuspicious <= stateMachine.Agent.stoppingDistance || !perception.HasSuspiciousTarget)
-                {
-                    stateMachine.SwitchState(new EnemyIdleState(stateMachine));
-                    return;
-                }
+            //? If recognition time is more than data.recognition time and still have target onside, switch to chase state
+            if (recognitionTimer >= data.RecognitionTime && perception.CurrentTarget)
+            {
+                stateMachine.SwitchState(new EnemyChaseState(stateMachine));
+                return;
             }
         }
 
@@ -90,11 +86,9 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
             Vector3 to = stateMachine.Agent.steeringTarget - stateMachine.transform.position;
             to.y = 0f;
-
             Vector3 dir = to.sqrMagnitude > 0.001f ? to.normalized : Vector3.zero;
 
             Move(dir * data.SuspiciousWalkSpeed, deltaTime);
-            RotateToPlayer(deltaTime);
 
             stateMachine.Agent.nextPosition = stateMachine.transform.position;
         }

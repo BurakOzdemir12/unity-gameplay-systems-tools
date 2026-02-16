@@ -8,7 +8,22 @@ namespace _Project.Systems.HealthSystem.Health
     public abstract class HealthBase : MonoBehaviour, IStunnable
     {
         [SerializeField] private float maxHealth;
+
+        public float MaxHealth
+        {
+            get => maxHealth;
+            set => maxHealth = value;
+        }
+
+
         private float currentHealth;
+
+        public float CurrentHealth
+        {
+            get => currentHealth;
+            set => currentHealth = value;
+        }
+
         public event Action OnDeath;
         public event Action<DamageInfo> OnTakeDamage;
         public event Action<float> OnStunned;

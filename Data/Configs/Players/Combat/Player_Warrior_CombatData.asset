@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9374719398d490fb7d4bfbe0803c993, type: 3}
   m_Name: Player_Warrior_CombatData
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems.CombatSystem.ScriptableObjects.Combat.CombatDataSo
-  attackDamage: 1
+  attackDamage: 20
   rotationDampTimeWhileAttack: 2
   impactDuration: 0.5
   blockingLayerChangeSpeed: 5

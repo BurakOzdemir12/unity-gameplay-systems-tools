@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Project.Systems.PerceptionSystem.Enums;
 using _Project.Systems.PerceptionSystem.Field_of_View;
 using _Project.Systems.PerceptionSystem.Noise_Sensor;
 using _Project.Systems.PerceptionSystem.Structs;
@@ -60,6 +61,9 @@ namespace _Project.Systems.PerceptionSystem
 #if UNITY_EDITOR
         [SerializeField] private float debugTimer;
 #endif
+        //Perception Settings
+        public event Action<PerceptionState> OnPerceptionChanged;
+        private PerceptionState currentPerceptionState;
 
         private void OnEnable()
         {
@@ -71,6 +75,7 @@ namespace _Project.Systems.PerceptionSystem
             bufferSetForChase = new HashSet<Collider>(bufferMax);
             bufferSetForAttack = new HashSet<Collider>(bufferMax);
             bufferSetForLockTarget = new HashSet<Collider>(bufferMax);
+            currentPerceptionState = PerceptionState.Calm;
         }
 
         private void Update()
@@ -83,6 +88,8 @@ namespace _Project.Systems.PerceptionSystem
 
             CheckAttackRange();
             ManageTargetVisibility();
+
+            CheckAndBroadcastState();
         }
 
         public void Initialize(GameObject owner, EnemyConfigSo configData, FieldOfView fov, NoiseSensor noiseSensor)
@@ -345,6 +352,31 @@ namespace _Project.Systems.PerceptionSystem
             }
         }
 
+        private void CheckAndBroadcastState()
+        {
+            PerceptionState newState = PerceptionState.Calm;
+
+            if (CurrentTarget)
+            {
+                newState = PerceptionState.Alerted;
+            }
+            else if (HasSuspiciousTarget)
+            {
+                newState = PerceptionState.Suspicious;
+            }
+            else
+            {
+                newState = PerceptionState.Calm;
+            }
+
+            if (newState != currentPerceptionState)
+            {
+                currentPerceptionState = newState;
+
+                OnPerceptionChanged?.Invoke(currentPerceptionState);
+            }
+        }
+
         private void ResetPerception()
         {
             bufferSetForChase.Clear();
@@ -357,6 +389,7 @@ namespace _Project.Systems.PerceptionSystem
             debugBuffersForAttack.Clear();
             debugBuffersForChase.Clear();
             debugBuffersForLockTarget.Clear();
+            currentPerceptionState = PerceptionState.Calm;
         }
 
         private void OnDrawGizmosSelected()

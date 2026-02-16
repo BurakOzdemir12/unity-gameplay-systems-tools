@@ -23,11 +23,12 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
             stateMachine.Animator.CrossFadeInFixedTime(combatData.ImpactSlightAnimHash,
                 combatData.CrossFadeDurationCombat);
+
+            stateMachine.EnemyPerceptionController.IsAggressive = true;
         }
 
         public override void Tick(float deltaTime)
         {
-            
             Move(deltaTime);
 
             remainingImpactTime -= deltaTime;
@@ -40,7 +41,6 @@ namespace _Project.Systems.CombatSystem.Enemy.States
 
         public override void Exit()
         {
-            
         }
     }
 }

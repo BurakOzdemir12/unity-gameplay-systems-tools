@@ -1,5 +1,7 @@
+using System;
 using _Project.Systems.SharedGameplay.WeaponLogic.ScriptableObjects;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
 {
@@ -30,6 +32,11 @@ namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
 
         public WeaponDataSo CurrentWeaponDataSo => currentWeaponData;
 
+        //Test
+        [Header("Rock Prefab For Testing Purposes")] [SerializeField]
+        private GameObject rockPrefab;
+
+        [SerializeField] private float throwPower = 10f;
 
         private void Awake()
         {
@@ -45,6 +52,14 @@ namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
             currentWeaponHitbox = weaponLogic.gameObject;
             currentWeaponModel = weaponLogic.transform.parent.gameObject;
             currentWeaponData = weaponLogic.WeaponData;
+        }
+
+        private void Update()
+        {
+            if (Keyboard.current.tKey.wasPressedThisFrame)
+            {
+                TestRockThrow();
+            }
         }
 
         private void EnableWeapon()
@@ -69,6 +84,17 @@ namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
             currentWeaponData = weaponDataSo;
             currentWeaponLogic = newWeaponLogic;
             currentWeaponHitbox = newWeaponLogic.gameObject;
+        }
+
+        private void TestRockThrow()
+        {
+            if (rockPrefab)
+            {
+                GameObject rockToThrow =
+                    Instantiate(rockPrefab, CurrentWeaponRoot.transform.position + Vector3.up * 1.5f,
+                        Quaternion.identity);
+                rockToThrow.GetComponent<Rigidbody>().AddForce(transform.forward * throwPower);
+            }
         }
     }
 }

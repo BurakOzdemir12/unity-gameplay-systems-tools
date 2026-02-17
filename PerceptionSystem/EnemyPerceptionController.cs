@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Project.Systems.MovementSystem.ScriptableObjects;
 using _Project.Systems.PerceptionSystem.Enums;
 using _Project.Systems.PerceptionSystem.Field_of_View;
 using _Project.Systems.PerceptionSystem.Noise_Sensor;
@@ -62,7 +63,7 @@ namespace _Project.Systems.PerceptionSystem
         [SerializeField] private float debugTimer;
 #endif
         //Perception Settings
-        public event Action<PerceptionState> OnPerceptionChanged;
+        public event Action<PerceptionState, float> OnPerceptionChanged;
         private PerceptionState currentPerceptionState;
 
         private void OnEnable()
@@ -372,8 +373,8 @@ namespace _Project.Systems.PerceptionSystem
             if (newState != currentPerceptionState)
             {
                 currentPerceptionState = newState;
-
-                OnPerceptionChanged?.Invoke(currentPerceptionState);
+                EnemyMovementDataSo movementData = enemyConfig.MovementData;
+                OnPerceptionChanged?.Invoke(currentPerceptionState, movementData.RecognitionTime);
             }
         }
 
@@ -390,6 +391,7 @@ namespace _Project.Systems.PerceptionSystem
             debugBuffersForChase.Clear();
             debugBuffersForLockTarget.Clear();
             currentPerceptionState = PerceptionState.Calm;
+            OnPerceptionChanged?.Invoke(currentPerceptionState, 0f);
         }
 
         private void OnDrawGizmosSelected()

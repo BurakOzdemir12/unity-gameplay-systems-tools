@@ -64,7 +64,7 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
                 healthSlider.value = currentHealth / maxHealth;
         }
 
-        public void SetAlertState(bool isAlerted)
+        public void SetAlertState(bool isAlerted, float duration)
         {
             if (!alertIcon) return;
             if (isAlerted)
@@ -73,7 +73,7 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
 
                 alertIcon.gameObject.SetActive(true);
                 if (alertCoroutine != null) StopCoroutine(alertCoroutine);
-                alertCoroutine = StartCoroutine(AlertedRoutine());
+                alertCoroutine = StartCoroutine(AlertedRoutine(duration));
             }
             else
             {
@@ -87,7 +87,7 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
             }
         }
 
-        public void SetSuspiciousState(bool isSuspicious)
+        public void SetSuspiciousState(bool isSuspicious, float duration)
         {
             if (!suspiciousIcon) return;
             if (isSuspicious)
@@ -96,7 +96,7 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
 
                 suspiciousIcon.gameObject.SetActive(true);
                 if (suspiciousCoroutine != null) StopCoroutine(suspiciousCoroutine);
-                suspiciousCoroutine = StartCoroutine(SuspiciousRoutine());
+                suspiciousCoroutine = StartCoroutine(SuspiciousRoutine(duration));
             }
             else
             {
@@ -112,20 +112,20 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
 
         public void UpdatePosition(Vector3 screenPos, bool isVisible)
         {
-            if (!isVisible)
-            {
-                canvasGroup.alpha = 0f;
-                return;
-            }
+            float targetAlpha = isVisible ? 1f : 0f;
 
-            canvasGroup.alpha = 1f;
-            rectTransform.position = screenPos;
+            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, targetAlpha, Time.deltaTime * 5f);
+
+            if (isVisible || canvasGroup.alpha > 0.01f)
+            {
+                rectTransform.position = screenPos;
+            }
         }
 
-        private IEnumerator AlertedRoutine()
+        private IEnumerator AlertedRoutine(float duration)
         {
             float timer = 0f;
-            while (timer < 1f)
+            while (timer < duration)
             {
                 timer += Time.deltaTime * 1.5f;
                 float value = Mathf.PingPong(timer, 1f);
@@ -134,13 +134,18 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
 
                 yield return null;
             }
+
+            if (alertIcon)
+            {
+                alertIcon.gameObject.SetActive(false);
+            }
         }
 
         //TODO Make one generic function for both routines
-        private IEnumerator SuspiciousRoutine()
+        private IEnumerator SuspiciousRoutine(float duration)
         {
             float timer = 0f;
-            while (timer < 1f)
+            while (timer < duration)
             {
                 timer += Time.deltaTime * 1.5f;
                 float value = Mathf.PingPong(timer, 1f);
@@ -148,6 +153,11 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
                 suspiciousIcon.color = suspiciousColorGradient.Evaluate(value);
 
                 yield return null;
+            }
+
+            if (suspiciousIcon)
+            {
+                suspiciousIcon.gameObject.SetActive(false);
             }
         }
 

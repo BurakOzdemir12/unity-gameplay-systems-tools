@@ -62,8 +62,14 @@ namespace _Project.Systems.MovementSystem.Enemy.States
                 return;
             }
 
-            //? If recognition time is more than data.recognition time and still have target onside, switch to chase state
-            if (recognitionTimer >= data.RecognitionTime && perception.CurrentTarget)
+            //? If recognition time is more than data.recognition time or distance too close to target
+            //? and still have target onside, switch to chase state
+            if (!perception.CurrentTarget) return;
+            
+            float distanceToTarget = Vector3.Distance(stateMachine.transform.position,
+                perception.CurrentTarget.transform.position);
+            if ((recognitionTimer >= data.RecognitionTime || distanceToTarget <= data.InstantChaseDistance) &&
+                perception.CurrentTarget)
             {
                 stateMachine.SwitchState(new EnemyChaseState(stateMachine));
                 return;

@@ -29,11 +29,10 @@ MonoBehaviour:
   <ChaseDetectionLayers>k__BackingField:
     serializedVersion: 2
     m_Bits: 65536
-  instantChaseDistance: 2
+  instantChaseDistance: 5
   locomotionBlendTreeDuration: 0.1
   crossFadeDuration: 0.1
   patrolRange: 41.2
   patrolDuration: 10
   patrolCooldown: 10
   suspiciousBlendTreeName: SuspiciousBlendTree
-  suspiciousLookTag: 

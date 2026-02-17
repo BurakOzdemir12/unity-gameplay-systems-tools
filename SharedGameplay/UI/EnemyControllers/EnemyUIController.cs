@@ -24,6 +24,16 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyControllers
         [Header("UI Elements")] private EnemyHUDView currentHud;
         private Camera mainCamera;
 
+        [Header("UI Show Range value")] [SerializeField]
+        private float showRange = 20f;
+
+        private float showRangeSqr;
+
+        private Coroutine deathRoutine;
+        private WaitForSeconds deathWait = new WaitForSeconds(4f);
+
+        private bool isDead;
+
         private void Awake()
         {
             mainCamera = Camera.main;
@@ -43,6 +53,8 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyControllers
 
         private void Start()
         {
+            showRangeSqr = showRange * showRange;
+
             if (currentHud == null && EnemyHUDPool.Instance != null)
             {
                 InitHUD();
@@ -53,8 +65,13 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyControllers
         {
             if (!currentHud || !mainCamera) return;
 
-            Vector3 screenPos = mainCamera.WorldToScreenPoint(headPoint.TransformPoint(offset));
-            bool isVisible = screenPos.z > 0;
+            Vector3 targetPos = offset + headPoint.position;
+            Vector3 screenPos = mainCamera.WorldToScreenPoint(targetPos);
+
+            Vector3 distanceToPlayer = transform.position - mainCamera.transform.position;
+            float distanceSqr = distanceToPlayer.sqrMagnitude;
+
+            bool isVisible = screenPos.z > 0 && distanceSqr < showRangeSqr && !isDead;
 
             currentHud.UpdatePosition(screenPos, isVisible);
         }
@@ -68,6 +85,7 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyControllers
             if (currentHud != null)
             {
                 currentHud.ResetHUD();
+                isDead = false;
             }
         }
 
@@ -84,29 +102,44 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyControllers
 
         private void HandleDeath()
         {
+            isDead = true;
+            if (currentHud && EnemyHUDPool.Instance)
+            {
+                currentHud.SetAlertState(false, 0);
+                currentHud.SetSuspiciousState(false, 0);
+
+                if (deathRoutine != null) StopCoroutine(deathRoutine);
+                deathRoutine = StartCoroutine(DeathRoutine());
+            }
+        }
+
+        private void HandlePerceptionChange(PerceptionState state, float time)
+        {
+            if (isDead) return;
+            switch (state)
+            {
+                case PerceptionState.Alerted:
+                    currentHud?.SetAlertState(true, time);
+                    currentHud?.SetSuspiciousState(false, time);
+                    break;
+                case PerceptionState.Suspicious:
+                    currentHud?.SetAlertState(false, time);
+                    currentHud?.SetSuspiciousState(true, time);
+                    break;
+                case PerceptionState.Calm:
+                    currentHud?.SetAlertState(false, time);
+                    currentHud?.SetSuspiciousState(false, time);
+                    break;
+            }
+        }
+
+        private IEnumerator DeathRoutine()
+        {
+            yield return deathWait;
             if (currentHud && EnemyHUDPool.Instance)
             {
                 EnemyHUDPool.Instance.ReturnHUD(currentHud);
                 currentHud = null;
-            }
-        }
-
-        private void HandlePerceptionChange(PerceptionState state)
-        {
-            switch (state)
-            {
-                case PerceptionState.Alerted:
-                    currentHud?.SetAlertState(true);
-                    currentHud?.SetSuspiciousState(false);
-                    break;
-                case PerceptionState.Suspicious:
-                    currentHud?.SetAlertState(false);
-                    currentHud?.SetSuspiciousState(true);
-                    break;
-                case PerceptionState.Calm:
-                    currentHud?.SetAlertState(false);
-                    currentHud?.SetSuspiciousState(false);
-                    break;
             }
         }
 

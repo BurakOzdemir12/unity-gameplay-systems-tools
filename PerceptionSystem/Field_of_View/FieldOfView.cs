@@ -3,33 +3,29 @@ using UnityEngine;
 
 namespace _Project.Systems.PerceptionSystem.Field_of_View
 {
-    // [ExecuteInEditMode]
+    // [ExecuteInEditMode] 
     public class FieldOfView : MonoBehaviour
     {
         #region With Mesh => Attributes
 
-        [SerializeField] private float distance;
-        [SerializeField] private float angle;
-        [SerializeField] private float height;
+        [Range(0, 50)]
+        [SerializeField] private float distance = 10f;
+        [Range(0, 360)]
+        [SerializeField] private float angle = 45f;
+        [SerializeField] private float height = 1.0f;
         [SerializeField] private Color meshColor = Color.red;
 
-        [SerializeField] private float scanFrequency;
+        [Range(0.1f, 10f)]
+        [SerializeField] private float scanFrequency = 2f;
         [SerializeField] private LayerMask sensorMask;
         [SerializeField] private LayerMask occlusionLayers;
 
-        public List<GameObject> Targets
-        {
-            get
-            {
-                targets.RemoveAll(obj => !obj);
-                return targets;
-            }
-        }
+        public List<GameObject> Targets => targets;
 
         private readonly List<GameObject> targets = new List<GameObject>();
 
         [SerializeField] private Collider[] detectedColliders = new Collider[10];
-        public Collider[] DetectedColliders => detectedColliders;
+        
         private int count;
         private float scanInterval;
         private float scanTimer;
@@ -41,12 +37,11 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
         private void Start()
         {
             scanInterval = 1f / scanFrequency;
+            mesh = CreateWedgeMesh();
         }
 
         private void Update()
         {
-            #region With Mesh
-
             if (Application.isPlaying)
             {
                 scanTimer -= Time.deltaTime;
@@ -56,10 +51,7 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
                     Scan();
                 }
             }
-
-            #endregion
         }
-
 
         #region Line Of Sight With mesh
 
@@ -67,7 +59,9 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
         {
             count = Physics.OverlapSphereNonAlloc(transform.position, distance, detectedColliders, sensorMask,
                 QueryTriggerInteraction.Ignore);
-            targets.Clear();
+            
+            targets.Clear(); 
+            
             for (int i = 0; i < count; ++i)
             {
                 if (detectedColliders[i] != null)
@@ -83,9 +77,11 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
 
         private bool IsInSight(GameObject target)
         {
-            Vector3 origin = transform.position + Vector3.up * (height * 0.5f);
+            if (target == null) return false;
 
+            Vector3 origin = transform.position + Vector3.up * (height * 0.5f);
             Vector3 targetPos = target.transform.position;
+            
             if (target.TryGetComponent<Collider>(out var col))
                 targetPos = col.bounds.center;
 
@@ -129,25 +125,18 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
             Vector3 topLeft = bottomLeft + Vector3.up * height;
 
             int vert = 0;
-            // left side triangle
-            vertices[vert++] = bottomCenter;
-            vertices[vert++] = bottomLeft;
-            vertices[vert++] = topLeft;
-
-            vertices[vert++] = topLeft;
-            vertices[vert++] = topCenter;
-            vertices[vert++] = bottomCenter;
-            // right side triangle
-            vertices[vert++] = bottomCenter;
-            vertices[vert++] = topCenter;
-            vertices[vert++] = topRight;
-
-            vertices[vert++] = topRight;
-            vertices[vert++] = bottomRight;
-            vertices[vert++] = bottomCenter;
+            
+            // Mesh generation logic (Vertices assignments)...
+            // Left side
+            vertices[vert++] = bottomCenter; vertices[vert++] = bottomLeft; vertices[vert++] = topLeft;
+            vertices[vert++] = topLeft; vertices[vert++] = topCenter; vertices[vert++] = bottomCenter;
+            // Right side
+            vertices[vert++] = bottomCenter; vertices[vert++] = topCenter; vertices[vert++] = topRight;
+            vertices[vert++] = topRight; vertices[vert++] = bottomRight; vertices[vert++] = bottomCenter;
 
             float currentAngle = -angle;
             float deltaAngle = (angle * 2) / segments;
+            
             for (int i = 0; i < segments; ++i)
             {
                 bottomLeft = Quaternion.Euler(0, currentAngle, 0) * Vector3.forward * distance;
@@ -156,23 +145,14 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
                 topRight = bottomRight + Vector3.up * height;
                 topLeft = bottomLeft + Vector3.up * height;
 
-                // far side triangle
-                vertices[vert++] = bottomLeft;
-                vertices[vert++] = bottomRight;
-                vertices[vert++] = topRight;
-
-                vertices[vert++] = topRight;
-                vertices[vert++] = topLeft;
-                vertices[vert++] = bottomLeft;
-                // top  triangle
-
-                vertices[vert++] = topCenter;
-                vertices[vert++] = topLeft;
-                vertices[vert++] = topRight;
-                // bottom triangle
-                vertices[vert++] = bottomCenter;
-                vertices[vert++] = bottomRight;
-                vertices[vert++] = bottomLeft;
+                // Far side
+                vertices[vert++] = bottomLeft; vertices[vert++] = bottomRight; vertices[vert++] = topRight;
+                vertices[vert++] = topRight; vertices[vert++] = topLeft; vertices[vert++] = bottomLeft;
+                // Top
+                vertices[vert++] = topCenter; vertices[vert++] = topLeft; vertices[vert++] = topRight;
+                // Bottom
+                vertices[vert++] = bottomCenter; vertices[vert++] = bottomRight; vertices[vert++] = bottomLeft;
+                
                 currentAngle += deltaAngle;
             }
 
@@ -188,6 +168,20 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
             return wedgeMesh;
         }
 
+        private void OnEnable()
+        {
+            if(mesh == null) mesh = CreateWedgeMesh();
+        }
+
+        private void OnDisable()
+        {
+            if (mesh != null)
+            {
+                if (Application.isPlaying) Destroy(mesh);
+                else DestroyImmediate(mesh);
+            }
+        }
+
         private void OnValidate()
         {
             if (scanFrequency <= 0) scanFrequency = 0.1f;
@@ -198,7 +192,6 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
                 if (Application.isPlaying) Destroy(mesh);
                 else DestroyImmediate(mesh);
             }
-
             mesh = CreateWedgeMesh();
         }
 
@@ -211,12 +204,15 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
             }
 
             Gizmos.DrawWireSphere(transform.position, distance);
+            
             if (detectedColliders != null)
             {
                 for (int i = 0; i < count; ++i)
                 {
-                    if (detectedColliders[i] != null) ;
-                    Gizmos.DrawSphere(detectedColliders[i].transform.position, 0.2f);
+                    if (detectedColliders[i] != null) 
+                    {
+                        Gizmos.DrawSphere(detectedColliders[i].transform.position, 0.2f);
+                    }
                 }
             }
 
@@ -230,7 +226,6 @@ namespace _Project.Systems.PerceptionSystem.Field_of_View
                 }
             }
         }
-
         #endregion
     }
 }

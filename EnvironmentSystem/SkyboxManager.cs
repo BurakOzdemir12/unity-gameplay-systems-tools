@@ -178,6 +178,8 @@ namespace _Project.Systems.EnvironmentSystem
         private TimeService timeService;
         private bool lastFrameWasDay = true;
 
+        private Material runtimeSkyboxMaterial;
+
         private void Start()
         {
             if (TimeManager.Instance != null)
@@ -185,13 +187,18 @@ namespace _Project.Systems.EnvironmentSystem
                 timeService = TimeManager.Instance.TimeService;
             }
 
-
             volume.profile.TryGet(out colorAdjustments);
             RenderSettings.sun = sun;
 
-            if (moonTexture != null)
+            if (skyboxMaterial != null)
             {
-                skyboxMaterial.SetTexture(MOON_TEX_ID, moonTexture);
+                runtimeSkyboxMaterial = new Material(skyboxMaterial);
+                RenderSettings.skybox = runtimeSkyboxMaterial;
+            }
+
+            if (moonTexture != null && runtimeSkyboxMaterial != null)
+            {
+                runtimeSkyboxMaterial.SetTexture(MOON_TEX_ID, moonTexture);
             }
 
             InitializeStaticSkySettings();
@@ -199,6 +206,7 @@ namespace _Project.Systems.EnvironmentSystem
 
         private void Update()
         {
+            if (!Application.isPlaying) return;
             UpdatePlanetPosition();
             UpdateLightSetting();
             HandleSkyBoxBlend();
@@ -258,6 +266,7 @@ namespace _Project.Systems.EnvironmentSystem
         private void HandleSkyBoxBlend()
         {
             if (!skyboxMaterial) return;
+            if (!runtimeSkyboxMaterial) return;
             TimeSpan currentTime = timeService.CurrentTime.TimeOfDay;
             float timePercent = (float)currentTime.TotalHours / 24;
 
@@ -266,74 +275,82 @@ namespace _Project.Systems.EnvironmentSystem
 
             // Sun Size
             float targetSunSize = Mathf.Lerp(0, sunSize, dayNightT);
-            skyboxMaterial.SetFloat(SUN_SIZE_ID, targetSunSize);
+            runtimeSkyboxMaterial.SetFloat(SUN_SIZE_ID, targetSunSize);
             // Sun Haze
             float targetSunHaze = Mathf.Lerp(0, sunHaze, dayNightT);
-            skyboxMaterial.SetFloat(SUN_HAZE_ID, targetSunHaze);
+            runtimeSkyboxMaterial.SetFloat(SUN_HAZE_ID, targetSunHaze);
             // Atmosphere Thickness
             float targetAtmosphereThickness =
                 Mathf.Lerp(nightTimeAtmosphereThickness, dayTimeAtmosphereThickness, dayNightT);
-            skyboxMaterial.SetFloat(ATMOSPHERE_THICKNESS_ID, targetAtmosphereThickness);
+            runtimeSkyboxMaterial.SetFloat(ATMOSPHERE_THICKNESS_ID, targetAtmosphereThickness);
             // Sky Zenith Color
             Color targetSkyZenithColor = skyColorGradient.Evaluate(timePercent);
-            skyboxMaterial.SetColor(ZENITH_COLOR_ID, targetSkyZenithColor);
+            runtimeSkyboxMaterial.SetColor(ZENITH_COLOR_ID, targetSkyZenithColor);
             // Sky Horizon Color
             Color targetSkyHorizonColor = horizonColorGradient.Evaluate(timePercent);
-            skyboxMaterial.SetColor(HORIZON_COLOR_ID, targetSkyHorizonColor);
+            runtimeSkyboxMaterial.SetColor(HORIZON_COLOR_ID, targetSkyHorizonColor);
             // Sky Ground Color
             Color targetSkyGroundColor = groundColorGradient.Evaluate(timePercent);
-            skyboxMaterial.SetColor(GROUND_COLOR_ID, targetSkyGroundColor);
+            runtimeSkyboxMaterial.SetColor(GROUND_COLOR_ID, targetSkyGroundColor);
             // Sky Exposure
             float targetSkyExposure = Mathf.Lerp(nightSkyExposure, daySkyExposure, dayNightT);
-            skyboxMaterial.SetFloat(SKY_EXPOSURE_ID, targetSkyExposure);
+            runtimeSkyboxMaterial.SetFloat(SKY_EXPOSURE_ID, targetSkyExposure);
             // Sky Saturation
             float targetSkySaturation = Mathf.Lerp(nightSkySaturation, daySkySaturation, dayNightT);
-            skyboxMaterial.SetFloat(SKY_SATURATION_ID, targetSkySaturation);
+            runtimeSkyboxMaterial.SetFloat(SKY_SATURATION_ID, targetSkySaturation);
             // Horizon Height
             float targetHorizonHeight = Mathf.Lerp(nightHorizonHeight, dayHorizonHeight, dayNightT);
-            skyboxMaterial.SetFloat(HORIZON_HEIGHT_ID, targetHorizonHeight);
+            runtimeSkyboxMaterial.SetFloat(HORIZON_HEIGHT_ID, targetHorizonHeight);
             // Horizon Sharpness
             float targetHorizonSharpness = Mathf.Lerp(nightHorizonSharpness, dayHorizonSharpness, dayNightT);
-            skyboxMaterial.SetFloat(HORIZON_SHARPNESS_ID, targetHorizonSharpness);
+            runtimeSkyboxMaterial.SetFloat(HORIZON_SHARPNESS_ID, targetHorizonSharpness);
             // Moon Size
             float targetMoonSize = Mathf.Lerp(moonSize, 0, dayNightT);
-            skyboxMaterial.SetFloat(MOON_SIZE_ID, targetMoonSize);
+            runtimeSkyboxMaterial.SetFloat(MOON_SIZE_ID, targetMoonSize);
             // Enable Moon
             enableMoon = !timeService.IsDayTime();
-            skyboxMaterial.SetFloat(ENABLE_MOON_ID, enableMoon ? 1 : 0);
+            runtimeSkyboxMaterial.SetFloat(ENABLE_MOON_ID, enableMoon ? 1 : 0);
             // Cloud Tint
             Color targetCloudTint = cloudTintGradient.Evaluate(timePercent);
-            skyboxMaterial.SetColor(CLOUD_TINT_ID, targetCloudTint);
+            runtimeSkyboxMaterial.SetColor(CLOUD_TINT_ID, targetCloudTint);
         }
 
         private void InitializeStaticSkySettings()
         {
+            if (!runtimeSkyboxMaterial) return;
+            if (!skyboxMaterial) return;
+
             // Enable Stars
             enableStars = !timeService.IsDayTime();
-            skyboxMaterial.SetFloat(ENABLE_STARS_ID, enableStars ? 1 : 0);
+            runtimeSkyboxMaterial.SetFloat(ENABLE_STARS_ID, enableStars ? 1 : 0);
             // Star Seed
-            skyboxMaterial.SetFloat(STAR_SEED_ID, starSeed);
+            runtimeSkyboxMaterial.SetFloat(STAR_SEED_ID, starSeed);
             // Star Density
-            skyboxMaterial.SetFloat(STAR_DENSITY_ID, starDensity);
+            runtimeSkyboxMaterial.SetFloat(STAR_DENSITY_ID, starDensity);
             // Star Intensity
-            skyboxMaterial.SetFloat(STAR_INTENSITY_ID, starIntensity);
+            runtimeSkyboxMaterial.SetFloat(STAR_INTENSITY_ID, starIntensity);
 
             // Cloud Seed
-            skyboxMaterial.SetFloat(CLOUD_SEED_ID, cloudSeed);
+            runtimeSkyboxMaterial.SetFloat(CLOUD_SEED_ID, cloudSeed);
             //Cloud rotation Y
-            skyboxMaterial.SetFloat(CLOUD_ROTATION_Y_ID, cloudRotationY);
+            runtimeSkyboxMaterial.SetFloat(CLOUD_ROTATION_Y_ID, cloudRotationY);
             // Cloud Coverage
-            skyboxMaterial.SetFloat(CLOUD_COVERAGE_ID, cloudCoverage);
+            runtimeSkyboxMaterial.SetFloat(CLOUD_COVERAGE_ID, cloudCoverage);
             // Cloud Softness
-            skyboxMaterial.SetFloat(CLOUD_SOFTNESS_ID, cloudSoftness);
+            runtimeSkyboxMaterial.SetFloat(CLOUD_SOFTNESS_ID, cloudSoftness);
             // Cloud Scale
-            skyboxMaterial.SetFloat(CLOUD_SCALE_ID, cloudScale);
+            runtimeSkyboxMaterial.SetFloat(CLOUD_SCALE_ID, cloudScale);
             // Cloud Base Height
-            skyboxMaterial.SetFloat(CLOUD_BASE_HEIGHT_ID, cloudBaseHeight);
+            runtimeSkyboxMaterial.SetFloat(CLOUD_BASE_HEIGHT_ID, cloudBaseHeight);
             // Cloud Wind Direction
-            skyboxMaterial.SetVector(CLOUD_WIND_DIRECTION_ID, cloudWindDirection);
+            runtimeSkyboxMaterial.SetVector(CLOUD_WIND_DIRECTION_ID, cloudWindDirection);
             // Cloud Speed
-            skyboxMaterial.SetFloat(CLOUD_SPEED_ID, cloudSpeed);
+            runtimeSkyboxMaterial.SetFloat(CLOUD_SPEED_ID, cloudSpeed);
+        }
+
+        private void OnDestroy()
+        {
+            if (runtimeSkyboxMaterial != null) Destroy(runtimeSkyboxMaterial);
         }
     }
 }

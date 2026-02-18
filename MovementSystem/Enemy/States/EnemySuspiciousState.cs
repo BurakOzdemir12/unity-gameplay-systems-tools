@@ -9,7 +9,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
     public class EnemySuspiciousState : EnemyBaseState
     {
         private EnemyMovementDataSo data;
-        private readonly Vector3 alertPosition;
+        private Vector3 alertPosition;
         private EnemyPerceptionController perception;
         private float recognitionTimer;
 
@@ -34,8 +34,18 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         public override void Tick(float deltaTime)
         {
-            recognitionTimer += deltaTime;
+            //? If the target position changed, reset the path, stop movement and change the new alert position
+            float distanceNewOldPos = Vector3.Distance(alertPosition, perception.LastKnownTargetPos);
+            if (distanceNewOldPos > 1f)
+            {
+                alertPosition = perception.LastKnownTargetPos;
+                recognitionTimer = 0f;
 
+                stateMachine.Agent.isStopped = true;
+                stateMachine.Agent.ResetPath();
+            }
+
+            recognitionTimer += deltaTime;
             RotateToPlayer(deltaTime);
 
             //? time for shock time animation
@@ -65,7 +75,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             //? If recognition time is more than data.recognition time or distance too close to target
             //? and still have target onside, switch to chase state
             if (!perception.CurrentTarget) return;
-            
+
             float distanceToTarget = Vector3.Distance(stateMachine.transform.position,
                 perception.CurrentTarget.transform.position);
             if ((recognitionTimer >= data.RecognitionTime || distanceToTarget <= data.InstantChaseDistance) &&

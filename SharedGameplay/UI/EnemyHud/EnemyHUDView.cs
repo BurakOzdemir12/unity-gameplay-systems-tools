@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,6 +29,9 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
         [Tooltip("Alert Icon Color Gradient ")] [SerializeField]
         private Gradient alertColorGradient;
 
+        [Tooltip("Level number text ")] [SerializeField]
+        private TextMeshProUGUI levelText;
+
 
         private RectTransform rectTransform;
 
@@ -46,6 +50,18 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
             suspiciousCoroutine = null;
         }
 
+        public void UpdatePosition(Vector3 screenPos, bool isVisible)
+        {
+            float targetAlpha = isVisible ? 1f : 0f;
+
+            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, targetAlpha, Time.deltaTime * 5f);
+
+            if (isVisible || canvasGroup.alpha > 0.01f)
+            {
+                rectTransform.position = screenPos;
+            }
+        }
+
         public void ResetHUD()
         {
             canvasGroup.alpha = 1f;
@@ -55,6 +71,7 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
 
             if (alertIcon) alertIcon.gameObject.SetActive(false);
             if (suspiciousIcon) suspiciousIcon.gameObject.SetActive(false);
+            if (levelText) levelText.gameObject.SetActive(true);
             gameObject.SetActive(true);
         }
 
@@ -69,8 +86,7 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
             if (!alertIcon) return;
             if (isAlerted)
             {
-                if (alertIcon.gameObject.activeSelf) return;
-
+                levelText.gameObject.SetActive(false);
                 alertIcon.gameObject.SetActive(true);
                 if (alertCoroutine != null) StopCoroutine(alertCoroutine);
                 alertCoroutine = StartCoroutine(AlertedRoutine(duration));
@@ -84,6 +100,10 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
                 }
 
                 alertIcon.gameObject.SetActive(false);
+                if (!suspiciousIcon.gameObject.activeSelf)
+                {
+                    if (levelText) levelText.gameObject.SetActive(true);
+                }
             }
         }
 
@@ -92,8 +112,7 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
             if (!suspiciousIcon) return;
             if (isSuspicious)
             {
-                if (suspiciousIcon.gameObject.activeSelf) return;
-
+                levelText.gameObject.SetActive(false);
                 suspiciousIcon.gameObject.SetActive(true);
                 if (suspiciousCoroutine != null) StopCoroutine(suspiciousCoroutine);
                 suspiciousCoroutine = StartCoroutine(SuspiciousRoutine(duration));
@@ -107,18 +126,10 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
                 }
 
                 suspiciousIcon.gameObject.SetActive(false);
-            }
-        }
-
-        public void UpdatePosition(Vector3 screenPos, bool isVisible)
-        {
-            float targetAlpha = isVisible ? 1f : 0f;
-
-            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, targetAlpha, Time.deltaTime * 5f);
-
-            if (isVisible || canvasGroup.alpha > 0.01f)
-            {
-                rectTransform.position = screenPos;
+                if (!alertIcon.gameObject.activeSelf)
+                {
+                    if (levelText) levelText.gameObject.SetActive(true);
+                }
             }
         }
 
@@ -139,9 +150,11 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
             {
                 alertIcon.gameObject.SetActive(false);
             }
+
+            if (!suspiciousIcon.gameObject.activeSelf)
+                levelText.gameObject.SetActive(true);
         }
 
-        //TODO Make one generic function for both routines
         private IEnumerator SuspiciousRoutine(float duration)
         {
             float timer = 0f;
@@ -159,6 +172,9 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
             {
                 suspiciousIcon.gameObject.SetActive(false);
             }
+
+            if (!alertIcon.gameObject.activeSelf)
+                levelText.gameObject.SetActive(true);
         }
 
         private void StopAllEffects()

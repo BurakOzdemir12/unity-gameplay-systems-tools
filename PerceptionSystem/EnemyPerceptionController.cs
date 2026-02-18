@@ -66,6 +66,8 @@ namespace _Project.Systems.PerceptionSystem
         public event Action<PerceptionState, float> OnPerceptionChanged;
         private PerceptionState currentPerceptionState;
 
+        private bool hasNewStimulus;
+
         private void OnEnable()
         {
             noiseSensor.OnNoiseHeard += HandleNoiseHeard;
@@ -293,6 +295,9 @@ namespace _Project.Systems.PerceptionSystem
             // Debug.Log($"Noise heard from {noiseData.Source.name}");
             noiseData.Source.TryGetComponent<Collider>(out var col);
             bufferSetForLockTarget.Add(col);
+
+            hasNewStimulus = true;
+
 #if UNITY_EDITOR
             if (!debugBuffersForLockTarget.Contains(col))
             {
@@ -370,11 +375,14 @@ namespace _Project.Systems.PerceptionSystem
                 newState = PerceptionState.Calm;
             }
 
-            if (newState != currentPerceptionState)
+            if (newState != currentPerceptionState || hasNewStimulus)
             {
                 currentPerceptionState = newState;
                 EnemyMovementDataSo movementData = enemyConfig.MovementData;
+
                 OnPerceptionChanged?.Invoke(currentPerceptionState, movementData.RecognitionTime);
+
+                hasNewStimulus = false;
             }
         }
 

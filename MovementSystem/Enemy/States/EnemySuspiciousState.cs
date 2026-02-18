@@ -34,22 +34,24 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         public override void Tick(float deltaTime)
         {
-            //? If the target position changed, reset the path, stop movement and change the new alert position
-            float distanceNewOldPos = Vector3.Distance(alertPosition, perception.LastKnownTargetPos);
-            if (distanceNewOldPos > 1f)
-            {
-                alertPosition = perception.LastKnownTargetPos;
-                recognitionTimer = 0f;
+            //? If the target position changed, and it's not the player, reset the path, stop movement and change the new alert position
+            HandleTargetPositionChange();
 
-                stateMachine.Agent.isStopped = true;
-                stateMachine.Agent.ResetPath();
+            //! If the alert is Player, then update the alert position to the player position, because it looks like stupid
+            if (perception.CurrentTarget)
+            {
+                alertPosition = perception.CurrentTarget.transform.position;
             }
 
             recognitionTimer += deltaTime;
             RotateToPlayer(deltaTime);
 
-            //? time for shock time animation
-            if (recognitionTimer <= 2f)
+            //? If recognition time is more than data.recognition time or distance too close to target
+            //? and still have target onside, switch to chase state
+            if (CheckAndSwitchToChase()) return;
+
+            //? If the recognition phase is active, stop movement and play Shock Anim.
+            if (IsRecognitionPhaseActive())
             {
                 stateMachine.Agent.isStopped = true;
                 stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0f,
@@ -57,24 +59,40 @@ namespace _Project.Systems.MovementSystem.Enemy.States
                 return;
             }
 
+
             //? Two Seconds later starts slowly walk to the alert position
+            StartMovingToAlertPosition(deltaTime);
+
+            //? If distance to alert position is less than stopping distance, switch to Idle state
+            if (HasReachedAlertPosition()) return;
+        }
+
+        private bool HasReachedAlertPosition()
+        {
+            float distanceToAlertPos = Vector3.Distance(stateMachine.transform.position, alertPosition);
+            if (distanceToAlertPos <= stateMachine.Agent.stoppingDistance)
+            {
+                stateMachine.SwitchState(new EnemyIdleState(stateMachine));
+                return true;
+            }
+
+            return false;
+        }
+
+        private void StartMovingToAlertPosition(float deltaTime)
+        {
             stateMachine.Agent.isStopped = false;
             stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 1f,
                 data.LocomotionAnimatorDampTime, deltaTime);
 
             MoveToDestination(alertPosition, deltaTime);
+        }
 
-            //? If distance to alert position is less than stopping distance, switch to Idle state
-            float distanceToAlertPos = Vector3.Distance(stateMachine.transform.position, alertPosition);
-            if (distanceToAlertPos <= stateMachine.Agent.stoppingDistance)
-            {
-                stateMachine.SwitchState(new EnemyIdleState(stateMachine));
-                return;
-            }
+        private bool IsRecognitionPhaseActive() => recognitionTimer <= data.RecognitionTime;
 
-            //? If recognition time is more than data.recognition time or distance too close to target
-            //? and still have target onside, switch to chase state
-            if (!perception.CurrentTarget) return;
+        private bool CheckAndSwitchToChase()
+        {
+            if (!perception.CurrentTarget) return false;
 
             float distanceToTarget = Vector3.Distance(stateMachine.transform.position,
                 perception.CurrentTarget.transform.position);
@@ -82,15 +100,23 @@ namespace _Project.Systems.MovementSystem.Enemy.States
                 perception.CurrentTarget)
             {
                 stateMachine.SwitchState(new EnemyChaseState(stateMachine));
-                return;
+                return true;
             }
+
+            return false;
         }
 
-        public override void Exit()
+        private void HandleTargetPositionChange()
         {
-            stateMachine.Agent.ResetPath();
-            stateMachine.Agent.isStopped = true;
-            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0f);
+            float distanceNewOldPos = Vector3.Distance(alertPosition, perception.LastKnownTargetPos);
+            if (distanceNewOldPos > 1f && !perception.CurrentTarget)
+            {
+                alertPosition = perception.LastKnownTargetPos;
+                recognitionTimer = 0f;
+
+                stateMachine.Agent.isStopped = true;
+                stateMachine.Agent.ResetPath();
+            }
         }
 
         private void MoveToDestination(Vector3 destination, float deltaTime)
@@ -107,6 +133,13 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             Move(dir * data.SuspiciousWalkSpeed, deltaTime);
 
             stateMachine.Agent.nextPosition = stateMachine.transform.position;
+        }
+
+        public override void Exit()
+        {
+            stateMachine.Agent.ResetPath();
+            stateMachine.Agent.isStopped = true;
+            stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 0f);
         }
     }
 }

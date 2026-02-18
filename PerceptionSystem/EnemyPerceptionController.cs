@@ -18,24 +18,23 @@ namespace _Project.Systems.PerceptionSystem
         [SerializeField] private NoiseSensor noiseSensor;
         [SerializeField] private GameObject ownerGameObject;
 
-        [Tooltip("Chase and Attack detect buffer length")] [SerializeField]
-        private int bufferMax = 4;
+        [Tooltip("Chase and Attack detect buffer length")] 
+        [SerializeField] private int bufferMax = 4;
 
-        [Header("Enemy Properties")] [Tooltip("Is enemy deaf")] [SerializeField]
-        private bool isDeaf = false;
+        [Header("Enemy Properties")] 
+        [Tooltip("Is enemy deaf")] 
+        [SerializeField] private bool isDeaf = false;
 
-        [Tooltip("Is enemy blind")] [SerializeField]
-        private bool isBlind = false;
-
+        [Tooltip("Is enemy blind")] 
+        [SerializeField] private bool isBlind = false;
 
         [Header("Collider Buffers For detection")]
 #if UNITY_EDITOR
         public List<Collider> debugBuffersForChase;
-
         public List<Collider> debugBuffersForAttack;
         public List<Collider> debugBuffersForLockTarget;
 #endif
-        public GameObject CurrentTarget { get; private set; }
+        [field: SerializeField] public GameObject CurrentTarget { get; private set; }
         public Vector3 LastKnownTargetPos { get; private set; }
         public bool IsTargetInAttackRange { get; private set; }
         public bool IsTargetInChaseRange { get; private set; }
@@ -50,22 +49,19 @@ namespace _Project.Systems.PerceptionSystem
         //Dynamic collider array
         private readonly Collider[] attackBuffer = new Collider[10];
 
-        //Persistence Settings
-        [Header("Persistence Time Settings")] [SerializeField]
-        private float targetPersistenceMemory = 8f;
-
-        [Tooltip("Noise will not listen to target if heard within this time")] [SerializeField]
-        private float noiseHearingDelay = 2f;
+        [Tooltip("Noise will not listen to target if heard within this time")] 
+        [SerializeField] private float noiseHearingDelay = 2f;
 
         private float targetPersistenceTimer;
         private float lastNoiseHeardTime;
+
 #if UNITY_EDITOR
         [SerializeField] private float debugTimer;
 #endif
+
         //Perception Settings
         public event Action<PerceptionState, float> OnPerceptionChanged;
         private PerceptionState currentPerceptionState;
-
         private bool hasNewStimulus;
 
         private void OnEnable()
@@ -86,12 +82,11 @@ namespace _Project.Systems.PerceptionSystem
             if (!enemyConfig) return;
             if (!isBlind)
             {
-                CheckChaseRange();
+                CheckVisuals();
             }
 
             CheckAttackRange();
             ManageTargetVisibility();
-
             CheckAndBroadcastState();
         }
 
@@ -104,11 +99,10 @@ namespace _Project.Systems.PerceptionSystem
         }
 
         //? Attack Range Check
-        //TODO refactor for range attacks, arrow, magic, etc.
         private void CheckAttackRange()
         {
-            Vector3 attackPos =
-                ownerGameObject.transform.TransformPoint(enemyConfig.CombatData.AttackPositionOffset);
+            Vector3 attackPos = ownerGameObject.transform.TransformPoint(enemyConfig.CombatData.AttackPositionOffset);
+
             int detected = Physics.OverlapSphereNonAlloc(
                 attackPos,
                 enemyConfig.CombatData.AttackRange,
@@ -117,9 +111,9 @@ namespace _Project.Systems.PerceptionSystem
                 QueryTriggerInteraction.Ignore);
 
             bufferSetForAttack.Clear();
+
             if (detected == 0)
             {
-                bufferSetForAttack.Clear();
                 IsTargetInAttackRange = false;
 #if UNITY_EDITOR
                 debugBuffersForAttack.Clear();
@@ -134,21 +128,22 @@ namespace _Project.Systems.PerceptionSystem
                     bufferSetForAttack.Add(attackBuffer[i]);
                 }
             }
+
 #if UNITY_EDITOR
             debugBuffersForAttack = bufferSetForAttack.ToList();
-
 #endif
             GameObject closestTarget = FindClosestTarget(bufferSetForAttack);
             IsTargetInAttackRange = closestTarget != null && closestTarget == CurrentTarget;
         }
 
-        private void CheckChaseRange()
+        private void CheckVisuals()
         {
             bufferSetForChase.Clear();
-            // ! If enemy gets triggered by player then chase that player regardless of Range 
+            
+            // ! If enemy gets triggered by player then chase that player regardless of Range
             if (HandleLockedTargetChase()) return;
 
-            //Field Of View Check (FOV) -< If no locked target, checks FOV
+            //Field Of View Check (FOV)
             var targets = fieldOfView.Targets;
             if (targets == null || targets.Count == 0)
             {
@@ -162,7 +157,7 @@ namespace _Project.Systems.PerceptionSystem
 
             CurrentTarget = null;
             IsTargetInChaseRange = false;
-            IsTargetInChaseRange = false;
+
             foreach (var target in targets)
             {
                 if (target.TryGetComponent<Collider>(out var coll))
@@ -173,9 +168,20 @@ namespace _Project.Systems.PerceptionSystem
 
             GameObject closestTarget = FindClosestTarget(bufferSetForChase);
             CurrentTarget = closestTarget;
+
             if (CurrentTarget != null)
             {
                 LastKnownTargetPos = CurrentTarget.transform.position;
+                
+                // --- LOCK TARGET UPDATE ---
+                if (CurrentTarget.TryGetComponent<Collider>(out var col))
+                {
+                    bufferSetForLockTarget.Add(col);
+#if UNITY_EDITOR
+                    if (!debugBuffersForLockTarget.Contains(col))
+                        debugBuffersForLockTarget.Add(col);
+#endif
+                }
             }
 
             IsTargetInChaseRange = CurrentTarget != null;
@@ -185,25 +191,23 @@ namespace _Project.Systems.PerceptionSystem
 #endif
         }
 
-        //? If enemy gets hit by player, it will chase that target regardless of FOV and Range,
-        //?, and if that target is dead it will be removed from chase buffer
+        //? If enemy gets hit by player, it will chase that target regardless of FOV and Range
         private bool HandleLockedTargetChase()
         {
-            // Locked On Target Check -> if get hit enemy chase that target
             if (bufferSetForLockTarget.Count > 0)
             {
-                // İf Target is dead remove it from lock target list
                 bufferSetForLockTarget.RemoveWhere(col => col == null || !col.enabled);
+
 #if UNITY_EDITOR
                 debugBuffersForLockTarget.Clear();
                 debugBuffersForLockTarget = bufferSetForLockTarget.ToList();
 #endif
-                // İf Target is alive then add it to chase Buffer Hashset
+
                 if (bufferSetForLockTarget.Count > 0)
                 {
                     bufferSetForChase.UnionWith(bufferSetForLockTarget);
-
                     GameObject closestLockedTarget = FindClosestTarget(bufferSetForLockTarget);
+                    
                     CurrentTarget = closestLockedTarget;
                     if (CurrentTarget != null)
                     {
@@ -214,11 +218,9 @@ namespace _Project.Systems.PerceptionSystem
                     return true;
                 }
             }
-
             return false;
         }
 
-        //? Finds the closest target in HashSet
         private GameObject FindClosestTarget(HashSet<Collider> targets)
         {
             if (targets.Count == 0) return null;
@@ -233,7 +235,6 @@ namespace _Project.Systems.PerceptionSystem
                 if (!hit.CompareTag("Player")) continue;
 
                 Vector3 difference = hit.transform.position - enemyTransform.position;
-
                 float sqrDist = difference.sqrMagnitude;
 
                 if (sqrDist < closestDistance)
@@ -241,18 +242,15 @@ namespace _Project.Systems.PerceptionSystem
                     closestDistance = sqrDist;
                     closestTarget = hit.gameObject;
                 }
-                // TODO add FOV /LOS check
             }
 
             CurrentTarget = closestTarget;
             return closestTarget;
         }
 
-        //? For Enemy Brain decision, it's answer to, "is it the same target that enemy is currently perceiving?"
         public bool IsPerceivingTarget(GameObject target)
         {
             if (target == null) return false;
-
             Transform targetRoot = target.transform.root;
 
             foreach (var col in bufferSetForAttack)
@@ -262,14 +260,12 @@ namespace _Project.Systems.PerceptionSystem
                     return true;
                 }
             }
-
             return false;
         }
 
         public void OnDamageTaken(GameObject damageInfoSourceObject)
         {
-            if (damageInfoSourceObject != null &&
-                damageInfoSourceObject.TryGetComponent<Collider>(out var attackerCollider))
+            if (damageInfoSourceObject != null && damageInfoSourceObject.TryGetComponent<Collider>(out var attackerCollider))
             {
                 bufferSetForLockTarget.Add(attackerCollider);
 #if UNITY_EDITOR
@@ -278,11 +274,16 @@ namespace _Project.Systems.PerceptionSystem
             }
         }
 
+        public bool IsTargetVisible(GameObject target)
+        {
+            if (target == null) return false;
+            return fieldOfView.Targets.Contains(target);
+        }
+
         public void OnDeath()
         {
             ResetPerception();
         }
-
 
         private void HandleNoiseHeard(NoiseData noiseData)
         {
@@ -292,10 +293,8 @@ namespace _Project.Systems.PerceptionSystem
             lastNoiseHeardTime = Time.time;
             LastKnownTargetPos = noiseData.Position;
 
-            // Debug.Log($"Noise heard from {noiseData.Source.name}");
             noiseData.Source.TryGetComponent<Collider>(out var col);
             bufferSetForLockTarget.Add(col);
-
             hasNewStimulus = true;
 
 #if UNITY_EDITOR
@@ -339,6 +338,7 @@ namespace _Project.Systems.PerceptionSystem
             }
 
             bool heardRecently = (Time.time - lastNoiseHeardTime) < noiseHearingDelay;
+
             //? If a target can be seen or heard recently, don't reset persistence
             if (canSeeTarget || heardRecently)
             {
@@ -347,14 +347,13 @@ namespace _Project.Systems.PerceptionSystem
                 debugTimer = 0f;
 #endif
             }
-            //? Enemy will forget the target after a certain (memoryTime) time 
             else
             {
                 targetPersistenceTimer += Time.deltaTime;
 #if UNITY_EDITOR
                 debugTimer = targetPersistenceTimer;
 #endif
-                if (targetPersistenceTimer >= targetPersistenceMemory) ResetPerception();
+                if (targetPersistenceTimer >= enemyConfig.MovementData.TargetPersistenceMemory) ResetPerception();
             }
         }
 
@@ -379,9 +378,7 @@ namespace _Project.Systems.PerceptionSystem
             {
                 currentPerceptionState = newState;
                 EnemyMovementDataSo movementData = enemyConfig.MovementData;
-
                 OnPerceptionChanged?.Invoke(currentPerceptionState, movementData.RecognitionTime);
-
                 hasNewStimulus = false;
             }
         }
@@ -393,12 +390,13 @@ namespace _Project.Systems.PerceptionSystem
             bufferSetForLockTarget.Clear();
             CurrentTarget = null;
             IsTargetInChaseRange = false;
-            IsTargetInChaseRange = false;
             IsAggressive = false;
+
             debugBuffersForAttack.Clear();
             debugBuffersForChase.Clear();
             debugBuffersForLockTarget.Clear();
             currentPerceptionState = PerceptionState.Calm;
+            
             OnPerceptionChanged?.Invoke(currentPerceptionState, 0f);
         }
 

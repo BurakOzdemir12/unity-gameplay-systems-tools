@@ -139,7 +139,8 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
             while (timer < duration)
             {
                 timer += Time.deltaTime * 1.5f;
-                float value = Mathf.PingPong(timer, 1f);
+                // float value = Mathf.PingPong(timer, 1f);
+                float value = Mathf.Clamp01(timer);
 
                 alertIcon.color = alertColorGradient.Evaluate(value);
 
@@ -161,7 +162,8 @@ namespace _Project.Systems.SharedGameplay.UI.EnemyHud
             while (timer < duration)
             {
                 timer += Time.deltaTime * 1.5f;
-                float value = Mathf.PingPong(timer, 1f);
+                // float value = Mathf.PingPong(timer, 1f);
+                float value = Mathf.Clamp01(timer);
 
                 suspiciousIcon.color = suspiciousColorGradient.Evaluate(value);
 

@@ -26,10 +26,11 @@ MonoBehaviour:
   freelookSpeedParamName: FreeLookSpeed
   suspiciousWalkSpeed: 3
   recognitionTime: 3
+  targetPersistenceMemory: 3
   <ChaseDetectionLayers>k__BackingField:
     serializedVersion: 2
     m_Bits: 65536
-  instantChaseDistance: 5
+  instantChaseDistance: 2
   locomotionBlendTreeDuration: 0.1
   crossFadeDuration: 0.1
   patrolRange: 41.2

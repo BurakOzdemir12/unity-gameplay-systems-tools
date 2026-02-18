@@ -9,7 +9,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
     {
         private EnemyMovementDataSo data;
         private float stoppingDistance;
-        private float timeWithoutVisuals;
+        private float timer;
 
         public EnemyChaseState(EnemyStateMachine stateMachine) : base(stateMachine)
         {
@@ -17,11 +17,11 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         public override void Enter()
         {
-            timeWithoutVisuals = 0f;
+            timer = 0f;
             data = stateMachine.EnemyConfigSo.MovementData;
-            
+
             stateMachine.EnemyPerceptionController.IsAggressive = true;
-            
+
             stateMachine.Agent.isStopped = false;
             stateMachine.Agent.speed = data.FreeMovementSpeed;
             stoppingDistance = stateMachine.Agent.stoppingDistance;
@@ -43,35 +43,31 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             Vector3 destination = perception.LastKnownTargetPos;
             float distanceToTarget = Vector3.Distance(stateMachine.transform.position, destination);
 
-            if (perception.CurrentTarget == null)
+            bool isTargetVisible = perception.IsTargetVisible(perception.CurrentTarget);
+
+            if (isTargetVisible)
             {
-                timeWithoutVisuals += deltaTime;
-
-                if (distanceToTarget <= Mathf.Max(stoppingDistance, 1.2f))
-                {
-                    stateMachine.SwitchState(new EnemyIdleState(stateMachine));
-                    return;
-                }
-
-                
-                if (timeWithoutVisuals > 5.0f)
-                {
-                    Debug.Log("Chase Timeout: Stuck or lost path.");
-                    stateMachine.SwitchState(new EnemyIdleState(stateMachine));
-                    return;
-                }
+                timer = 0f;
             }
             else
             {
-                timeWithoutVisuals = 0f; 
+                timer += deltaTime;
+                bool reachedLastKnownPos = distanceToTarget <= Mathf.Max(stoppingDistance, 1.5f);
+                bool timeIsUp = timer > data.TargetPersistenceMemory;
+
+                if (reachedLastKnownPos || timeIsUp)
+                {
+                    Debug.Log("I Lost the enemy but i will follow the last pos.");
+                    stateMachine.SwitchState(new EnemySuspiciousState(stateMachine, destination));
+                    return;
+                }
             }
 
             MoveToPlayer(destination, deltaTime);
-            
+
             stateMachine.Animator.SetFloat(data.FreeLookSpeedParamHash, 1f,
                 data.LocomotionAnimatorDampTime,
                 deltaTime);
-
             HandleBlocking(deltaTime, true);
         }
 
@@ -84,7 +80,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
         private void MoveToPlayer(Vector3 destination, float deltaTime)
         {
-            if (stateMachine.Agent.isOnNavMesh) 
+            if (stateMachine.Agent.isOnNavMesh)
             {
                 stateMachine.Agent.SetDestination(destination);
             }

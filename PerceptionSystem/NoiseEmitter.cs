@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems.MovementSystem.Events;
+using _Project.Systems.PerceptionSystem.Enums;
 using _Project.Systems.PerceptionSystem.Interfaces;
 using _Project.Systems.PerceptionSystem.Structs;
 using UnityEngine;
@@ -104,7 +105,7 @@ namespace _Project.Systems.PerceptionSystem
                 {
                     col.TryGetComponent<INoiseListener>(out var listener);
                     listener?.OnNoiseDetected(new NoiseData(origin, transform.root.gameObject,
-                        finalRadius));
+                        finalRadius, PerceptionType.Hostile));
                 }
             }
         }

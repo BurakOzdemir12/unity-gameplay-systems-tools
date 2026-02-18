@@ -1,4 +1,5 @@
-﻿using _Project.Systems.PerceptionSystem.Interfaces;
+﻿using _Project.Systems.PerceptionSystem.Enums;
+using _Project.Systems.PerceptionSystem.Interfaces;
 using _Project.Systems.PerceptionSystem.Structs;
 using UnityEngine;
 
@@ -32,7 +33,7 @@ namespace _Project.Systems.PerceptionSystem.Noise_Manager
             {
                 if (hitBuffer[i].TryGetComponent<INoiseListener>(out var listener))
                 {
-                    listener.OnNoiseDetected(new NoiseData(position, source, radius));
+                    listener.OnNoiseDetected(new NoiseData(position, source, radius, PerceptionType.Stimulus));
                 }
             }
         }

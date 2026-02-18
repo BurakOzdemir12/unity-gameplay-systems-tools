@@ -22,6 +22,11 @@ namespace _Project.Systems.MovementSystem.ScriptableObjects
 
         public float RecognitionTime => recognitionTime;
 
+        [Tooltip("Target persistence total memory time")] [SerializeField]
+        private float targetPersistenceMemory = 5f;
+
+        public float TargetPersistenceMemory => targetPersistenceMemory;
+
         #endregion
 
         [field: Header("Chase Settings")]

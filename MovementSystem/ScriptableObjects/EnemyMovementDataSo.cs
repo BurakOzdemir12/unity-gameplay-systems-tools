@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace _Project.Systems.MovementSystem.ScriptableObjects
 {
@@ -67,6 +68,21 @@ namespace _Project.Systems.MovementSystem.ScriptableObjects
         public float PatrolCooldown => patrolCooldown;
 
         #endregion
+
+        [Header("voice / Emotes")] [Tooltip("Enemy Suspicious audio clips")] [SerializeField]
+        private AudioClip[] suspiciousAudioClips;
+
+        public AudioClip[] SuspiciousAudioClips => suspiciousAudioClips;
+
+        [Tooltip("Enemy Alert audio clips")] [SerializeField]
+        private AudioClip[] alertAudioClips;
+
+        public AudioClip[] AlertAudioClips => alertAudioClips;
+
+        [Tooltip("Voice Volume for Suspicious clip")] [SerializeField]
+        private float voiceVolume = 1.5f;
+
+        public float VoiceVolume => voiceVolume;
 
         #region Anim & Param Names
 

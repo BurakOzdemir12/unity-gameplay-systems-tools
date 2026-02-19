@@ -1,6 +1,8 @@
 ﻿using _Project.Systems.MovementSystem.Enemy.States;
 using _Project.Systems.MovementSystem.ScriptableObjects;
 using _Project.Systems.PerceptionSystem;
+using _Project.Systems.SharedGameplay.Managers.Effects.Audio;
+using _Project.Systems.SharedGameplay.Managers.Effects.Audio.Enums;
 using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using UnityEngine;
 
@@ -25,6 +27,14 @@ namespace _Project.Systems.MovementSystem.Enemy.States
 
             data = stateMachine.EnemyConfigSo.MovementData;
             perception = stateMachine.EnemyPerceptionController;
+
+            if (data.SuspiciousAudioClips != null)
+            {
+                var toPlay = data.SuspiciousAudioClips[Random.Range(0, data.SuspiciousAudioClips.Length)];
+                SoundManager.Instance.PlayGeneric3DSound(toPlay, stateMachine.transform.position, SoundChannel.Voice,
+                    data.VoiceVolume,
+                    true, false);
+            }
 
             stateMachine.Agent.isStopped = true;
             stateMachine.Agent.speed = data.SuspiciousWalkSpeed;

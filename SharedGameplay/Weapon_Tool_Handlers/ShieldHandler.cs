@@ -1,4 +1,5 @@
 ﻿using _Project.Systems.SharedGameplay.Managers.Effects.Audio;
+using _Project.Systems.SharedGameplay.Managers.Effects.Audio.Enums;
 using _Project.Systems.SharedGameplay.Managers.Effects.Vfx;
 using _Project.Systems.SharedGameplay.Shield_Logic;
 using _Project.Systems.SharedGameplay.Shield_Logic.ScriptableObjects;
@@ -78,7 +79,8 @@ namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
                 )) return;
 
             // SoundManager.Instance.PlayShieldBreak(clip, volume, CurrentShieldHitbox.transform.position);
-            SoundManager.Instance.PlayGeneric3DSound(clip, CurrentShieldHitbox.transform.position, volume);
+            SoundManager.Instance.PlayGeneric3DSound(clip, CurrentShieldHitbox.transform.position, SoundChannel.Impact,
+                volume);
 
             EffectManager.Instance.PlayShieldBreak(vfx, CurrentShieldHitbox.transform.position);
 

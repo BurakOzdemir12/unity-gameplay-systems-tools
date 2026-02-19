@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Project.Systems.SharedGameplay.Managers.Effects.Audio.Structs;
 using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
@@ -31,6 +32,8 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             audioSource.pitch = data.Pitch;
             audioSource.spatialBlend = data.SpatialBlend;
             audioSource.loop = data.Loop;
+
+            audioSource.outputAudioMixerGroup = data.MixerGroup;
 
             audioSource.minDistance = 1f;
             audioSource.maxDistance = 25f;

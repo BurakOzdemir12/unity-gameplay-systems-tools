@@ -11,8 +11,12 @@ using _Project.Systems.EnvironmentSystem.Weather.Enums;
 using _Project.Systems.EnvironmentSystem.Weather.Events;
 using _Project.Systems.MovementSystem.Events;
 using _Project.Systems.SharedGameplay.Feedback;
+using _Project.Systems.SharedGameplay.Managers.Effects.Audio.Enums;
+using _Project.Systems.SharedGameplay.Managers.Effects.Audio.Structs;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Pool;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
@@ -20,6 +24,14 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
     public class SoundManager : MonoBehaviour
     {
         public static SoundManager Instance { get; private set; }
+
+        [Header("Audio Mixer Groups")] [SerializeField]
+        private AudioMixerGroup impactSfxMixerGroup;
+
+        [SerializeField] private AudioMixerGroup traversalSFxMixerGroup;
+        [SerializeField] private AudioMixerGroup combatSFxMixerGroup;
+        [SerializeField] private AudioMixerGroup voiceSFxMixerGroup;
+        [SerializeField] private AudioMixerGroup gatheringSFxMixerGroup;
 
         [Header("Pool Settings")] [SerializeField]
         private SoundEmitter soundEmitterPrefab;
@@ -236,6 +248,23 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
 
         #endregion
 
+        #region Mixer Group Selection
+
+        private AudioMixerGroup GetMixerGroup(SoundChannel channel)
+        {
+            return channel switch
+            {
+                SoundChannel.Voice => voiceSFxMixerGroup,
+                SoundChannel.Impact => impactSfxMixerGroup,
+                SoundChannel.Traversal => traversalSFxMixerGroup,
+                SoundChannel.Combat => combatSFxMixerGroup,
+                SoundChannel.Gathering => gatheringSFxMixerGroup,
+                _ => null
+            };
+        }
+
+        #endregion
+
         #region Event Bus Handlers
 
         private void HandleTraversalEvent(CharacterTraversalEvent @evt)
@@ -256,7 +285,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = traversalSFxMixerGroup
             });
             // audioSource.PlayOneShot(clip, volume);
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
@@ -281,7 +310,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = combatSFxMixerGroup
             });
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
@@ -309,7 +338,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = impactSfxMixerGroup
             });
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
@@ -334,7 +363,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = impactSfxMixerGroup
             });
         }
 
@@ -353,7 +382,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = gatheringSFxMixerGroup
             });
         }
 
@@ -378,13 +407,14 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
 
         #region Singleton Function Calls
 
-        public void PlayGeneric3DSound(AudioClip clip, Vector3 position, float volume= 1f, bool isFrequent = true,
+        public void PlayGeneric3DSound(AudioClip clip, Vector3 position, SoundChannel channel, float volume = 1f,
+            bool isFrequent = true,
             bool isLoop = false)
         {
             PlaySound(new SoundData
             {
                 Clip = clip, Position = position, Volume = volume, Pitch = 1f, SpatialBlend = 1f,
-                FrequentSound = isFrequent, Loop = isLoop
+                FrequentSound = isFrequent, Loop = isLoop, MixerGroup = GetMixerGroup(channel)
             });
         }
 

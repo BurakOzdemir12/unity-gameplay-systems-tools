@@ -1,4 +1,6 @@
-﻿using _Project.Systems._Core.Enums;
+﻿using System;
+using System.Collections.Generic;
+using _Project.Systems._Core.Enums;
 using _Project.Systems._Core.EventBus;
 using _Project.Systems._Core.EventBus.Events;
 using _Project.Systems.CombatSystem.Events;
@@ -10,12 +12,26 @@ using _Project.Systems.EnvironmentSystem.Weather.Events;
 using _Project.Systems.MovementSystem.Events;
 using _Project.Systems.SharedGameplay.Feedback;
 using UnityEngine;
+using UnityEngine.Pool;
+using Random = UnityEngine.Random;
 
 namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
 {
     public class SoundManager : MonoBehaviour
     {
         public static SoundManager Instance { get; private set; }
+
+        [Header("Pool Settings")] [SerializeField]
+        private SoundEmitter soundEmitterPrefab;
+
+        [SerializeField] private int defaultCapacity = 10;
+        [SerializeField] private int maxPoolSize = 100;
+        [SerializeField] private int maxSoundInstances = 30;
+
+        [SerializeField] private Transform poolContainer;
+        private IObjectPool<SoundEmitter> soundEmitterPool;
+        private readonly List<SoundEmitter> activeSoundEmitters = new List<SoundEmitter>();
+        public readonly LinkedList<SoundEmitter> FrequentSoundEmitters = new LinkedList<SoundEmitter>();
 
         #region Impact Events
 
@@ -35,9 +51,8 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
         #endregion
 
         [Header("Audio Sources")] [SerializeField]
-        private AudioSource audioSource;
+        private AudioSource ambientAudioSource;
 
-        [SerializeField] private AudioSource ambientAudioSource;
         [SerializeField] private AudioSource musicAudioSource;
 
         [Space(2)] [SerializeField] private EnvironmentalAudioProfile envAudioProfile;
@@ -51,7 +66,8 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             if (Instance != null && Instance != this) Destroy(this.gameObject);
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
-            audioSource = GetComponent<AudioSource>();
+
+            InitializePool();
         }
 
 
@@ -104,6 +120,121 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlayAmbientSound(envAudioProfile.GetEnvAudio(currentDivision, currentWeather));
             PlayMusicTrack(musicAudioProfile.GetMusicTrack(false, currentDivision));
         }
+        // public SoundBuilder CreateSoundBuilder() => new SoundBuilder(this);
+        //
+        // public bool CanPlaySound(SoundData data) {
+        //     if (!data.FrequentSound) return true;
+        //
+        //     if (FrequentSoundEmitters.Count >= maxSoundInstances) {
+        //         try {
+        //             FrequentSoundEmitters.First.Value.Stop();
+        //             return true;
+        //         } catch {
+        //             Debug.Log("SoundEmitter is already released");
+        //         }
+        //         return false;
+        //     }
+        //     return true;
+        // }
+
+        public SoundEmitter GetSoundEmitter()
+        {
+            return soundEmitterPool.Get();
+        }
+
+        public void ReturnToPool(SoundEmitter emitter)
+        {
+            soundEmitterPool.Release(emitter);
+        }
+
+        public void StopAllSounds()
+        {
+            LinkedList<SoundEmitter> tempList = new LinkedList<SoundEmitter>(activeSoundEmitters);
+            foreach (var emitter in tempList)
+            {
+                emitter.Stop();
+            }
+
+            FrequentSoundEmitters.Clear();
+        }
+
+        private void InitializePool()
+        {
+            if (poolContainer == null) poolContainer = new GameObject("SoundEmitter_Pool").transform;
+            poolContainer.SetParent(this.transform);
+
+            soundEmitterPool = new ObjectPool<SoundEmitter>(
+                CreateSoundEmitter,
+                OnTakeFromPool,
+                OnReturnedToPool,
+                OnDestroyPoolObject,
+                true,
+                defaultCapacity,
+                maxPoolSize
+            );
+        }
+
+        private SoundEmitter CreateSoundEmitter()
+        {
+            var soundEmitter = Instantiate(soundEmitterPrefab, poolContainer);
+            soundEmitter.gameObject.SetActive(false);
+            return soundEmitter;
+        }
+
+        private void OnTakeFromPool(SoundEmitter emitter)
+        {
+            emitter.gameObject.SetActive(true);
+            activeSoundEmitters.Add(emitter);
+        }
+
+        private void OnReturnedToPool(SoundEmitter emitter)
+        {
+            if (emitter.Node != null)
+            {
+                FrequentSoundEmitters.Remove(emitter.Node);
+                emitter.Node = null;
+            }
+
+            emitter.gameObject.SetActive(false);
+            activeSoundEmitters.Remove(emitter);
+        }
+
+        private void OnDestroyPoolObject(SoundEmitter emitter)
+        {
+            if (emitter != null && emitter.gameObject != null)
+            {
+                Destroy(emitter.gameObject);
+            }
+        }
+
+        #region Core Play Logic (With Pool pattern)
+
+        private void PlaySound(SoundData data)
+        {
+            if (data.Clip == null) return;
+            if (data.FrequentSound && FrequentSoundEmitters.Count >= maxSoundInstances)
+            {
+                try
+                {
+                    FrequentSoundEmitters.First.Value.Stop();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning(e);
+                }
+            }
+
+            SoundEmitter emitter = soundEmitterPool.Get();
+            emitter.Initialize(data, soundEmitterPool);
+            emitter.Play();
+
+            if (data.FrequentSound)
+            {
+                emitter.Node = FrequentSoundEmitters.AddLast(emitter);
+            }
+        }
+
+        #endregion
 
         #region Event Bus Handlers
 
@@ -122,8 +253,12 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
                     out var volume))
                 return;
 
-            audioSource.PlayOneShot(clip, volume);
-
+            PlaySound(new SoundData
+            {
+                Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
+                SpatialBlend = 1f, FrequentSound = true, Loop = false
+            });
+            // audioSource.PlayOneShot(clip, volume);
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
 
@@ -143,7 +278,11 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
                     out var volume))
                 return;
 
-            audioSource.PlayOneShot(clip, volume);
+            PlaySound(new SoundData
+            {
+                Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
+                SpatialBlend = 1f, FrequentSound = true, Loop = false
+            });
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
 
@@ -167,8 +306,11 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
                     out var volume
                 )) return;
 
-            audioSource.PlayOneShot(clip, volume);
-
+            PlaySound(new SoundData
+            {
+                Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
+                SpatialBlend = 1f, FrequentSound = true, Loop = false
+            });
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
 
@@ -189,7 +331,11 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
                     out var clip, out _, out var volume
                 )) return;
 
-            audioSource.PlayOneShot(clip, volume);
+            PlaySound(new SoundData
+            {
+                Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
+                SpatialBlend = 1f, FrequentSound = true, Loop = false
+            });
         }
 
         private void HandleGatheringActionEvent(CharacterGatheringActionEvent evt)
@@ -204,7 +350,11 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
                     evt.ToolType, evt.ActionTag,
                     out var clip, out _, out var volume
                 )) return;
-            audioSource.PlayOneShot(clip, volume);
+            PlaySound(new SoundData
+            {
+                Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
+                SpatialBlend = 1f, FrequentSound = true, Loop = false
+            });
         }
 
         private void HandleTimeChangedEvent(TimeChangedEvent evt)
@@ -228,9 +378,14 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
 
         #region Singleton Function Calls
 
-        public void PlayShieldBreak(AudioClip clip, float volume)
+        public void PlayGeneric3DSound(AudioClip clip, Vector3 position, float volume= 1f, bool isFrequent = true,
+            bool isLoop = false)
         {
-            audioSource.PlayOneShot(clip, volume);
+            PlaySound(new SoundData
+            {
+                Clip = clip, Position = position, Volume = volume, Pitch = 1f, SpatialBlend = 1f,
+                FrequentSound = isFrequent, Loop = isLoop
+            });
         }
 
         #endregion

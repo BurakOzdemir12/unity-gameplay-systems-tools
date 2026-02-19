@@ -77,7 +77,9 @@ namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
                     out var clip, out var vfx, out var volume
                 )) return;
 
-            SoundManager.Instance.PlayShieldBreak(clip, volume);
+            // SoundManager.Instance.PlayShieldBreak(clip, volume, CurrentShieldHitbox.transform.position);
+            SoundManager.Instance.PlayGeneric3DSound(clip, CurrentShieldHitbox.transform.position, volume);
+
             EffectManager.Instance.PlayShieldBreak(vfx, CurrentShieldHitbox.transform.position);
 
             // currentShieldModel.SetActive(false);

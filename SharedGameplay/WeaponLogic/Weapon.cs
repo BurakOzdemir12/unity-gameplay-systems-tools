@@ -7,7 +7,7 @@ namespace _Project.Systems.SharedGameplay.WeaponLogic
     public class Weapon : Item, IPickupable
     {
         
-        public ItemDataSo Data => CurrentItemData;
+        public ItemData Data => CurrentItemData;
         public int Amount => CurrentItemAmount;
 
         public bool OnPickedUp()

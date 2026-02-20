@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a01f8fa86c842e6a9b56e292f43a4ad, type: 3}
   m_Name: Sword_Normal_Data
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Systems._Core.WeaponLogic.ScriptableObjects.WeaponDataSo
-  itemID: 0
-  itemName: Sword
-  itemIcon: {fileID: 21300000, guid: c5632919c7eedf34ea3fce4ddb103880, type: 3}
-  maxStackSize: 4
+  itemId: 1
+  displayName: Sword
+  description: Big Sword
+  icon: {fileID: 21300000, guid: 00e2f569bbd7dcb4fa841097d986f4dd, type: 3}
+  maxStackSize: 5
+  weight: 5
   isStackable: 1
   itemPrefab: {fileID: 6039613567015340336, guid: 0824cb7988b75774b8d074a779c45919, type: 3}
   handItemPrefab: {fileID: 6039613567015340336, guid: 0824cb7988b75774b8d074a779c45919, type: 3}

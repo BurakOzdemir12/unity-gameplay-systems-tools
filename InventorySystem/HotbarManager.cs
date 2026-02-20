@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using _Project.Systems._Core;
 using _Project.Systems._Core.InputHandler;
+using _Project.Systems.InventorySystem.UI;
 using UnityEngine;
 
 namespace _Project.Systems.InventorySystem
@@ -10,13 +11,13 @@ namespace _Project.Systems.InventorySystem
     {
         [field: SerializeField] public PlayerInputHandler InputHandler { get; private set; }
         [SerializeField] private GameObject hotbarParent;
-        public List<Slot> hotbarSlots = new List<Slot>();
+        public List<SlotUI> hotbarSlots = new List<SlotUI>();
 
         private int selectedHotbarIndex;
 
         private void Awake()
         {
-            hotbarSlots.AddRange(hotbarParent.GetComponentsInChildren<Slot>());
+            hotbarSlots.AddRange(hotbarParent.GetComponentsInChildren<SlotUI>());
         }
 
         private void OnEnable()

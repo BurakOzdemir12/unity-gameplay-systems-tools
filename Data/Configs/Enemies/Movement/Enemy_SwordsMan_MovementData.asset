@@ -45,5 +45,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5a3e1ff8d27a54f55b588745f0da2365, type: 3}
   - {fileID: 8300000, guid: 39060c79bd38f4c3fbda6ff7ee919d46, type: 3}
   - {fileID: 8300000, guid: f78ab64b655a24c5c9fdfba68a507a86, type: 3}
-  voiceVolume: 20.54
+  voiceVolume: 1
   suspiciousBlendTreeName: SuspiciousBlendTree

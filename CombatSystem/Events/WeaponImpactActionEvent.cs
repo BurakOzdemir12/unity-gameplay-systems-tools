@@ -11,13 +11,13 @@ namespace _Project.Systems.CombatSystem.Events
         public GameObject SourceTool;
         public GameObject Target;
         public string Tag;
-        public WeaponDataSo WeaponData;
+        public WeaponData WeaponData;
         public SurfaceType Surface;
         public Vector3 Position;
         public Vector3 Normal;
 
         public WeaponImpactActionEvent(GameObject source, GameObject sourceTool, GameObject target, string tag,
-            WeaponDataSo weaponData,
+            WeaponData weaponData,
             SurfaceType surface, Vector3 position, Vector3 normal)
         {
             Source = source;

@@ -31,7 +31,7 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             if (data.SuspiciousAudioClips != null)
             {
                 var toPlay = data.SuspiciousAudioClips[Random.Range(0, data.SuspiciousAudioClips.Length)];
-                SoundManager.Instance.PlayGeneric3DSound(toPlay, stateMachine.transform.position, SoundChannel.Voice,
+                SoundManager.Instance.PlayGeneric3DSound(toPlay, stateMachine.transform.position, SoundChannel.CombatVocal,
                     data.VoiceVolume,
                     true, false);
             }

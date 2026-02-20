@@ -28,9 +28,9 @@ namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
         public GameObject CurrentWeaponModel => currentWeaponModel;
 
         [Header("Current Weapon Data ")] [SerializeField]
-        private WeaponDataSo currentWeaponData;
+        private WeaponData currentWeaponData;
 
-        public WeaponDataSo CurrentWeaponDataSo => currentWeaponData;
+        public WeaponData CurrentWeaponData => currentWeaponData;
 
         //Test
         [Header("Rock Prefab For Testing Purposes")] [SerializeField]
@@ -76,12 +76,12 @@ namespace _Project.Systems.SharedGameplay.Weapon_Tool_Handlers
             // currentWeaponHitbox.SetActive(false);
         }
 
-        public void SwitchWeapon(WeaponDataSo weaponDataSo)
+        public void SwitchWeapon(WeaponData weaponData)
         {
-            WeaponLogic.WeaponLogic newWeaponLogic = Instantiate(weaponDataSo.itemPrefab, currentWeaponRoot.transform)
+            WeaponLogic.WeaponLogic newWeaponLogic = Instantiate(weaponData.itemPrefab, currentWeaponRoot.transform)
                 .GetComponentInChildren<WeaponLogic.WeaponLogic>();
 
-            currentWeaponData = weaponDataSo;
+            currentWeaponData = weaponData;
             currentWeaponLogic = newWeaponLogic;
             currentWeaponHitbox = newWeaponLogic.gameObject;
         }

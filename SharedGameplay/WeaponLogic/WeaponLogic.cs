@@ -17,9 +17,9 @@ namespace _Project.Systems.SharedGameplay.WeaponLogic
     public class WeaponLogic : MonoBehaviour
     {
         [Header("Weapon Data")] [SerializeField]
-        private WeaponDataSo weaponData;
+        private WeaponData weaponData;
 
-        public WeaponDataSo WeaponData => weaponData;
+        public WeaponData WeaponData => weaponData;
 
         [Header("Collider References (Set in Inspector")] [SerializeField]
         private Collider characterOwnCollider;

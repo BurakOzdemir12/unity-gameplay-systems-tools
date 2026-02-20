@@ -1,5 +1,7 @@
 using _Project.Systems.CombatSystem.Enemy.States;
 using _Project.Systems.MovementSystem.ScriptableObjects;
+using _Project.Systems.SharedGameplay.Managers.Effects.Audio;
+using _Project.Systems.SharedGameplay.Managers.Effects.Audio.Enums;
 using _Project.Systems.SharedGameplay.StateMachine.Enemy;
 using UnityEngine;
 
@@ -21,6 +23,13 @@ namespace _Project.Systems.MovementSystem.Enemy.States
             data = stateMachine.EnemyConfigSo.MovementData;
 
             stateMachine.EnemyPerceptionController.IsAggressive = true;
+
+            if (data.AlertAudioClips != null)
+            {
+                AudioClip toPlay = data.AlertAudioClips[Random.Range(0, data.AlertAudioClips.Length)];
+                SoundManager.Instance.PlayGeneric3DSound(toPlay, stateMachine.transform.position,
+                    SoundChannel.CombatVocal, data.VoiceVolume, true, false);
+            }
 
             stateMachine.Agent.isStopped = false;
             stateMachine.Agent.speed = data.FreeMovementSpeed;

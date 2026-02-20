@@ -5,7 +5,8 @@
         Sfx,
         Traversal,
         Impact,
-        Voice,
+        CombatVocal,
+        Dialogue,
         Combat,
         Gathering,
         Environment

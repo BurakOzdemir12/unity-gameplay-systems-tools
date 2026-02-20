@@ -1,4 +1,7 @@
 ﻿using _Project.Systems.InventorySystem;
+using _Project.Systems.InventorySystem.Core;
+using _Project.Systems.InventorySystem.ScriptableObjects;
+using _Project.Systems.InventorySystem.UI;
 using _Project.Systems.SharedGameplay.Pickup_Drop.Interfaces;
 using UnityEngine;
 
@@ -6,7 +9,7 @@ namespace _Project.Systems.SharedGameplay.Pickup_Drop
 {
     public class PickupController : MonoBehaviour
     {
-        [field: SerializeField] public InventoryManager InventoryManager { get; private set; }
+        [field: SerializeField] public InventoryComponent InventoryComponent { get; private set; }
 
         // public event Action OnPickup;
         [SerializeField] private float pickUpRange;
@@ -15,16 +18,16 @@ namespace _Project.Systems.SharedGameplay.Pickup_Drop
 
         private void OnEnable()
         {
-            InventoryManager.ItemDropped += HandleItemDropped;
+            InventoryComponent.OnItemDroppedToWorld += HandleItemDropped;
         }
 
 
         public void TryPickup()
         {
-            if (InventoryManager == null)
+            if (InventoryComponent == null)
             {
-                InventoryManager = GetComponentInParent<InventoryManager>();
-                if (InventoryManager == null)
+                InventoryComponent = GetComponentInParent<InventoryComponent>();
+                if (InventoryComponent == null)
                 {
                     Debug.LogError("[PickupController] Inventory is NULL.");
                     return;
@@ -48,19 +51,25 @@ namespace _Project.Systems.SharedGameplay.Pickup_Drop
                 return;
             }
 
-            InventoryManager.AddItem(pickable.Data, pickable.Amount);
+            InventoryComponent.AddItem(pickable.Data, pickable.Amount);
             pickable.OnPickedUp();
         }
 
-        private void HandleItemDropped(GameObject obj)
+        private void HandleItemDropped(ItemData data, int amount)
         {
-            var dropPoint =  transform.TransformPoint(dropOffset);
-            GameObject droppedItem = Instantiate(obj, dropPoint, Quaternion.identity);
+            var dropPoint = transform.TransformPoint(dropOffset);
+            GameObject droppedItem = Instantiate(data.itemPrefab, dropPoint, Quaternion.identity);
+            
+            if (droppedItem.TryGetComponent<Item>(out var item))
+            {
+                item.CurrentItemData = data;
+                item.CurrentItemAmount = amount;
+            }
         }
 
         private void OnDisable()
         {
-            InventoryManager.ItemDropped -= HandleItemDropped;
+            InventoryComponent.OnItemDroppedToWorld -= HandleItemDropped;
         }
 
         private void OnDrawGizmos()

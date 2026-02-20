@@ -11,6 +11,8 @@ using _Project.Systems.HealthSystem.Health;
 using _Project.Systems.HealthSystem.Ragdoll;
 using _Project.Systems.HealthSystem.Structs;
 using _Project.Systems.InventorySystem;
+using _Project.Systems.InventorySystem.Core;
+using _Project.Systems.InventorySystem.UI;
 using _Project.Systems.MovementSystem.Player.States.RootStates;
 using _Project.Systems.PerceptionSystem;
 using _Project.Systems.SharedGameplay.BaseScriptableObjects.Characters;
@@ -36,7 +38,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
         [field: SerializeField] public GatheringController GatheringController { get; private set; }
         [field: SerializeField] public GroundChecker GroundChecker { get; private set; }
         [field: SerializeField] public PlayerConfigSo PlayerConfigSo { get; private set; }
-        [field: SerializeField] public InventoryManager InventoryManager { get; private set; }
+        [field: SerializeField] public InventoryComponent InventoryComponent { get; private set; }
         [field: SerializeField] public PickupController PickupController { get; private set; }
         [field: SerializeField] public PlayerAttackSignal PlayerAttackSignal { get; private set; }
         [field: SerializeField] public NoiseEmitter NoiseEmitter { get; private set; }
@@ -179,7 +181,7 @@ namespace _Project.Systems.SharedGameplay.StateMachine.Player
 
         private void HandleInventoryToggle()
         {
-            InventoryManager.ToggleInventoryVisibility();
+            InventoryComponent.ToggleInventoryVisibility();
         }
 
         private void HandleTakeDamage(DamageInfo damageInfo)

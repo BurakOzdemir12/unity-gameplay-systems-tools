@@ -25,13 +25,32 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
     {
         public static SoundManager Instance { get; private set; }
 
-        [Header("Audio Mixer Groups")] [SerializeField]
-        private AudioMixerGroup impactSfxMixerGroup;
 
-        [SerializeField] private AudioMixerGroup traversalSFxMixerGroup;
-        [SerializeField] private AudioMixerGroup combatSFxMixerGroup;
-        [SerializeField] private AudioMixerGroup voiceSFxMixerGroup;
-        [SerializeField] private AudioMixerGroup gatheringSFxMixerGroup;
+        [Header("Audio Mixer Groups")] [SerializeField]
+        private AudioMixer mainMixer;
+
+        [Space(5)]
+        [Tooltip("Mixer Group for Impact Sounds like Sword hit enemy, rock or pickaxe hit on rock, etc.")]
+        [SerializeField]
+        private AudioMixerGroup impactMixerGroup;
+
+        [Tooltip("Mixer Group for Traversal Sounds like footsteps, jump, landing, etc.")] [SerializeField]
+        private AudioMixerGroup traversalMixerGroup;
+
+        [Tooltip("Mixer Group for Combat Vocal Sounds like grunts, yells, etc.")] [SerializeField]
+        private AudioMixerGroup combatSFxMixerGroup;
+
+        [Tooltip("Mixer Group for Combat Sounds like sword swing, bow shoot, etc.")] [SerializeField]
+        private AudioMixerGroup combatVocalMixerGroup;
+
+        [Tooltip("Mixer Group for Dialogue Sounds like NPC conversations, etc.")] [SerializeField]
+        private AudioMixerGroup dialogueMixerGroup;
+
+        [Tooltip("Mixer Group for Gathering Sounds like harvesting crops, mining, etc.")] [SerializeField]
+        private AudioMixerGroup gatheringMixerGroup;
+
+        [Tooltip("Mixer Group for Environmental Sounds like rain, wind, etc.")] [SerializeField]
+        private AudioMixerGroup envMixerGroup;
 
         [Header("Pool Settings")] [SerializeField]
         private SoundEmitter soundEmitterPrefab;
@@ -254,11 +273,13 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
         {
             return channel switch
             {
-                SoundChannel.Voice => voiceSFxMixerGroup,
-                SoundChannel.Impact => impactSfxMixerGroup,
-                SoundChannel.Traversal => traversalSFxMixerGroup,
+                SoundChannel.Traversal => traversalMixerGroup,
+                SoundChannel.Impact => impactMixerGroup,
+                SoundChannel.CombatVocal => combatVocalMixerGroup,
+                SoundChannel.Dialogue => dialogueMixerGroup,
                 SoundChannel.Combat => combatSFxMixerGroup,
-                SoundChannel.Gathering => gatheringSFxMixerGroup,
+                SoundChannel.Gathering => gatheringMixerGroup,
+                SoundChannel.Environment => envMixerGroup,
                 _ => null
             };
         }
@@ -285,7 +306,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = traversalSFxMixerGroup
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = traversalMixerGroup
             });
             // audioSource.PlayOneShot(clip, volume);
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
@@ -338,7 +359,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = impactSfxMixerGroup
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = impactMixerGroup
             });
             // AudioSource.PlayClipAtPoint(clip, evt.Position, volume);
         }
@@ -363,7 +384,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = impactSfxMixerGroup
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = impactMixerGroup
             });
         }
 
@@ -382,7 +403,7 @@ namespace _Project.Systems.SharedGameplay.Managers.Effects.Audio
             PlaySound(new SoundData
             {
                 Clip = clip, Position = evt.Position, Volume = volume, Pitch = Random.Range(0.9f, 1.1f),
-                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = gatheringSFxMixerGroup
+                SpatialBlend = 1f, FrequentSound = true, Loop = false, MixerGroup = gatheringMixerGroup
             });
         }
 

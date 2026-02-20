@@ -1,5 +1,6 @@
 ﻿using _Project.Systems.InventorySystem.ScriptableObjects;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Project.Systems.InventorySystem
 {
@@ -13,9 +14,9 @@ namespace _Project.Systems.InventorySystem
             set => currentItemAmount = value;
         }
 
-        [SerializeField] private ItemDataSo currentItemData;
+        [FormerlySerializedAs("currentInventoryItemData")] [SerializeField] private ItemData currentItemData;
 
-        public ItemDataSo CurrentItemData
+        public ItemData CurrentItemData
         {
             get => currentItemData;
             set => currentItemData = value;

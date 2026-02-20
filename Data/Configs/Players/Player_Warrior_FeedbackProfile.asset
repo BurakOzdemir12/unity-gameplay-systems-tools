@@ -29,7 +29,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: fdc05ea2699023143ba7e93533cc5a0b, type: 3}
     - {fileID: 8300000, guid: f26cf9ded47cf0140957490a16f85acc, type: 3}
     VFX: {fileID: 5222117830268790141, guid: 3bf0e130d015dc7458c0a9f5528c6345, type: 3}
-    Volume: 0.5
+    Volume: 1
   - Name: Running on Grass
     Surface: 1
     traversal: 1
@@ -51,7 +51,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: b04914b5801123b4dafba88cbcb5bc74, type: 3}
     - {fileID: 8300000, guid: 3ec9ef3892d02044a9d62e412eb45ffb, type: 3}
     VFX: {fileID: 0}
-    Volume: 0.5
+    Volume: 1
   - Name: Running on Snow
     Surface: 4
     traversal: 1
@@ -68,7 +68,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: f20b2086edb0fa14194625121c56cecc, type: 3}
     - {fileID: 8300000, guid: 763409ee05f3fce4a8e83df52710a28e, type: 3}
     VFX: {fileID: 0}
-    Volume: 0.5
+    Volume: 1
   - Name: Running on Water
     Surface: 5
     traversal: 1
@@ -80,7 +80,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: a86f0a1ad946e34429c0e3caac1a484c, type: 3}
     - {fileID: 8300000, guid: 7b6895e4d3b50784daa1c49222e8eac5, type: 3}
     VFX: {fileID: 0}
-    Volume: 0.5
+    Volume: 1
   - Name: Running on Metal
     Surface: 3
     traversal: 1
@@ -102,7 +102,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: e2b868994c062864eaa867681aeac0d8, type: 3}
     - {fileID: 8300000, guid: 034986a81cc0be546a288ff268b8783e, type: 3}
     VFX: {fileID: 0}
-    Volume: 0.5
+    Volume: 1
   - Name: Sprint on Dirt
     Surface: 0
     traversal: 2
@@ -119,7 +119,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: fdc05ea2699023143ba7e93533cc5a0b, type: 3}
     - {fileID: 8300000, guid: f26cf9ded47cf0140957490a16f85acc, type: 3}
     VFX: {fileID: 5222117830268790141, guid: 3bf0e130d015dc7458c0a9f5528c6345, type: 3}
-    Volume: 1.97
+    Volume: 1
   - Name: Heavy Landing on Dirt
     Surface: 0
     traversal: 6
@@ -129,7 +129,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 942019cf9ecd5854ebeb343b12b7f779, type: 3}
     - {fileID: 8300000, guid: 1a88f429c4a7b734f9c4254f0c654cea, type: 3}
     VFX: {fileID: 5222117830268790141, guid: 3bf0e130d015dc7458c0a9f5528c6345, type: 3}
-    Volume: 4
+    Volume: 1
   actionFeedbackList:
   - Name: Sword Attack Male Voice
     Surface: 0
@@ -140,7 +140,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 2a1cfd41c98d1460d816233f23e6152f, type: 3}
     - {fileID: 8300000, guid: 17eaccd8f692843cf9652d4cec294fe2, type: 3}
     VFX: {fileID: 0}
-    Volume: 0.5
+    Volume: 1
   - Name: 'Sword Heavy Attack Male Voice '
     Surface: 0
     combatAction: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 962fed30cb2044e488376207e9cd60f3, type: 3}
     - {fileID: 8300000, guid: 940905f8a21c145119b64f16e7131c47, type: 3}
     VFX: {fileID: 0}
-    Volume: 0.5
+    Volume: 1
   gatherActionFeedbackList:
   - Name: Mining Effects
     Surface: 8
@@ -160,4 +160,4 @@ MonoBehaviour:
     Clips:
     - {fileID: 8300000, guid: d637bacd075454147bb398300d59dc3e, type: 3}
     VFX: {fileID: 0}
-    Volume: 0.4
+    Volume: 1

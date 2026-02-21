@@ -17,8 +17,7 @@ namespace _Project.Systems.InventorySystem
             set => currentItemAmount = value;
         }
 
-        [FormerlySerializedAs("currentInventoryItemData")] [SerializeField]
-        private ItemData currentItemData;
+        [SerializeField] private ItemData currentItemData;
 
         public ItemData CurrentItemData
         {

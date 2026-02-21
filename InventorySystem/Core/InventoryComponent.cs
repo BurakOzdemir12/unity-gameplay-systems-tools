@@ -27,10 +27,14 @@ namespace _Project.Systems.InventorySystem.Core
         private float currentWeight;
         public float CurrentWeight => currentWeight;
 
+        private bool weightLimitReached;
+
+        //Events
         public event Action<int, InventorySlot> OnSlotChanged;
         public event Action<ItemData, int> OnItemDroppedToWorld;
         public event Action OnInventoryToggle;
-        public event Action OnWeightChanged;
+        public event Action<bool> OnWeightChanged;
+        public event Action<string> OnEncumbered;
 
         private void Awake()
         {
@@ -103,11 +107,12 @@ namespace _Project.Systems.InventorySystem.Core
 
             if (actualAmountToAdd <= 0)
             {
-                Debug.LogWarning($"Weight limit! {itemToAdd.displayName} cant take any more weight.");
+                OnEncumbered?.Invoke("No Space for " + itemToAdd.displayName);
                 return;
             }
 
             int remaining = amount;
+
             if (currentWeight + itemToAdd.weight > maxWeight) return;
             currentWeight += itemToAdd.weight * amount;
 
@@ -161,7 +166,7 @@ namespace _Project.Systems.InventorySystem.Core
 
             if (remaining > 0)
             {
-                Debug.LogError("Not enough space in inventory to add item: " + itemToAdd.name);
+                OnEncumbered?.Invoke("No Space for " + itemToAdd.displayName);
             }
 
             CalculateWeight();
@@ -197,7 +202,9 @@ namespace _Project.Systems.InventorySystem.Core
             }
 
             currentWeight = newWeight;
-            OnWeightChanged?.Invoke();
+            weightLimitReached = currentWeight >= maxWeight;
+
+            OnWeightChanged?.Invoke(weightLimitReached);
         }
     }
 }

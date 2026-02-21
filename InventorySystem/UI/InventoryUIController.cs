@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using _Project.Systems.InventorySystem.Core;
 using _Project.Systems.InventorySystem.ScriptableObjects;
@@ -32,11 +33,24 @@ namespace _Project.Systems.InventorySystem.UI
         [Tooltip("Max weight Text")] [SerializeField]
         private TextMeshProUGUI maxWeightText;
 
-        private List<SlotUI> inventorySlots = new List<SlotUI>();
+        [Tooltip("Weight limit reached warning text")] [SerializeField]
+        private TextMeshProUGUI weightLimitWarningText;
 
+        [Tooltip("Weight limit icon")] [SerializeField]
+        private RawImage weightIcon;
+
+        [Tooltip("Weight limit message shown time")] [SerializeField]
+        private float weightLimitMessageTime = 3f;
+
+
+        //Slot Settings
+        private List<SlotUI> inventorySlots = new List<SlotUI>();
         private SlotUI draggedSlotUi = null;
         private SlotUI hovered;
         private UnityEngine.UI.ScrollRect currentScrollRect;
+
+        //coroutines
+        private Coroutine inventoryMessageCoroutine;
 
         private void Awake()
         {
@@ -59,6 +73,7 @@ namespace _Project.Systems.InventorySystem.UI
             inventoryComponent.OnSlotChanged += UpdateSlotUI;
             inventoryComponent.OnInventoryToggle += ToggleInventoryVisibility;
             inventoryComponent.OnWeightChanged += UpdateWeight;
+            inventoryComponent.OnEncumbered += HandleEncumbered;
         }
 
         private void OnDisable()
@@ -68,6 +83,39 @@ namespace _Project.Systems.InventorySystem.UI
             inventoryComponent.OnSlotChanged -= UpdateSlotUI;
             inventoryComponent.OnInventoryToggle -= ToggleInventoryVisibility;
             inventoryComponent.OnWeightChanged -= UpdateWeight;
+            inventoryComponent.OnEncumbered -= HandleEncumbered;
+        }
+
+        private void HandleEncumbered(string message)
+        {
+            weightLimitWarningText.text = message;
+            weightLimitWarningText.gameObject.SetActive(true);
+
+            if (inventoryMessageCoroutine != null) StopCoroutine(EncumberedMessageRoutine());
+            inventoryMessageCoroutine = StartCoroutine(EncumberedMessageRoutine());
+        }
+
+        private IEnumerator EncumberedMessageRoutine()
+        {
+            yield return new WaitForSeconds(weightLimitMessageTime);
+
+            weightLimitWarningText.gameObject.SetActive(false);
+        }
+
+        private void UpdateWeight(bool isWeightLimitReached)
+        {
+            currentWeightText.text = inventoryComponent.CurrentWeight.ToString("0.##");
+            maxWeightText.text = $"/{inventoryComponent.MaxWeight:0.##}";
+            weightSlider.value = inventoryComponent.CurrentWeight / inventoryComponent.MaxWeight;
+
+            weightIcon.color = isWeightLimitReached ? Color.red : Color.gray6;
+        }
+
+        private void ToggleInventoryVisibility()
+        {
+            inventoryPanel.SetActive(!inventoryPanel.activeInHierarchy);
+            Cursor.lockState = inventoryPanel.activeInHierarchy ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = inventoryPanel.activeInHierarchy;
         }
 
         private void UpdateSlotUI(int index, InventorySlot updatedSlot)
@@ -76,20 +124,6 @@ namespace _Project.Systems.InventorySystem.UI
             {
                 inventorySlots[index].UpdateUi(updatedSlot);
             }
-        }
-
-        private void UpdateWeight()
-        {
-            currentWeightText.text = inventoryComponent.CurrentWeight.ToString("0.##");
-            maxWeightText.text = $"/{inventoryComponent.MaxWeight:0.##}";
-            weightSlider.value = inventoryComponent.CurrentWeight / inventoryComponent.MaxWeight;
-        }
-
-        private void ToggleInventoryVisibility()
-        {
-            inventoryPanel.SetActive(!inventoryPanel.activeInHierarchy);
-            Cursor.lockState = inventoryPanel.activeInHierarchy ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = inventoryPanel.activeInHierarchy;
         }
 
         public void OnPointerDown(PointerEventData eventData)

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using _Project.Systems.InventorySystem.Core;
 using _Project.Systems.InventorySystem.ScriptableObjects;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using Cursor = UnityEngine.Cursor;
 using Image = UnityEngine.UI.Image;
 
@@ -18,13 +20,23 @@ namespace _Project.Systems.InventorySystem.UI
 
         [SerializeField] private GameObject inventoryPanel;
         [SerializeField] private GameObject inventorySlotParent;
-        [SerializeField] public Image dragIcon;
+        [SerializeField] private Image dragIcon;
         [SerializeField] private GameObject dropArea;
+
+        [Header("Inventory Weight Settings")] [Tooltip("Weight Slider")] [SerializeField]
+        private Slider weightSlider;
+
+        [Tooltip("Current weight Text")] [SerializeField]
+        private TextMeshProUGUI currentWeightText;
+
+        [Tooltip("Max weight Text")] [SerializeField]
+        private TextMeshProUGUI maxWeightText;
 
         private List<SlotUI> inventorySlots = new List<SlotUI>();
 
         private SlotUI draggedSlotUi = null;
         private SlotUI hovered;
+        private UnityEngine.UI.ScrollRect currentScrollRect;
 
         private void Awake()
         {
@@ -34,6 +46,10 @@ namespace _Project.Systems.InventorySystem.UI
             {
                 inventorySlots[i].Initialize(i);
             }
+
+            currentWeightText.text = inventoryComponent.CurrentWeight.ToString("0.##");
+            maxWeightText.text = $"/ {inventoryComponent.MaxWeight:0.##}";
+            weightSlider.value = inventoryComponent.CurrentWeight / inventoryComponent.MaxWeight;
         }
 
         private void OnEnable()
@@ -42,6 +58,7 @@ namespace _Project.Systems.InventorySystem.UI
 
             inventoryComponent.OnSlotChanged += UpdateSlotUI;
             inventoryComponent.OnInventoryToggle += ToggleInventoryVisibility;
+            inventoryComponent.OnWeightChanged += UpdateWeight;
         }
 
         private void OnDisable()
@@ -50,6 +67,7 @@ namespace _Project.Systems.InventorySystem.UI
 
             inventoryComponent.OnSlotChanged -= UpdateSlotUI;
             inventoryComponent.OnInventoryToggle -= ToggleInventoryVisibility;
+            inventoryComponent.OnWeightChanged -= UpdateWeight;
         }
 
         private void UpdateSlotUI(int index, InventorySlot updatedSlot)
@@ -58,6 +76,13 @@ namespace _Project.Systems.InventorySystem.UI
             {
                 inventorySlots[index].UpdateUi(updatedSlot);
             }
+        }
+
+        private void UpdateWeight()
+        {
+            currentWeightText.text = inventoryComponent.CurrentWeight.ToString("0.##");
+            maxWeightText.text = $"/{inventoryComponent.MaxWeight:0.##}";
+            weightSlider.value = inventoryComponent.CurrentWeight / inventoryComponent.MaxWeight;
         }
 
         private void ToggleInventoryVisibility()
@@ -69,7 +94,6 @@ namespace _Project.Systems.InventorySystem.UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            Debug.Log("Pointer down");
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -108,8 +132,6 @@ namespace _Project.Systems.InventorySystem.UI
 
         public void OnDrop(PointerEventData eventData)
         {
-            Debug.Log("InventoryManager OnDrop CALLED");
-
             if (draggedSlotUi == null) return;
 
             var droppedOn = eventData.pointerCurrentRaycast.gameObject;

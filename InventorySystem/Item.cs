@@ -1,4 +1,5 @@
-﻿using _Project.Systems.InventorySystem.ScriptableObjects;
+﻿using _Project.Systems.InventorySystem.Enums;
+using _Project.Systems.InventorySystem.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -7,6 +8,8 @@ namespace _Project.Systems.InventorySystem
     public class Item : MonoBehaviour
     {
         [SerializeField] private int currentItemAmount;
+        [SerializeField] private ItemType itemType;
+        public ItemType ItemType => itemType;
 
         public int CurrentItemAmount
         {
@@ -14,7 +17,8 @@ namespace _Project.Systems.InventorySystem
             set => currentItemAmount = value;
         }
 
-        [FormerlySerializedAs("currentInventoryItemData")] [SerializeField] private ItemData currentItemData;
+        [FormerlySerializedAs("currentInventoryItemData")] [SerializeField]
+        private ItemData currentItemData;
 
         public ItemData CurrentItemData
         {

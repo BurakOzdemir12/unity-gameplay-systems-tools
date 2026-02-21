@@ -19,9 +19,18 @@ namespace _Project.Systems.InventorySystem.Core
         [SerializeField] private List<InventorySlot> slots = new List<InventorySlot>();
         public IReadOnlyList<InventorySlot> Slots => slots;
 
+        [Header("Weight Settings")] [Tooltip("Max weight limit for Inventory")] [SerializeField]
+        private float maxWeight = 100f;
+
+        public float MaxWeight => maxWeight;
+
+        private float currentWeight;
+        public float CurrentWeight => currentWeight;
+
         public event Action<int, InventorySlot> OnSlotChanged;
         public event Action<ItemData, int> OnItemDroppedToWorld;
         public event Action OnInventoryToggle;
+        public event Action OnWeightChanged;
 
         private void Awake()
         {
@@ -82,11 +91,25 @@ namespace _Project.Systems.InventorySystem.Core
 
             OnSlotChanged?.Invoke(fromIndex, fromSlot);
             OnSlotChanged?.Invoke(toIndex, toSlot);
+
+            CalculateWeight();
         }
 
         public void AddItem(ItemData itemToAdd, int amount)
         {
+            float availableWeight = maxWeight - currentWeight;
+            int affordableAmount = itemToAdd.weight > 0 ? Mathf.FloorToInt(availableWeight / itemToAdd.weight) : amount;
+            int actualAmountToAdd = Mathf.Min(amount, affordableAmount);
+
+            if (actualAmountToAdd <= 0)
+            {
+                Debug.LogWarning($"Weight limit! {itemToAdd.displayName} cant take any more weight.");
+                return;
+            }
+
             int remaining = amount;
+            if (currentWeight + itemToAdd.weight > maxWeight) return;
+            currentWeight += itemToAdd.weight * amount;
 
             if (itemToAdd.isStackable)
             {
@@ -106,7 +129,11 @@ namespace _Project.Systems.InventorySystem.Core
                             remaining -= amountToAdd;
 
                             OnSlotChanged?.Invoke(i, slots[i]);
-                            if (remaining <= 0) return;
+                            if (remaining <= 0)
+                            {
+                                CalculateWeight();
+                                return;
+                            }
                         }
                     }
                 }
@@ -123,14 +150,21 @@ namespace _Project.Systems.InventorySystem.Core
 
                     OnSlotChanged?.Invoke(i, slots[i]);
 
-                    if (remaining <= 0) return;
+                    if (remaining <= 0)
+                    {
+                        CalculateWeight();
+                        return;
+                    }
                 }
             }
+
 
             if (remaining > 0)
             {
                 Debug.LogError("Not enough space in inventory to add item: " + itemToAdd.name);
             }
+
+            CalculateWeight();
         }
 
         public void DropItemFromSlot(int index)
@@ -142,11 +176,28 @@ namespace _Project.Systems.InventorySystem.Core
 
             slot.ClearSlot();
             OnSlotChanged?.Invoke(index, slot);
+
+            CalculateWeight();
         }
 
         public void ToggleInventoryVisibility()
         {
             OnInventoryToggle?.Invoke();
+        }
+
+        public void CalculateWeight()
+        {
+            float newWeight = 0f;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (slots[i].HasItem)
+                {
+                    newWeight += slots[i].StoredItem.weight * slots[i].ItemAmount;
+                }
+            }
+
+            currentWeight = newWeight;
+            OnWeightChanged?.Invoke();
         }
     }
 }
